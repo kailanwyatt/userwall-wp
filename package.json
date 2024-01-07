@@ -1,0 +1,25 @@
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "description": "Description of your project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "grunt": "grunt",
+    "scripts": "grunt scripts",
+    "styles": "grunt styles",
+    "start": "npm run grunt",
+    "wp_start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "keywords": [],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@wordpress/scripts": "^26.19.0",
+    "grunt": "^1.4.0",
+    "grunt-contrib-concat": "^2.0.0",
+    "grunt-contrib-uglify": "^5.1.1",
+    "grunt-contrib-watch": "^1.1.0"
+  }
+}
