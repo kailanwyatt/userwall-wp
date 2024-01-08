@@ -13,7 +13,6 @@ function threads_wp_deactivate() {
         $table_comments = $wpdb->prefix . 'threads_comments';
         $table_likes = $wpdb->prefix . 'threads_likes';
         $table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
-        $table_groups = $wpdb->prefix . 'threads_groups';
         $table_polls = $wpdb->prefix . 'threads_polls';
         $table_poll_votes = $wpdb->prefix . 'threads_poll_votes';
         $table_media = $wpdb->prefix . 'threads_media';
@@ -33,11 +32,9 @@ function threads_wp_deactivate() {
 
         // SQL queries to drop the tables
         $sql_queries = array(
-            "DROP TABLE IF EXISTS $table_posts",
             "DROP TABLE IF EXISTS $table_comments",
             "DROP TABLE IF EXISTS $table_likes",
             "DROP TABLE IF EXISTS $table_bookmarks",
-            "DROP TABLE IF EXISTS $table_groups",
             "DROP TABLE IF EXISTS $table_polls",
             "DROP TABLE IF EXISTS $table_poll_votes",
             "DROP TABLE IF EXISTS $table_media",
@@ -53,7 +50,8 @@ function threads_wp_deactivate() {
             "DROP TABLE IF EXISTS $table_user_following",
             "DROP TABLE IF EXISTS $table_reports",
             "DROP TABLE IF EXISTS $table_user_notifications",
-            "DROP TABLE IF EXISTS $table_poll_options"
+            "DROP TABLE IF EXISTS $table_poll_options",
+            "DROP TABLE IF EXISTS $table_posts",
         );
 
         // Delete the tables

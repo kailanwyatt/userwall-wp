@@ -26,7 +26,7 @@ class Threads_WP_Shortcode {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = sanitize_text_field( $_POST['post_content'] );
+        $post_content = sanitize_text_field( $_POST['content'] );
 
         // You may want to add more sanitization and validation here
 
@@ -65,7 +65,6 @@ class Threads_WP_Shortcode {
         $post_tabs = array(
             'post' => __( 'Post', 'threads-wp' ),
             'image' => __( 'Image', 'threads-wp' ),
-            'poll'  => __( 'Poll', 'threads-wp' )
         );
 
         $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );

@@ -5,6 +5,7 @@ class Threads_WP_Base_Addon {
     protected $addon_author = '';
     protected $addon_version = '';
     protected $addon_id = '';
+    public $file = '';
     protected $is_active = false;
 
     public function __construct() {
@@ -13,6 +14,8 @@ class Threads_WP_Base_Addon {
         $this->addon_author = $this->get_author();
         $this->addon_version = $this->get_version();
         $this->addon_id      = $this->get_id();
+        $this->file          = $this->get_file_path();
+        $this->hooks();
     }
 
     // Abstract methods to be implemented by subclasses
@@ -36,6 +39,10 @@ class Threads_WP_Base_Addon {
         return $this->addon_version;
     }
 
+    public function get_file_path() {
+        return __FILE__;
+    }
+
     public function activate_addon() {
         // Add addon-specific activation logic here
     }
@@ -51,5 +58,9 @@ class Threads_WP_Base_Addon {
      */
     public function is_active() {
         return $this->is_active;
+    }
+
+    public function hooks() {
+
     }
 }

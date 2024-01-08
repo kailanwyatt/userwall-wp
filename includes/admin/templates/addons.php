@@ -6,7 +6,6 @@ $addons_manager = new Threads_WP_Addons();
 // Register and load addons
 $addons = array();
 $addons = $addons_manager->register_addons($addons);
-$addons_manager->load_addons($addons);
 
 // Get the list of installed addons
 $addons = $addons_manager->get_addons();

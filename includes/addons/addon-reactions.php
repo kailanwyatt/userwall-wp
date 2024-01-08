@@ -1,19 +1,19 @@
 <?php
-class ThreadsWP_Poll_Addon extends Threads_WP_Base_Addon {
+class ThreadsWP_Addon_Reactions extends Threads_WP_Base_Addon {
     public function get_id() {
-        return 'polls';
+        return 'reactions';
     }
 
     public function get_name() {
-        return 'My Custom Addon';
+        return __( 'Reactions', 'thread-wp' );
     }
 
     public function get_description() {
-        return 'Description of My Custom Addon';
+        return __( 'Reactions', 'thread-wp' );
     }
 
     public function get_author() {
-        return 'Third-Party Developer';
+        return __( 'ThreadWP', 'thread-wp' );;
     }
 
     public function get_version() {
@@ -42,4 +42,4 @@ function register_threads_wp_addons($addons) {
 }
 
 // Hook the function to the filter 'threads_wp_register_addons'
-add_filter('threads_wp_register_addons', 'register_threads_wp_addons');
+//add_filter('threads_wp_register_addons', 'register_threads_wp_addons');

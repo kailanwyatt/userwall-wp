@@ -1,4 +1,5 @@
-<div class="reddit-form">
+<div class="threads-wp-form-wrapper">
+    <form id="threads-wp-post-form">
     <ul class="threads-tabs">
         <?php if ( ! empty(  $post_tabs ) ) : ?>
             <?php foreach ( $post_tabs as $tab => $label ) : ?>
@@ -62,6 +63,7 @@
     </div>
     <?php endif; ?>
     <button class="submit-button">Submit</button>
+    </form>
 </div>
 
 <div id="reddit-container"></div>

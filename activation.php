@@ -9,9 +9,6 @@ function threads_wp_activate() {
     $table_comments = $wpdb->prefix . 'threads_comments';
     $table_likes = $wpdb->prefix . 'threads_likes';
     $table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
-    $table_groups = $wpdb->prefix . 'threads_groups';
-    $table_polls = $wpdb->prefix . 'threads_polls';
-    $table_poll_votes = $wpdb->prefix . 'threads_poll_votes';
     $table_media = $wpdb->prefix . 'threads_media';
     $table_albums = $wpdb->prefix . 'threads_albums';
     $table_reports = $wpdb->prefix . 'threads_reports';
@@ -25,13 +22,15 @@ function threads_wp_activate() {
     $table_user_following = $wpdb->prefix . 'threads_user_following';
     $table_reports = $wpdb->prefix . 'threads_reports';
     $table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
-    $table_poll_options = $wpdb->prefix . 'threads_poll_options';
+    
 
     // SQL query to create the 'threads_plugin_posts' table
     $sql_query_posts = "CREATE TABLE IF NOT EXISTS $table_posts (
         post_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        post_title VARCHAR(255) NOT NULL,
         post_content TEXT,
         post_type VARCHAR(20) NOT NULL,
+        post_status VARCHAR(20) NOT NULL,
         creation_date DATETIME NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,
         INDEX user_id_index (user_id),
@@ -74,41 +73,8 @@ function threads_wp_activate() {
         FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
     )";
     
-    // SQL query to create the 'threads_plugin_groups' table
-    $sql_query_groups = "CREATE TABLE IF NOT EXISTS $table_groups (
-        group_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        group_name VARCHAR(255) NOT NULL,
-        group_description TEXT,
-        creation_date DATETIME NOT NULL,
-        creator_user_id BIGINT UNSIGNED NOT NULL,
-        INDEX creator_user_id_index (creator_user_id),
-        FOREIGN KEY (creator_user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-    
-    // SQL query to create the 'threads_polls' table
-    $sql_query_polls = "CREATE TABLE IF NOT EXISTS $table_polls (
-        poll_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        question_text TEXT NOT NULL,
-        creation_date DATETIME NOT NULL,
-        user_id BIGINT UNSIGNED NOT NULL,
-        post_id INT UNSIGNED NOT NULL,
-        INDEX user_id_index (user_id),
-        INDEX post_id_index (post_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
-    )";
 
-    // SQL query to create the 'threads_poll_votes' table
-$sql_query_poll_votes = "CREATE TABLE IF NOT EXISTS $table_poll_votes (
-    vote_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    poll_id INT UNSIGNED NOT NULL,
-    selected_option INT NOT NULL,
-    INDEX user_id_index (user_id),
-    INDEX poll_id_index (poll_id),
-    FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-    FOREIGN KEY (poll_id) REFERENCES $table_polls(poll_id)
-)";
+
 
 // SQL query to create the 'threads_media' table
 $sql_query_media = "CREATE TABLE IF NOT EXISTS $table_media (
@@ -215,15 +181,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_poll_options' table
-    $sql_query_poll_options = "CREATE TABLE IF NOT EXISTS $table_poll_options (
-        option_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        poll_id INT UNSIGNED NOT NULL,
-        option_text TEXT NOT NULL,
-        INDEX poll_id_index (poll_id),
-        FOREIGN KEY (poll_id) REFERENCES wp_threads_polls(poll_id)
-    )";
-
 
     // SQL query to create the 'threads_reports' table
     $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
@@ -309,15 +266,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         timestamp DATETIME NOT NULL,
         INDEX user_id_index (user_id),
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    // SQL query to create the 'wp_threads_poll_options' table
-    $sql_query_poll_options = "CREATE TABLE IF NOT EXISTS $table_poll_options (
-        option_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        poll_id INT UNSIGNED NOT NULL,
-        option_text TEXT NOT NULL,
-        INDEX poll_id_index (poll_id),
-        FOREIGN KEY (poll_id) REFERENCES wp_threads_polls(poll_id)
     )";
 
     $sql_query_badges = "CREATE TABLE IF NOT EXISTS $table_badges (

@@ -8,10 +8,10 @@ class Threads_WP_Addons {
         $this->active_addons = get_option('threads_wp_active_addons', []);
     }
 
-    public function register_addons($addons) {
+    public function register_addons($addons = array() ) {
         $addons = array();
         
-        require_once( THREADS_WP_PLUGIN_ADDONS_DIR . 'polls/polls.php' );
+        
         // Register internal addons
         $addons = $this->register_internal_addons($addons);
 
@@ -22,26 +22,31 @@ class Threads_WP_Addons {
     }
 
     private function register_internal_addons($addons) {
-        // Register your internal addons here
-        // Add them to the $addons array
-        // Example:
-        /*
-        $addons[] = array(
-            'name' => 'Internal Addon',
-            'description' => 'Description of internal addon',
-            'version' => '1.0',
-            'author' => 'Your Name',
-            'file' => __DIR__ . '/internal-addon.php', // Adjust the path
-        );
-        */
-        
-        /* $addons[] = array(
-            'name' => __( 'Polls', 'threads-wp' ),
-            'description' => 'Description of internal addon',
-            'version' => '1.0',
-            'author' => 'ThreadsWP',
-            'file' => THREADS_WP_PLUGIN_DIR . 'poll/polls.php',
-        ); */
+
+        $addons = array();
+
+        // Define the folder path where your addon files are located
+        $addon_dir = THREADS_WP_PLUGIN_ADDONS_DIR;
+
+        // Use glob to find PHP files with class names starting with 'ThreadsWP_Addon_'
+        $addon_files = glob($addon_dir . 'addon-*.php');
+
+        // Loop through the found files
+        foreach ($addon_files as $addon_file) {
+            // Include the addon file
+            require_once($addon_file);
+
+            // Extract the class name from the file path
+            $class_name = basename($addon_file, '.php');
+            $class_name = ucfirst( str_replace( 'addon-', '', $class_name ) );
+            $class_name = 'ThreadsWP_Addon_' . $class_name;
+            // Check if the class exists and if it's an instance of Threads_WP_Base_Addon
+            if (class_exists($class_name) && is_subclass_of($class_name, 'Threads_WP_Base_Addon')) {
+                $addon_id = strtolower(str_replace('ThreadsWP_Addon_', '', $class_name));
+                // Instantiate the class and add it to the addons array
+                $addons[ $addon_id ] = new $class_name();
+            }
+        }
         return $addons;
     }
 
@@ -73,29 +78,33 @@ class Threads_WP_Addons {
                 $addon['name'],
                 $addon['description'],
                 $addon['version'],
-                $addon['active']
+                $addon['active'],
+                $addon['file']
             );
-            $addon_objects[] = $addon_object;
+            $addon_objects[ $addon['id'] ] = $addon_object;
         }
 
         return $addon_objects;
     }
 
-    public function load_addons($addons) {
-        if ( empty( $addons ) ) {
-            return;
-        }
-        // Load and activate addons
-        foreach ($addons as $addon) {
-            if (isset($addon['file']) && file_exists($addon['file'])) {
-                include_once $addon['file'];
-                // Add logic to activate the addon if needed
+    public function load_addons() {
+        error_log( wp_debug_backtrace_summary() ); 
+        if ( ! empty( $this->active_addons ) ) {
+            // Load and activate addons
+            foreach ( $this->active_addons as $addon) {
+                
+                if (isset($addon['file']) && file_exists($addon['file']) && ! class_exists( $addon['class'] ) ) {
+                    
+                    include_once( $addon['file'] );
+                    $class_name = $addon['class'];
+                    $addon_class = new $class_name();
+                }
             }
-        }
+        } 
     }
 
     public function is_active($addon_id) {
-        return in_array($addon_id, $this->active_addons);
+        return in_array($addon_id, array_keys( $this->active_addons ) );
     }
 
     public function activate_addon( $addon_id ) {
@@ -106,7 +115,3 @@ class Threads_WP_Addons {
         $addon = $this->get_addon_by_id( $addon_id )->deactivate_addon();
     }
 }
-
-// Create an instance of the Threads_WP_Addons class
-$addons_manager = new Threads_WP_Addons();
-
