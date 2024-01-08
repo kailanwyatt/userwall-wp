@@ -9,6 +9,7 @@
 // Define plugin constants
 define('THREADS_WP_PLUGIN_FILE', __FILE__);
 define('THREADS_WP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('THREADS_WP_PLUGIN_ADDONS_DIR', plugin_dir_path(__FILE__) . 'includes/addons/');
 define('THREADS_WP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require_once( THREADS_WP_PLUGIN_DIR . 'activation.php');
@@ -21,8 +22,16 @@ register_activation_hook(__FILE__, 'threads_wp_activate');
 // Hook into plugin deactivation
 register_deactivation_hook(__FILE__, 'threads_wp_deactivate');
 
+// Include the addon management class (Threads_WP_Addons)
+include_once THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-addons.php';
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-addon.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-admin.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-blocks.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-post-manager.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-template.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-shortcode.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-filemanager.php' );
+
 // Autoloader for include files (excluding addons)
 //spl_autoload_register('threads_wp_autoload');
 
@@ -49,6 +58,9 @@ if (!class_exists('Threads_WP')) {
          * Constructor (private to enforce Singleton pattern).
          */
         private function __construct() {
+            // Enqueue assets on the front end
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+
             // Define the path to the addons folder
             $addons_folder = trailingslashit(plugin_dir_path(__FILE__)) . 'addons';
 
@@ -97,8 +109,39 @@ if (!class_exists('Threads_WP')) {
                 }
             }
         }
+
+        public function enqueue_assets() {
+            // Enqueue JavaScript
+            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util'), '1.0', true);
+            
+            $ajax_nonce = wp_create_nonce('threads_wp_nonce');
+
+            // Create an array to pass data to JavaScript
+            $threadsWP_data = array(
+                'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
+                'nonce'    => $ajax_nonce,
+            );
+
+            // Localize the script with the data
+            wp_localize_script('threads-wp-js', 'threadsWPObject', apply_filters( 'thread_wp_localize_script', $threadsWP_data ) );
+
+
+            // Enqueue CSS
+            wp_enqueue_style('threads-wp-css', plugins_url('assets/css/threads-wp.css', __FILE__), array(), '1.0', 'all');
+        }
     }
 
     // Initialize the Singleton instance
     Threads_WP::get_instance();
 }
+
+function add_type_attribute($tag, $handle, $src) {
+    // if not your script, do nothing and return original $tag
+    if ( 'threads-wp-js' !== $handle ) {
+        return $tag;
+    }
+    // change the script tag by adding type="module" and return it.
+    $tag = '<script type="module" src="' . esc_url( $src ) . '"></script>';
+    return $tag;
+}
+add_filter('script_loader_tag', 'add_type_attribute' , 10, 3);

@@ -1,0 +1,97 @@
+/* Style the form container */
+#threads-wp-post-form {
+    background-color: #fff;
+    border: 1px solid #e1e8ed;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Style the text area for post content */
+#threads-wp-post-content {
+    width: 100%;
+    min-height: 100px;
+    border: none;
+    resize: none;
+    font-size: 16px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the post button */
+#threads-wp-post-button {
+    background-color: #1da1f2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* Style the post button on hover */
+#threads-wp-post-button:hover {
+    background-color: #0d86c9;
+}
+
+.reddit-form {
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.threads-tabs {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.threads-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.threads-tab-content {
+    display: none;
+}
+
+textarea,
+input[type="file"],
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button.submit-button {
+    background-color: #0079d3;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* Style the currently active tab */
+.threads-tab.active {
+    background-color: #0079d3;
+    color: #fff;
+}
+
+.threads-tab-content.active {
+    display: block;
+}
+
+.threads-wp-reddit-thread {
+    background-color: #f7f7f7;
+    padding: 10px;
+}
+

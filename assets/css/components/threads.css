@@ -1,0 +1,94 @@
+/* Style each individual thread */
+.threads-wp-thread {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Style the thread content */
+.threads-wp-thread-content {
+    font-size: 16px;
+}
+
+/* Style the thread author */
+.threads-wp-thread-author {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Style the comment section */
+.threads-wp-comment-section {
+    margin-top: 10px;
+}
+
+/* Style each individual comment */
+.threads-wp-comment {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Style the comment content */
+.threads-wp-comment-content {
+    font-size: 14px;
+}
+
+/* Style the comment author */
+.threads-wp-comment-author {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Style the reply button */
+.threads-wp-reply-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Style the reply button on hover */
+.threads-wp-reply-button:hover {
+    background-color: #0056b3;
+}
+
+/* Style the ellipsis icon */
+.threads-wp-ellipsis {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Style the actions area */
+.threads-wp-thread-actions {
+    position: absolute;
+    top: 40px; /* Adjust the position as needed */
+    right: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    z-index: 999;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for visual effect */
+    display: block;
+    margin-top: 10px; /* Optional: Add some spacing between actions */
+}
+
+/* Style the actions */
+.threads-wp-action {
+    font-size: 14px;
+    color: #007bff;
+    display: block; /* Make each action appear on a new line */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    margin-right: 10px;
+}
+
+/* Style the actions on hover */
+.threads-wp-action:hover {
+    text-decoration: underline;
+}

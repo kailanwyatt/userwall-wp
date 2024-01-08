@@ -1,4 +1,4 @@
-$(document).ready(function() {
+jQuery(document).ready(function($) {
     var myModal = $('#myModal').twitterModal({
         content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
         showCloseBtn: true,
