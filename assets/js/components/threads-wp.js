@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
             this.initializeReplyForm();
             // Initialize Quill rich text editor for the post form
             this.initializeQuillEditor();
-            this.initializeLiveUpdates();
+            //this.initializeLiveUpdates();
         }
     
         initialize() {
@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
             $('#threads-wp-post-form').on('submit', this.submitForm.bind(this));
     
             // Attach click event to the ellipsis icon
-            $('.threads-wp-ellipsis').click(this.handleEllipsisClick);
+            $(document).on('click', '.threads-wp-ellipsis', this.handleEllipsisClick );
     
             // Add a click event to the document body to close actions when clicking outside
             $('body').click(this.closeActions);
@@ -70,6 +70,10 @@ jQuery(document).ready(function($) {
                     nonce: threadsWPObject.nonce,
                 },
                 success: function(response) {
+                    var template = wp.template( 'thread-wp-feed-template' );
+                    jQuery('[data-thread="' + response.data.post_type + '"] .threads-wp-reddit-thread').append( template( response.data.threads )  );
+                    // Reset post form.
+                    
                     // Handle the response here (e.g., display a success message)
                 },
                 error: function(error) {

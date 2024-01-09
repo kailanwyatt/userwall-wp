@@ -28,8 +28,8 @@ class WP_Custom_Settings_API {
     private function init_general_main_settings() {
         add_settings_section(
             'wp_custom_general_main',
-            __( 'Main Settings', 'wp-custom-admin-settings-panel' ),
-            function() { echo '<p>Main settings section description.</p>'; },
+            null,
+            false,
             'wp_custom_general_main'
         );
 

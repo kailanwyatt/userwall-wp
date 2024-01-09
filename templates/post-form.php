@@ -66,4 +66,6 @@
     </form>
 </div>
 
-<div id="reddit-container"></div>
+<div id="reddit-container" data-thread="posts" data-thread-wrapper data-post_type="all">
+    <div class="threads-wp-reddit-thread"></div>
+</div>

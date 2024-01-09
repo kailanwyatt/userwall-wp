@@ -27,11 +27,12 @@ require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-addon.p
 include_once THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-addons.php';
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-admin.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-blocks.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-ajax-manager.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-post-manager.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-template.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-shortcode.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-filemanager.php' );
-
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-table-manager.php' );
 
 // Create an instance of the Threads_WP_Addons class
 $addons_manager = new Threads_WP_Addons();

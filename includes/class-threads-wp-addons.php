@@ -88,7 +88,6 @@ class Threads_WP_Addons {
     }
 
     public function load_addons() {
-        error_log( wp_debug_backtrace_summary() ); 
         if ( ! empty( $this->active_addons ) ) {
             // Load and activate addons
             foreach ( $this->active_addons as $addon) {
