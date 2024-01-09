@@ -5,7 +5,7 @@
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
             <!-- Thread content -->
             <div class="threads-wp-thread-content">
-                {{ thread.post_content }}
+                {{{ thread.post_content }}}
             </div>
             <div class="threads-wp-thread-author">
                 {{ thread.user_id }}
@@ -35,6 +35,7 @@
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Follow', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Follow', 'threads-wp'); ?>"><?php esc_html_e('Follow', 'threads-wp'); ?></span>
             </div>
 
+            <?php /*
             <!-- Reaction Area -->
             <div class="threads-wp-reactions">
                 <!-- Display reaction count -->
@@ -50,6 +51,7 @@
                 <button class="threads-wp-reaction-button" aria-label="<?php esc_html_e('Sad', 'threads-wp'); ?>"><?php esc_html_e('Sad', 'threads-wp'); ?></button>
                 <button class="threads-wp-reaction-button" aria-label="<?php esc_html_e('Angry', 'threads-wp'); ?>"><?php esc_html_e('Sad', 'threads-wp'); ?></button>
             </div>
+            */ ?>
 
             <div class="">
                 <div class="threads-wp-reaction-count" aria-label="<?php esc_html_e('Reactions count', 'threads-wp'); ?>">
@@ -68,6 +70,12 @@
                         <line x1="7" y1="17" x2="17" y2="17" stroke="currentColor" stroke-width="1.5"/>
                     </svg>
                 </div>
+            </div>
+
+            <!-- LinkedIn-style comment box -->
+            <div class="linkedin-style-comment-box">
+                <textarea class="comment-textarea" placeholder="Write a comment..."></textarea>
+                <button class="comment-submit-button">Post</button>
             </div>
 
             <!-- Comment Section -->

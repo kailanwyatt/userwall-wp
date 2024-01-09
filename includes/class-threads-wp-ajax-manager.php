@@ -3,6 +3,23 @@ class Threads_WP_AJAX_Manager {
     public function __construct() {
         // Add action hooks for handling AJAX requests
         add_action('wp_ajax_threads_wp_save_post', array( $this, 'threads_wp_save_post') );
+        add_action('wp_ajax_fetch_data_by_thread', array( $this, 'fetch_data_by_thread') );
+        add_action('wp_ajax_nopriv_fetch_data_by_thread', array( $this, 'fetch_data_by_thread') );
+
+        add_action('wp_ajax_fetch_latest_thread_notice', array( $this, 'fetch_latest_thread_notice') );
+        add_action('wp_ajax_nopriv_fetch_latest_thread_notice', array( $this, 'fetch_latest_thread_notice') );
+
+        add_action('wp_ajax_fetch_latest_thread', array( $this, 'fetch_latest_thread') );
+        add_action('wp_ajax_nopriv_fetch_latest_thread', array( $this, 'fetch_latest_thread') );
+
+        // Post action.
+        add_action('wp_ajax_threads_wp_posts_action', array( $this, 'handle_post_action') );
+
+        add_action( 'wp_ajax_threads_wp_load_more_posts', array( $this, 'load_more_posts' ) );
+        add_action( 'wp_ajax_nopriv_threads_wp_load_more_posts', array( $this, 'load_more_posts' ) );
+
+        add_action( 'wp_ajax_threads_wp_load_comments', array( $this, 'load_comments' ) );
+        add_action( 'wp_ajax_nopriv_threads_wp_load_comments', array( $this, 'load_comments' ) );
     }
 
     /**
@@ -15,6 +32,57 @@ class Threads_WP_AJAX_Manager {
             return true;
         }
         return false;
+    }
+
+    public function handle_post_action() {
+        // Check the nonce for security
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'your_nonce_action' ) ) {
+            wp_send_json_error( array( 'message' => 'Nonce verification failed.' ) );
+        }
+
+        // Get the action type from the AJAX request
+        $action_type = isset( $_POST['action_type'] ) ? sanitize_text_field( $_POST['action_type'] ) : '';
+
+        // Get the post ID associated with the action (if needed)
+        $post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+
+        // Perform actions based on the action type
+        switch ( $action_type ) {
+            case 'edit':
+                // Handle Edit action
+                // You can perform your edit logic here
+                break;
+            case 'delete':
+                // Handle Delete action
+                // You can perform your delete logic here
+                break;
+            case 'block':
+                // Handle Block action
+                // You can perform your block logic here
+                break;
+            case 'report':
+                // Handle Report action
+                // You can perform your report logic here
+                break;
+            case 'embed-post':
+                // Handle Embed Post action
+                // You can perform your embed logic here
+                break;
+            case 'save':
+                // Handle Save action
+                // You can perform your save logic here
+                break;
+            case 'follow':
+                // Handle Follow action
+                // You can perform your follow logic here
+                break;
+            default:
+                // Handle unknown action type
+                wp_send_json_error( array( 'message' => 'Unknown action type.' ) );
+        }
+
+        // Send a success response (if needed)
+        wp_send_json_success( array( 'message' => 'Action successful.' ) );
     }
 
     public function threads_wp_save_post() {
@@ -32,7 +100,7 @@ class Threads_WP_AJAX_Manager {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = sanitize_text_field( $_POST['content'] );
+        $post_content = wp_kses_post( $_POST['content'] );
 
         // Prepare data to insert into the threads_posts table
         $post_data = array(
@@ -49,7 +117,6 @@ class Threads_WP_AJAX_Manager {
             wp_send_json_failure( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
         } else {
             $post = $post_manager->get_post_by_id( $insert_result );
-            error_log( print_r( $post, true ) );
             $return_data = array(
                 'post_type' => $post->post_type,
                 'threads' => array(
@@ -78,6 +145,45 @@ class Threads_WP_AJAX_Manager {
 
         // Send JSON response
         wp_send_json($response);
+    }
+
+    public function fetch_data_by_thread() {
+        $post_manager = new Threads_WP_Post_Manager();
+        $posts = $post_manager->get_posts();
+        wp_send_json($posts);
+    }
+
+    public function fetch_latest_thread_notice() {
+        // Check for nonce security
+        if ( ! $this->is_valid_nonce() ) {
+            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+        }
+
+        $post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
+        $post_manager = new Threads_WP_Post_Manager();
+        $posts = $post_manager->get_posts_latest_count( $post_id );
+        wp_send_json_success( array('message' => $posts ) );
+    }
+
+    public function fetch_latest_thread() {
+        // Check for nonce security
+        if ( ! $this->is_valid_nonce() ) {
+            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+        }
+
+        $post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
+        $post_manager = new Threads_WP_Post_Manager();
+        $posts = $post_manager->get_posts_latest( $post_id );
+        wp_send_json_success( array('threads' => $posts ) );
+    }
+
+    public function load_more_posts() {
+        $posts = array();
+        wp_send_json_success( array('threads' => $posts ) );
+    }
+
+    public function load_comments() {
+
     }
 }
 

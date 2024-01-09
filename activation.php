@@ -9,8 +9,6 @@ function threads_wp_activate() {
     $table_comments = $wpdb->prefix . 'threads_comments';
     $table_likes = $wpdb->prefix . 'threads_likes';
     $table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
-    $table_media = $wpdb->prefix . 'threads_media';
-    $table_albums = $wpdb->prefix . 'threads_albums';
     $table_reports = $wpdb->prefix . 'threads_reports';
     $table_user_reputation = $wpdb->prefix . 'threads_user_reputation';
     $table_badges = $wpdb->prefix . 'threads_badges';
@@ -76,15 +74,7 @@ function threads_wp_activate() {
 
 
 
-// SQL query to create the 'threads_media' table
-$sql_query_media = "CREATE TABLE IF NOT EXISTS $table_media (
-    media_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    file_path VARCHAR(255) NOT NULL,
-    description TEXT,
-    post_id INT UNSIGNED NOT NULL,
-    INDEX post_id_index (post_id),
-    FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
-)";
+
 
 // SQL query to create the 'threads_reports' table
 $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
@@ -285,7 +275,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         $sql_query_groups,
         $sql_query_polls,  
         $sql_query_poll_votes,
-        $sql_query_media,
         $sql_query_user_reputation,
         $sql_query_badges,
         $sql_query_hashtags,

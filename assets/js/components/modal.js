@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.twitterModal = function(options) {
+    $.fn.threadModal = function(options) {
         var settings = $.extend({
             content: '',
             showCloseBtn: true,

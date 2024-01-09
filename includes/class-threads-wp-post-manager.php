@@ -143,9 +143,65 @@ class Threads_WP_Post_Manager {
      * @param int $limit Number of posts to retrieve (optional).
      * @return array List of post objects.
      */
-    public function get_posts_latest($last_post_id, $limit = 30) {
+    public function get_posts_latest($last_post_id = 0, $limit = 30) {
         // Implement the query to fetch the latest posts since $last_post_id here
+        $tables = Threads_WP_Table_Manager::get_table_names();
+        $query = $this->wpdb->prepare(
+            "SELECT p.*, 
+            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
+            FROM {$this->table_posts} p
+            WHERE p.post_id > %d
+            ORDER BY p.post_id DESC
+            LIMIT %d",
+            $last_post_id,
+            $limit
+        );
 
+        $posts = $this->wpdb->get_results($query);
         return apply_filters('thread_wp_get_posts_latest', $posts, $last_post_id, $limit);
+    }
+
+    /**
+     * Get the latest posts since a given post ID.
+     *
+     * @param int $last_post_id The ID of the last post.
+     * @param int $limit Number of posts to retrieve (optional).
+     * @return array List of post objects.
+     */
+    public function get_posts_latest_count($last_post_id = 0, $limit = 30) {
+        // Implement the query to fetch the latest posts since $last_post_id here
+        $tables = Threads_WP_Table_Manager::get_table_names();
+        $query = $this->wpdb->prepare(
+            "SELECT COUNT(p.post_id)
+            FROM {$this->table_posts} p
+            WHERE p.post_id > %d
+            ORDER BY p.post_id ASC
+            LIMIT %d",
+            $last_post_id,
+            $limit
+        );
+
+        $posts = $this->wpdb->get_var($query);
+        return apply_filters('thread_wp_get_posts_latest_count', $posts, $last_post_id, $limit);
+    }
+
+
+    public function get_posts($last_post_id = 0, $limit = 30) {
+        // Implement the query to fetch the latest posts since $last_post_id here
+        $tables = Threads_WP_Table_Manager::get_table_names();
+        $post_id = '1';
+        $posts = $this->wpdb->get_results(
+            $this->wpdb->prepare(
+                "SELECT p.*, 
+                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+                (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
+                FROM {$this->table_posts} p
+                WHERE 1 = %d ORDER BY post_id DESC",
+                $post_id
+            )
+        );
+
+        return apply_filters('thread_wp_get_posts', $posts, $last_post_id, $limit);
     }
 }

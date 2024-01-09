@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-    var myModal = $('#myModal').twitterModal({
+    var myModal = $('#myModal').threadModal({
         content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
         showCloseBtn: true,
         openTransition: 'fade',

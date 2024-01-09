@@ -1,7 +1,7 @@
 <div class="threads-wp-form-wrapper">
-    <form id="threads-wp-post-form">
+    <form id="threads-wp-post-form" enctype='multipart/form-data'>
     <ul class="threads-tabs">
-        <?php if ( ! empty(  $post_tabs ) ) : ?>
+        <?php if ( ! empty(  $post_tabs ) && count( $post_tabs ) > 1 ) : ?>
             <?php foreach ( $post_tabs as $tab => $label ) : ?>
             <li class="threads-tab" data-tab="<?php echo esc_attr( $tab ); ?>"><?php echo esc_html( $label ); ?></li>
             <?php endforeach; ?>
@@ -32,14 +32,8 @@
                         <button class="ql-script" value="super"></button>
                     </div>
                 </div>
-                <?php
-                break;
-            case 'image':
-                ?>
-                <div class="threads-tab-content" data-tab="image">
-                    <!-- Image upload input -->
-                    <input type="file" accept="image/*" id="image-upload">
-                    <label for="image-upload">Upload an image</label>
+                <div class="rich-preview-container">
+                    <!-- Rich preview will be displayed here -->
                 </div>
                 <?php
                 break;
@@ -66,6 +60,7 @@
     </form>
 </div>
 
-<div id="reddit-container" data-thread="posts" data-thread-wrapper data-post_type="all">
+<div id="reddit-container" data-thread="posts" data-thread-wrapper data-post_type="all" data-per_page="30">
     <div class="threads-wp-reddit-thread"></div>
+    <div class="loading-indicator" style="display: none;">Loading...</div>
 </div>

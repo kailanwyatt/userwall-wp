@@ -16,7 +16,6 @@ class Threads_WP_Shortcode {
         ob_start();
         $post_tabs = array(
             'post' => __( 'Post', 'threads-wp' ),
-            'image' => __( 'Image', 'threads-wp' ),
         );
 
         $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );

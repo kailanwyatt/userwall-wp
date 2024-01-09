@@ -38,13 +38,22 @@ class Threads_WP_Admin {
             'dashicons-admin-generic'
         );
 
+        // Instantiate the addon management class
+        $addons_manager = new Threads_WP_Addons();
+
         // Additional menus
         $this->add_submenu('Posts', 'Posts', 'threads-wp-posts', array($this, 'posts_page'));
         $this->add_submenu('Comments', 'Comments', 'threads-wp-comments', array($this, 'comments_page'));
-        $this->add_submenu('Groups', 'Groups', 'threads-wp-groups', array($this, 'groups_page'));
-        $this->add_submenu('Polls', 'Polls', 'threads-wp-polls', array($this, 'polls_page'));
-        $this->add_submenu('Media', 'Media', 'threads-wp-media', array($this, 'media_page'));
-        $this->add_submenu('Albums', 'Albums', 'threads-wp-albums', array($this, 'albums_page'));
+        if ( $addons_manager->is_active( 'groups' ) ) {
+            $this->add_submenu('Groups', 'Groups', 'threads-wp-groups', array($this, 'groups_page'));
+        }
+        if ( $addons_manager->is_active( 'polls' ) ) {
+            $this->add_submenu('Polls', 'Polls', 'threads-wp-polls', array($this, 'polls_page'));
+        }
+        if ( $addons_manager->is_active( 'gallery' ) ) {
+            $this->add_submenu('Media', 'Media', 'threads-wp-media', array($this, 'media_page'));
+            $this->add_submenu('Albums', 'Albums', 'threads-wp-albums', array($this, 'albums_page'));
+        }
         $this->add_submenu('Reports', 'Reports', 'threads-wp-reports', array($this, 'reports_page'));
         $this->add_submenu('User Reputation', 'User Reputation', 'threads-wp-user-reputation', array($this, 'user_reputation_page'));
         $this->add_submenu('Addons', 'Addons', 'threads-wp-addons', array($this, 'addons_page'));
