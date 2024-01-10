@@ -10,8 +10,8 @@
     "styles": "grunt styles",
     "start": "npm run grunt",
     "wp_start": "wp-scripts start",
-    "build": "wp-scripts build",
-    "webp_build": "webpack --config webpack.config.js"
+    "build2": "wp-scripts build",
+    "build": "grunt scripts && grunt styles && webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "Your Name",

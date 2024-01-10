@@ -17,10 +17,8 @@ function threads_wp_activate() {
     $table_notifications = $wpdb->prefix . 'threads_notifications';
     $table_search_history = $wpdb->prefix . 'threads_search_history';
     $table_user_followers = $wpdb->prefix . 'threads_user_followers';
-    $table_user_following = $wpdb->prefix . 'threads_user_following';
-    $table_reports = $wpdb->prefix . 'threads_reports';
     $table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
-    
+    $table_blocklist = $wpdb->prefix . 'threads_blocklist';
 
     // SQL query to create the 'threads_plugin_posts' table
     $sql_query_posts = "CREATE TABLE IF NOT EXISTS $table_posts (
@@ -266,6 +264,17 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         INDEX badge_name_index (badge_name)
     )";
 
+    $sql_query_blocklist = "CREATE TABLE IF NOT EXISTS $table_blocklist (
+        blocklist_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        user_id BIGINT UNSIGNED NOT NULL,
+        blocked_user_id BIGINT UNSIGNED NOT NULL,
+        block_date DATETIME NOT NULL,
+        INDEX user_id_index (user_id),
+        INDEX blocked_user_id_index (blocked_user_id),
+        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
+        FOREIGN KEY (blocked_user_id) REFERENCES {$wpdb->prefix}users(ID)
+    )";
+
     // Array of SQL queries for the first 5 tables
     $sql_queries = array(
         $sql_query_posts,
@@ -273,8 +282,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         $sql_query_likes,
         $sql_query_bookmarks,
         $sql_query_groups,
-        $sql_query_polls,  
-        $sql_query_poll_votes,
         $sql_query_user_reputation,
         $sql_query_badges,
         $sql_query_hashtags,
@@ -285,7 +292,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         $sql_query_user_following,
         $sql_query_reports,
         $sql_query_user_notifications,
-        $sql_query_poll_options
+        $sql_query_blocklist,
     );
 
     // Include the WordPress database upgrade file

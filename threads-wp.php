@@ -126,6 +126,7 @@ if (!class_exists('Threads_WP')) {
             $threadsWP_data = array(
                 'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
                 'nonce'    => $ajax_nonce,
+                'user_id'  => get_current_user_id(),
             );
 
             // Localize the script with the data

@@ -29,6 +29,7 @@ function threads_wp_deactivate() {
         $table_reports = $wpdb->prefix . 'threads_reports';
         $table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
         $table_poll_options = $wpdb->prefix . 'threads_poll_options';
+        $table_blocklist = $wpdb->prefix . 'threads_blocklist';
 
         // SQL queries to drop the tables
         $sql_queries = array(
@@ -51,7 +52,9 @@ function threads_wp_deactivate() {
             "DROP TABLE IF EXISTS $table_reports",
             "DROP TABLE IF EXISTS $table_user_notifications",
             "DROP TABLE IF EXISTS $table_poll_options",
+            "DROP TABLE IF EXISTS $table_blocklist",
             "DROP TABLE IF EXISTS $table_posts",
+
         );
 
         // Delete the tables

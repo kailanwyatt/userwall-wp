@@ -7,18 +7,28 @@
             <div class="threads-wp-thread-content">
                 {{{ thread.post_content }}}
             </div>
+            
+            <# if ( thread.user_id == threadsWPObject.user_id ) { #>
+            <!-- Edit Form (hidden by default) -->
+            <div class="edit-form" style="display: none;">
+                <div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
+                <button class="save-button">Save Changes</button>
+                <button class="cancel-button">Cancel Changes</button>
+            </div>
+            <# } #>
             <div class="threads-wp-thread-author">
                 {{ thread.user_id }}
             </div>
-            
+            <?php if ( is_user_logged_in() ) : ?>
             <!-- Action Area -->
             <div class="threads-wp-thread-actions" style="display: none;">
+                <# if ( thread.user_id == threadsWPObject.user_id ) { #>
                 <!-- Edit action -->
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Edit', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'threads-wp'); ?>"><?php esc_html_e('Edit', 'threads-wp'); ?></span>
 
                 <!-- Delete action -->
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Delete', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Delete', 'threads-wp'); ?>"><?php esc_html_e('Delete', 'threads-wp'); ?></span>
-
+                <# } else { #>
                 <!-- Block action -->
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Block', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Block', 'threads-wp'); ?>"><?php esc_html_e('Block', 'threads-wp'); ?></span>
 
@@ -33,8 +43,9 @@
 
                 <!-- Follow action -->
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Follow', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Follow', 'threads-wp'); ?>"><?php esc_html_e('Follow', 'threads-wp'); ?></span>
+                <# } #>
             </div>
-
+            <?php endif; ?>
             <?php /*
             <!-- Reaction Area -->
             <div class="threads-wp-reactions">
@@ -71,12 +82,13 @@
                     </svg>
                 </div>
             </div>
-
-            <!-- LinkedIn-style comment box -->
-            <div class="linkedin-style-comment-box">
-                <textarea class="comment-textarea" placeholder="Write a comment..."></textarea>
+            <?php if ( is_user_logged_in() ) : ?>
+            <!-- comment box -->
+            <div class="comment-edit-form">
+                <div id="quill-comment-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
                 <button class="comment-submit-button">Post</button>
             </div>
+            <?php endif; ?>
 
             <!-- Comment Section -->
             <div class="threads-wp-comment-section"></div>
@@ -86,15 +98,55 @@
 
 <script type="text/html" id="tmpl-reddit-style-thread-comment-template">
     <!-- Comment Section -->
-    <# _.each(thread.comments, function(comment) { #>
-        <div class="threads-wp-comment">
+    
+    <# _.each(data, function(comment) { #>
+        <div class="threads-wp-comment" data-commentid="{{ comment.comment_id }}">
+            <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
             <!-- Comment content and author -->
             <div class="threads-wp-comment-content">
-                {{ comment.comment_content }}
+                {{{ comment.comment_content }}}
             </div>
+
+            <# if ( comment.user_id == threadsWPObject.user_id ) { #>
+            <!-- Edit Form (hidden by default) -->
+            <div class="comment-thread-edit-form" style="display: none;">
+                <div id="quill-editor-edit-{{ comment.post_id }}-{{ comment.comment_id }}" class="post-quill-editor-edit"></div>
+                <button class="save-button">Save Changes</button>
+                <button class="cancel-button">Cancel Changes</button>
+            </div>
+            <# } #>
             <div class="threads-wp-comment-author">
                 {{ comment.comment_author }}
             </div>
+
+            <?php if ( is_user_logged_in() ) : ?>
+            <!-- Action Area -->
+            <div class="threads-wp-thread-actions" style="display: none;">
+                <# if ( comment.user_id == threadsWPObject.user_id ) { #>
+                <!-- Edit action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Edit', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'threads-wp'); ?>"><?php esc_html_e('Edit', 'threads-wp'); ?></span>
+
+                <!-- Delete action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Delete', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Delete', 'threads-wp'); ?>"><?php esc_html_e('Delete', 'threads-wp'); ?></span>
+                <# } else { #>
+                <!-- Block action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Block', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Block', 'threads-wp'); ?>"><?php esc_html_e('Block', 'threads-wp'); ?></span>
+
+                <!-- Report action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Report', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Report', 'threads-wp'); ?>"><?php esc_html_e('Report', 'threads-wp'); ?></span>
+
+                <!-- Embed post action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Embed Post', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Embed Post', 'threads-wp'); ?>"><?php esc_html_e('Embed Post', 'threads-wp'); ?></span>
+
+                <!-- Save action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Save', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Save', 'threads-wp'); ?>"><?php esc_html_e('Save', 'threads-wp'); ?></span>
+
+                <!-- Follow action -->
+                <span class="threads-wp-action" data-action="<?php esc_html_e('Follow', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Follow', 'threads-wp'); ?>"><?php esc_html_e('Follow', 'threads-wp'); ?></span>
+                <# } #>
+            </div>
+            <?php endif; ?>
+            <?php if ( is_user_logged_in() ) : ?>
             <!-- Reply button -->
             <div class="threads-wp-reply">
                 <button class="threads-wp-reply-button" aria-label="<?php esc_html_e('Reply', 'threads-wp'); ?>">Reply</button>
@@ -106,6 +158,7 @@
                     <button class="threads-wp-reply-cancel" aria-label="<?php esc_html_e('Cancel Reply', 'threads-wp'); ?>">Cancel Reply</button>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
     <# }); #>
 </script>

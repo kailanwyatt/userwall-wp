@@ -1,3 +1,4 @@
+<?php if ( is_user_logged_in() ) : ?>
 <div class="threads-wp-form-wrapper">
     <form id="threads-wp-post-form" enctype='multipart/form-data'>
     <ul class="threads-tabs">
@@ -59,6 +60,7 @@
     <button class="submit-button">Submit</button>
     </form>
 </div>
+<?php endif; ?>
 
 <div id="reddit-container" data-thread="posts" data-thread-wrapper data-post_type="all" data-per_page="30">
     <div class="threads-wp-reddit-thread"></div>

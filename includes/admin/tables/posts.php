@@ -86,8 +86,8 @@ class Threads_WP_Posts_Table extends WP_List_Table {
     
         // Define your SQL query to fetch post data
         $query = "SELECT p.*, u.display_name AS user_name,
-                  (SELECT COUNT(*) FROM {$wpdb->prefix}comments WHERE comment_post_ID = p.ID) AS comments_count,
-                  (SELECT COUNT(*) FROM your_reaction_table WHERE post_id = p.ID) AS reactions_count
+                  (SELECT COUNT(*) FROM {$wpdb->prefix}comments WHERE comment_post_ID = p.post_id) AS comments_count,
+                  (SELECT COUNT(*) FROM your_reaction_table WHERE post_id = p.post_id) AS reactions_count
                   FROM {$wpdb->prefix}posts p
                   LEFT JOIN {$wpdb->prefix}users u ON p.post_author = u.ID
                   WHERE p.post_type = 'post'"; // Adjust your post type as needed

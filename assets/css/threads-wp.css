@@ -1111,6 +1111,7 @@ button.submit-button {
     padding: 10px;
     margin-bottom: 10px;
     background-color: #f9f9f9;
+    position: relative;
 }
 
 /* Style the comment content */
