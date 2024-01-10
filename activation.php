@@ -17,6 +17,7 @@ function threads_wp_activate() {
     $table_notifications = $wpdb->prefix . 'threads_notifications';
     $table_search_history = $wpdb->prefix . 'threads_search_history';
     $table_user_followers = $wpdb->prefix . 'threads_user_followers';
+    $table_user_following =  $wpdb->prefix . 'threads_user_following';
     $table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
     $table_blocklist = $wpdb->prefix . 'threads_blocklist';
 
@@ -35,7 +36,8 @@ function threads_wp_activate() {
     
     // SQL query to create the 'threads_plugin_comments' table
     $sql_query_comments = "CREATE TABLE IF NOT EXISTS $table_comments (
-        comment_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        comment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        parent_id BIGINT,
         comment_content TEXT,
         comment_date DATETIME NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -146,17 +148,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         INDEX follower_user_id_index (follower_user_id),
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
         FOREIGN KEY (follower_user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    // SQL query to create the 'wp_threads_user_following' table
-    $sql_query_user_following = "CREATE TABLE IF NOT EXISTS $table_user_following (
-        following_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        following_user_id BIGINT UNSIGNED NOT NULL,
-        INDEX user_id_index (user_id),
-        INDEX following_user_id_index (following_user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (following_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
     // SQL query to create the 'wp_threads_user_notifications' table
@@ -281,7 +272,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         $sql_query_comments,
         $sql_query_likes,
         $sql_query_bookmarks,
-        $sql_query_groups,
         $sql_query_user_reputation,
         $sql_query_badges,
         $sql_query_hashtags,

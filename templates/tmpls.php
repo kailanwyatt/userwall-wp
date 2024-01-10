@@ -152,13 +152,15 @@
                 <button class="threads-wp-reply-button" aria-label="<?php esc_html_e('Reply', 'threads-wp'); ?>">Reply</button>
                 <div class="threads-wp-reply-form" style="display: none;">
                     <!-- Rich text editor container -->
-                    <div data-comment-reply></div>
+                    <div data-comment-reply="quill-editor-{{ comment.comment_id }}"></div>
                     <!-- Reply and Cancel buttons -->
                     <button class="threads-wp-reply-submit" aria-label="<?php esc_html_e('Submit Reply', 'threads-wp'); ?>">Submit Reply</button>
                     <button class="threads-wp-reply-cancel" aria-label="<?php esc_html_e('Cancel Reply', 'threads-wp'); ?>">Cancel Reply</button>
                 </div>
             </div>
             <?php endif; ?>
+            <!-- Comment Section -->
+            <div class="threads-wp-comment-reply-section"></div>
         </div>
     <# }); #>
 </script>

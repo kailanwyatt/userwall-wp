@@ -467,6 +467,51 @@ jQuery(document).ready(function($) {
                     }
                 });
             });
+
+            $('.threads-wp-reply-button').on('click', function () {
+                // Find the closest comment container
+                var commentContainer = $(this).closest('.threads-wp-comment');
+                
+                // Get the dynamic ID for the Quill editor
+                var quillEditorId = commentContainer.find('[data-comment-reply]').attr('data-comment-reply');
+        
+                // Toggle the reply form visibility
+                commentContainer.find('.threads-wp-reply-form').toggle();
+        
+                // Initialize Quill editor inside the reply form using the dynamic ID
+                var quill = new Quill('#' + quillEditorId, {
+                    theme: 'snow', // You can customize the Quill editor's theme
+                });
+        
+                // Handle submit button click
+                commentContainer.find('.threads-wp-reply-submit').on('click', function () {
+                    var replyContent = quill.root.innerHTML;
+        
+                    // Perform an AJAX request to submit the comment
+                    $.ajax({
+                        type: 'POST',
+                        url: ajaxurl, // WordPress AJAX URL
+                        data: {
+                            action: 'thread_wp_comment_reply', // AJAX action hook
+                            postId: postId, // Replace with the actual post ID
+                            commentContent: replyContent,
+                            nonce: threadWpCommentReply.nonce, // Nonce value (localized in your template)
+                        },
+                        success: function (response) {
+                            // Handle the AJAX response here (update the comment section, etc.)
+                            if (response.success) {
+                                // Update your comment section with response.data
+                                $('.threads-wp-comment-reply-section').html(response.data);
+                            } else {
+                                console.error('Error:', response.data);
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error:', error);
+                        },
+                    });
+                });
+            });
         }
 
         fetchAndRenderPosts($div) {

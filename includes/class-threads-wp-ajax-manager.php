@@ -25,6 +25,8 @@ class Threads_WP_AJAX_Manager {
         add_action( 'wp_ajax_threads_wp_update_comment', array( $this, 'threads_wp_update_comment' ) );
 
         add_action( 'wp_ajax_threads_wp_post_comment', array( $this, 'post_comment' ) );
+
+        add_action('wp_ajax_thread_wp_comment_reply', array($this, 'comment_reply_callback'));
     }
 
     /**
@@ -307,6 +309,33 @@ class Threads_WP_AJAX_Manager {
             wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'threads-wp' ) ) );
         } else {
             $comments = $post_manager->get_comment_by_id( $post_id );
+            $return_data = array(
+                'comments' => array(
+                    $comments
+                )
+            );
+            wp_send_json_success( $return_data );
+        }
+    }
+
+    public function comment_reply_callback() {
+        // Get the comment content from the AJAX request
+        $comment_content = sanitize_text_field($_POST['commentContent']);
+
+        // Get current user ID
+        $current_user_id = get_current_user_id();
+
+        $post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+
+        $parent_comment = ! empty( $_POST['postId']) ? intval($_POST['postId']) : 0;
+
+        $post_manager = new Threads_WP_Post_Manager();
+        $insert_result = $post_manager->add_comment( $current_user_id, $post_id, $comment_content, $parent_comment );
+
+        if ( $insert_result === false ) {
+            wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'threads-wp' ) ) );
+        } else {
+            $comments = $post_manager->get_comment_by_id( $insert_result );
             $return_data = array(
                 'comments' => array(
                     $comments

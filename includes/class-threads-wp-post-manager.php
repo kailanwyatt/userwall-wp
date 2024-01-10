@@ -352,7 +352,7 @@ class Threads_WP_Post_Manager {
      * @param string $comment_content The content of the comment.
      * @return int|false The new comment ID on success, false on failure.
      */
-    public function add_comment($user_id, $post_id, $comment_content) {
+    public function add_comment($user_id, $post_id, $comment_content, $parent_comment = 0 ) {
         $table_comments = $this->wpdb->prefix . 'threads_comments';
 
         $insert_data = array(
@@ -362,6 +362,9 @@ class Threads_WP_Post_Manager {
             'comment_date' => current_time('mysql'),
         );
 
+        if ( $parent_comment ) {
+            $insert_data['parent_id'] = $parent_comment;
+        }
         $result = $this->wpdb->insert($table_comments, $insert_data);
 
         if ($result) {
