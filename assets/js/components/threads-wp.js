@@ -187,7 +187,7 @@ jQuery(document).ready(function($) {
             // Initialize the class
             this.initialize();
             this.initializeTabs();
-            this.initializeReplyForm();
+            //this.initializeReplyForm();
             // Initialize Quill rich text editor for the post form
             this.initializeQuillEditor();
             this.initializeLiveUpdates();
@@ -350,7 +350,6 @@ jQuery(document).ready(function($) {
                 $editForm.show();
                 
                 if ( isComment ) {
-                    console.log( `#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}` );
                      // Initialize Quill editor for editing
                     let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`, {
                         theme: 'snow'
@@ -395,8 +394,6 @@ jQuery(document).ready(function($) {
                 var postID = $postDiv.data('postid');
 
                 if ( isComment ) {
-                    console.log( $postDiv );
-                    console.log( $commentDiv );
                     const quill = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`);
                     content = quill.root.innerHTML; // Get Quill editor content
                 } else {
@@ -429,8 +426,6 @@ jQuery(document).ready(function($) {
                             });
 
                             var html = template(newThreads);
-                            console.log( $commentDiv );
-                            console.log( html );
                             $commentDiv.replaceWith(html);
                         } else {
                             // Handle success, e.g., update the post content display
@@ -449,6 +444,7 @@ jQuery(document).ready(function($) {
                             $content.show();
 
                             const quillContainerId = `quill-comment-editor-edit-${postID}`;
+                            
                             const quillContainer = document.getElementById(quillContainerId);
 
                             // Check if the container exists (only if the thread is loaded via Ajax)
@@ -468,40 +464,58 @@ jQuery(document).ready(function($) {
                 });
             });
 
-            $('.threads-wp-reply-button').on('click', function () {
+            $(document).on('click', '.threads-wp-reply-button', function () {
                 // Find the closest comment container
                 var commentContainer = $(this).closest('.threads-wp-comment');
                 
+                var commentId = commentContainer.data('commentid');
+
+                var postContainer = $(this).closest('.threads-wp-thread');
+                var postId =  postContainer.data('postid');
+
                 // Get the dynamic ID for the Quill editor
                 var quillEditorId = commentContainer.find('[data-comment-reply]').attr('data-comment-reply');
         
                 // Toggle the reply form visibility
                 commentContainer.find('.threads-wp-reply-form').toggle();
-        
+                
                 // Initialize Quill editor inside the reply form using the dynamic ID
                 var quill = new Quill('#' + quillEditorId, {
                     theme: 'snow', // You can customize the Quill editor's theme
                 });
-        
+                
                 // Handle submit button click
                 commentContainer.find('.threads-wp-reply-submit').on('click', function () {
                     var replyContent = quill.root.innerHTML;
-        
+               
                     // Perform an AJAX request to submit the comment
                     $.ajax({
                         type: 'POST',
-                        url: ajaxurl, // WordPress AJAX URL
+                        url: threadsWPObject.ajax_url,
                         data: {
                             action: 'thread_wp_comment_reply', // AJAX action hook
-                            postId: postId, // Replace with the actual post ID
+                            post_id: postId,
+                            commentId: commentId,
                             commentContent: replyContent,
-                            nonce: threadWpCommentReply.nonce, // Nonce value (localized in your template)
+                            nonce: threadsWPObject.nonce, // Nonce value (localized in your template)
                         },
                         success: function (response) {
                             // Handle the AJAX response here (update the comment section, etc.)
                             if (response.success) {
                                 // Update your comment section with response.data
-                                $('.threads-wp-comment-reply-section').html(response.data);
+                                var template = wp.template('reddit-style-thread-comment-template');
+                                var newThreads = response.data.comments.map(function (thread) {
+                                    // Apply the doEmbed method to the post_content
+                                    thread.comment_content = window.ThreadWPHelper.doEmbed(thread.comment_content);
+                                    return thread;
+                                });
+                                var html = template(newThreads);
+                                var commentHtml = jQuery( '<div class="tempWrap">' + html + '</div>' );
+                                commentHtml.find('.threads-wp-reply').remove();
+                                commentHtml.find('.threads-wp-comment-reply-section').remove();
+                                commentContainer.find('.threads-wp-comment-reply-section').prepend(commentHtml.html());
+                                // Clear the comment input field
+                                quill.root.innerHTML = '';
                             } else {
                                 console.error('Error:', response.data);
                             }
@@ -670,13 +684,42 @@ jQuery(document).ready(function($) {
                         success: function(response) {
                             if ( response.data.comments.length && response.data.comments.length > 0 ) {
                                 var template = wp.template('reddit-style-thread-comment-template');
-                                var newThreads = response.data.comments.map(function (thread) {
+                                var newThreads = response.data.comments.map(function ( thread_row ) {
                                     // Apply the doEmbed method to the post_content
-                                    thread.comment_content = window.ThreadWPHelper.doEmbed(thread.comment_content);
-                                    return thread;
+                                    thread_row.comment_content = window.ThreadWPHelper.doEmbed(thread_row.comment_content);
+                                    return thread_row;
                                 });
-                                var html = template(newThreads[0]);
-                                thread.find('.threads-wp-comment-section').prepend(html);
+                               
+                                jQuery.each( newThreads, function( index, comment ) {
+                                    var template = wp.template('reddit-style-thread-comment-template');
+
+                                    var commentData = comment;
+
+                                    // Render the template with the data
+                                    var renderedHtml = template(commentData);
+                                    
+                                    // Convert the HTML string to a jQuery object
+                                    var commentHtml = jQuery('<div class="tempWrapper">' + renderedHtml + '</div>' );
+
+                                    var childComments = commentData[0].child_comments;
+                                    if ( childComments.length > 0 ) {
+                                        template = wp.template('reddit-style-thread-comment-template');
+                                        var innerComments = childComments.map(function (innerComment) {
+                                            // Apply the doEmbed method to the post_content
+                                            innerComment.comment_content = window.ThreadWPHelper.doEmbed(innerComment.comment_content);
+                                            return innerComment;
+                                        });
+     
+                                        jQuery.each( innerComments, function( index2, inner_comment ) {
+                                            var ReplyTemplate = wp.template('reddit-style-thread-comment-template');
+                                            var child_html = ReplyTemplate({inner_comment});
+                                            commentHtml.find('.threads-wp-comment-reply-section').append(child_html);
+                                        });
+                                    }
+
+                                    thread.find('.threads-wp-comment-section').prepend(commentHtml.html());
+                                });
+                                
                             }
                         },
                         error: function(error) {
@@ -711,22 +754,42 @@ jQuery(document).ready(function($) {
             event.preventDefault();
     
             // Get form data
-            const formData = jQuery('#threads-wp-post-form').serialize();
+            //const formData = jQuery('#threads-wp-post-form').serialize();
             
             // Get the HTML content from the Quill editor
             const quill = new Quill('.post-quill-editor'); // Initialize Quill (if not already done)
             const content = quill.root.innerHTML;
 
-            // Perform AJAX request to save the post
-            jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
-                type: 'POST',
-                data: {
+            var tab = jQuery('.threads-tab.active').data('tab');
+            var form = jQuery('#threads-wp-post-form')[0];
+
+            const formData = new FormData(form);
+            if ( tab == 'image' ) {
+                console.log( formData );
+                formData.append("content", jQuery('#threads-wp-post-form').find('[name="image_content"]').val() );
+            }
+
+            formData.append( 'action', 'threads_wp_save_post' );
+            formData.append( 'nonce', threadsWPObject.nonce );
+            formData.append( 'post_tab', tab );
+            /*
+            data: {
                     action: 'threads_wp_save_post', // Create this AJAX action in your main plugin file
                     form_data: formData,
                     content: content,
                     nonce: threadsWPObject.nonce,
+                    post_tab: tab,
                 },
+                */
+            // Perform AJAX request to save the post
+            jQuery.ajax({
+                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
+                type: 'POST',
+                enctype: 'multipart/form-data',
+                processData: false,  // Important!
+                contentType: false,
+                cache: false,
+                data: formData,
                 success: function(response) {
                     var template = wp.template( 'thread-wp-feed-template' );
                     var newThreads = response.data.threads.map(function(thread) {
@@ -736,9 +799,25 @@ jQuery(document).ready(function($) {
                     });
                     
                     var html = template( newThreads );
-                    jQuery('[data-thread="' + response.data.post_type + '"] .threads-wp-reddit-thread').prepend( html );
-                    // Reset post form.
                     
+                    jQuery('[data-thread="' + response.data.post_type + '"] .threads-wp-reddit-thread').prepend( html );
+                    jQuery.each( newThreads, function( index, thread ) {
+                        const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
+                            
+                        const quillContainer = document.getElementById(quillContainerId);
+
+                        // Check if the container exists (only if the thread is loaded via Ajax)
+                        if (quillContainer) {
+                            // Initialize Quill editor
+                            const quill = new Quill(quillContainer, {
+                                theme: 'snow', // You can use a different theme if needed
+                                placeholder: 'Edit your thread here...',
+                            });
+                        }
+                    });
+                    
+                    // Reset post form.
+                    quill.root.innerHTML = '';
                     // Handle the response here (e.g., display a success message)
                 },
                 error: function(error) {
@@ -771,7 +850,6 @@ jQuery(document).ready(function($) {
 
         handleActionClick(event) {
             var $thread = jQuery(event.target).closest('.threads-wp-thread');
-            console.log( $thread );
             const actionType = jQuery(event.target).data('action');
             if ( actionType == 'Edit' ) {
                 return;
@@ -830,13 +908,13 @@ jQuery(document).ready(function($) {
             });
       
             // Show/hide reply form when clicking the Reply button
-            jQuery('.threads-wp-reply-button').click(function() {
+            jQuery(document).on('click', '.threads-wp-reply-button', function() {
               const replyForm = jQuery(this).siblings('.threads-wp-reply-form');
               replyForm.toggle();
             });
       
             // Handle form submission
-            jQuery('.threads-wp-reply-submit').click(function() {
+            jQuery(document).on( 'click', '.threads-wp-reply-submit2', function() {
               // Get the HTML content from Quill editor
               const replyContent = quill.root.innerHTML;
       
@@ -859,7 +937,7 @@ jQuery(document).ready(function($) {
             });
       
             // Cancel reply form
-            jQuery('.threads-wp-reply-cancel').click(function() {
+            jQuery(document).on('click', '.threads-wp-reply-cancel', function() {
               const replyForm = jQuery(this).parents('.threads-wp-reply-form');
               replyForm.hide();
             });

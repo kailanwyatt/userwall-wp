@@ -42,7 +42,7 @@ class Threads_WP_Post_Manager {
         if ($result) {
             $post_id = $this->wpdb->insert_id;
             do_action( 'thread_wp_create_post', $post_id, $insert_data);
-            return apply_filters('thread_wp_create_post', $post_id, $insert_data);
+            return $post_id;
         } else {
             return false;
         }
@@ -102,7 +102,12 @@ class Threads_WP_Post_Manager {
      */
     public function delete_post($post_id) {
         do_action( 'thread_wp_before_delete_post', $post_id );
-        $result = $this->wpdb->delete($this->table_posts, array('post_id' => $post_id));
+        $tables = Threads_WP_Table_Manager::get_table_names();
+        $result = $this->wpdb->delete($tables['posts'], array('post_id' => $post_id));
+
+        // Delete comments
+        $result = $this->wpdb->delete($tables['comments'], array('post_id' => $post_id));
+        
         do_action( 'thread_wp_after_delete_post', $post_id );
         return $result !== false;
     }
@@ -125,7 +130,6 @@ class Threads_WP_Post_Manager {
                 $post_id
             )
         );
-
         return apply_filters('thread_wp_get_post_by_id', $post, $post_id);
     }
 
@@ -486,15 +490,33 @@ class Threads_WP_Post_Manager {
      */
     public function get_comments_by_post_id($post_id, $limit = 5) {
         $tables = Threads_WP_Table_Manager::get_table_names();
-        $comments = $this->wpdb->get_results(
+        $comments = $this->get_comments_recursive($post_id, 0, $limit, $tables['comments']);
+    
+        return apply_filters('thread_wp_get_comments_by_post_id', $comments, $post_id, $limit);
+    }
+    
+    private function get_comments_recursive($post_id, $parent_id, $limit, $comments_table) {
+        $results = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SELECT * FROM {$tables['comments']} WHERE post_id = %d ORDER BY comment_date DESC LIMIT %d",
+                "SELECT * FROM $comments_table WHERE post_id = %d AND parent_id = %d ORDER BY comment_date DESC LIMIT %d",
                 $post_id,
+                $parent_id,
                 $limit
             )
         );
-
-        return apply_filters('thread_wp_get_comments_by_post_id', $comments, $post_id, $limit);
+    
+        $comments = array();
+    
+        foreach ($results as $result) {
+            $comment = $result;
+            $child_comments = $this->get_comments_recursive($post_id, $comment->comment_id, $limit, $comments_table);
+            if (!empty($child_comments)) {
+                $comment->child_comments = $child_comments;
+            }
+            $comments[] = $comment;
+        }
+    
+        return $comments;
     }
 
     /**

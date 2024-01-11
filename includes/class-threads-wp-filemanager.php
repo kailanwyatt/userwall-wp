@@ -4,7 +4,7 @@ class Threads_WP_FileManager {
     private $post_type; // Post type (user or post)
     private $user_id; // User ID or group ID
 
-    public function __construct($post_type, $id) {
+    public function __construct( $id = '', $post_type = 'user' ) {
         $this->post_type = $post_type;
         $this->user_id = $id;
         $this->upload_dir = $this->generateUploadDirectoryPath();
@@ -12,7 +12,12 @@ class Threads_WP_FileManager {
 
     // Method to generate the upload directory path based on post type and ID
     private function generateUploadDirectoryPath() {
-        $directory = '/wp-content/uploads/threads-wp/';
+        $upload_dir = wp_upload_dir();
+
+        // The uploads directory path is stored in the 'path' element of the returned array
+        $uploads_path = $upload_dir['basedir'];
+
+        $directory = $uploads_path . '/threads-wp/';
         if ($this->post_type === 'user') {
             $directory .= 'users-uploads/';
         } elseif ($this->post_type === 'post') {
@@ -23,14 +28,14 @@ class Threads_WP_FileManager {
         return $directory;
     }
 
-    public function uploadFile($file) {
+    public function uploadFile($file = array() ) {
         // Ensure the upload directory exists
-        if (!file_exists($this->upload_dir)) {
+        if (!is_dir($this->upload_dir)) {
             wp_mkdir_p($this->upload_dir);
         }
 
         // Generate a unique file name based on user/group ID and a timestamp
-        $unique_filename = $this->user_id . '_' . time() . '_' . $file['name'];
+        $unique_filename = $this->user_id . '_' . time() . '_' . sanitize_title( $file['name'] );
 
         // Construct the full path to the uploaded file
         $file_path = $this->upload_dir . $unique_filename;

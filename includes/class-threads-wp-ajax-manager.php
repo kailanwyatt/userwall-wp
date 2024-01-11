@@ -120,7 +120,7 @@ class Threads_WP_AJAX_Manager {
         if ( $insert_result === false ) {
             wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
         } else {
-            $comments = $post_manager->get_comment_by_id( $post_id );
+            $comments = $post_manager->get_comment_by_id( $comment_id );
             $return_data = array(
                 'post_id'  => $post_id,
                 'comments' => array(
@@ -184,6 +184,8 @@ class Threads_WP_AJAX_Manager {
         // Get post content from the form
         $post_content = wp_kses_post( $_POST['content'] );
 
+        $post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST ) : 'post';
+
         // Prepare data to insert into the threads_posts table
         $post_data = array(
             'content' => $post_content,
@@ -194,7 +196,6 @@ class Threads_WP_AJAX_Manager {
 
         $post_manager = new Threads_WP_Post_Manager();
         $insert_result = $post_manager->create_post( $post_data );
-
         if ( $insert_result === false ) {
             wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
         } else {
@@ -308,7 +309,7 @@ class Threads_WP_AJAX_Manager {
         if ( $insert_result === false ) {
             wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'threads-wp' ) ) );
         } else {
-            $comments = $post_manager->get_comment_by_id( $post_id );
+            $comments = $post_manager->get_comment_by_id( $insert_result );
             $return_data = array(
                 'comments' => array(
                     $comments
@@ -327,7 +328,7 @@ class Threads_WP_AJAX_Manager {
 
         $post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
-        $parent_comment = ! empty( $_POST['postId']) ? intval($_POST['postId']) : 0;
+        $parent_comment = ! empty( $_POST['commentId']) ? intval($_POST['commentId']) : 0;
 
         $post_manager = new Threads_WP_Post_Manager();
         $insert_result = $post_manager->add_comment( $current_user_id, $post_id, $comment_content, $parent_comment );

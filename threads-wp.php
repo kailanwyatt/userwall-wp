@@ -24,6 +24,7 @@ register_deactivation_hook(__FILE__, 'threads_wp_deactivate');
 
 // Include the addon management class (Threads_WP_Addons)
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-addon.php' );
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-post.php' );
 include_once THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-addons.php';
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-admin.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-blocks.php' );
