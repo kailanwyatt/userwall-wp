@@ -1175,3 +1175,8 @@ button.submit-button {
 .threads-wp-action:hover {
     text-decoration: underline;
 }
+
+.thread-wp-wall-image {
+    width: 100%;
+    height: auto;
+}

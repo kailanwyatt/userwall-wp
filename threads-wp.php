@@ -119,7 +119,7 @@ if (!class_exists('Threads_WP')) {
 
         public function enqueue_assets() {
             // Enqueue JavaScript
-            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util'), '1.0', true);
+            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util', 'wp-hooks'), '1.0', true);
             
             $ajax_nonce = wp_create_nonce('threads_wp_nonce');
 
@@ -128,6 +128,7 @@ if (!class_exists('Threads_WP')) {
                 'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
                 'nonce'    => $ajax_nonce,
                 'user_id'  => get_current_user_id(),
+                'reply_placeholder' => __( 'What are you\'re thoughs?', 'threads-wp' ),
             );
 
             // Localize the script with the data

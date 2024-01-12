@@ -3,17 +3,18 @@
     <# _.each(data, function(thread) { #>
         <div class="threads-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}">
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
-            <!-- Thread content -->
+            <?php do_action( 'threads_wp_before_post_content' ); ?>
             <div class="threads-wp-thread-content">
                 {{{ thread.post_content }}}
             </div>
-            
+            <?php do_action( 'threads_wp_after_post_content' ); ?>
+            <div class="threads-wp-thread-media"></div>
             <# if ( thread.user_id == threadsWPObject.user_id ) { #>
             <!-- Edit Form (hidden by default) -->
             <div class="edit-form" style="display: none;">
                 <div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
-                <button class="save-button">Save Changes</button>
-                <button class="cancel-button">Cancel Changes</button>
+                <button class="save-button"><?php esc_html_e('Save Changes', 'threads-wp'); ?></button>
+                <button class="cancel-button"><?php esc_html_e('Cancel Changes', 'threads-wp'); ?></button>
             </div>
             <# } #>
             <div class="threads-wp-thread-author">
@@ -43,6 +44,7 @@
 
                 <!-- Follow action -->
                 <span class="threads-wp-action" data-action="<?php esc_html_e('Follow', 'threads-wp'); ?>" aria-label="<?php esc_html_e('Follow', 'threads-wp'); ?>"><?php esc_html_e('Follow', 'threads-wp'); ?></span>
+                <?php do_action( 'threads_wp_after_post_action' ); ?>
                 <# } #>
             </div>
             <?php endif; ?>

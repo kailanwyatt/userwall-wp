@@ -103,10 +103,13 @@ class Threads_WP_Post_Manager {
     public function delete_post($post_id) {
         do_action( 'thread_wp_before_delete_post', $post_id );
         $tables = Threads_WP_Table_Manager::get_table_names();
-        $result = $this->wpdb->delete($tables['posts'], array('post_id' => $post_id));
 
         // Delete comments
         $result = $this->wpdb->delete($tables['comments'], array('post_id' => $post_id));
+        
+        $result = $this->wpdb->delete($tables['posts'], array('post_id' => $post_id));
+
+        
         
         do_action( 'thread_wp_after_delete_post', $post_id );
         return $result !== false;

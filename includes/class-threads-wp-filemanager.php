@@ -34,11 +34,17 @@ class Threads_WP_FileManager {
             wp_mkdir_p($this->upload_dir);
         }
 
+        // Use pathinfo() to get the file name and extension
+        $file_info = pathinfo($file['name']);
+        
+        $file_name = $file_info['filename']; // File name without extension
+        $file_extension = $file_info['extension']; // File extension
+
         // Generate a unique file name based on user/group ID and a timestamp
-        $unique_filename = $this->user_id . '_' . time() . '_' . sanitize_title( $file['name'] );
+        $unique_filename = $this->user_id . '_' . time() . '_' . sanitize_title( $file_name );
 
         // Construct the full path to the uploaded file
-        $file_path = $this->upload_dir . $unique_filename;
+        $file_path = $this->upload_dir . $unique_filename . '.' . $file_extension;
 
         // Move the uploaded file to the specified path
         if (move_uploaded_file($file['tmp_name'], $file_path)) {
@@ -52,9 +58,30 @@ class Threads_WP_FileManager {
     public function deleteFile($file_path) {
         if (file_exists($file_path)) {
             unlink($file_path); // Delete the file
+    
+            $parent_directory = dirname($file_path);
+            if ($this->isDirectoryEmpty($parent_directory)) {
+                // If the parent directory is empty, delete it
+                rmdir($parent_directory);
+            }
             return true;
         }
         return false;
+    }
+    
+    private function isDirectoryEmpty($dir) {
+        if (!is_readable($dir)) {
+            return null;
+        }
+        $handle = opendir($dir);
+        while (false !== ($entry = readdir($handle))) {
+            if ($entry != "." && $entry != "..") {
+                closedir($handle);
+                return false;
+            }
+        }
+        closedir($handle);
+        return true;
     }
 
     // Method to delete all user files by user ID
@@ -97,4 +124,29 @@ class Threads_WP_FileManager {
             rmdir($dir);
         }
     }
+
+    public function getFileUrl($file_name, $post_id = '', $group_id = '') {
+        if ($this->post_type === 'user' && !empty($this->user_id)) {
+            $directory = 'users-uploads/' . $this->user_id . '/';
+        } elseif ($this->post_type === 'post' && !empty($post_id)) {
+            $directory = 'group-uploads/' . $group_id . '/';
+        } else {
+            return false; // Cannot determine the file directory
+        }
+        
+        $upload_dir = wp_upload_dir();
+
+        // The uploads directory path is stored in the 'path' element of the returned array
+        $uploads_path = $upload_dir['basedir'];
+
+        //$directory = $uploads_path . '/threads-wp/';
+        $file_path = $this->upload_dir . $file_name;
+        if (file_exists($file_path)) {
+            $upload_dir = wp_upload_dir();
+            $base_url = $upload_dir['baseurl'];
+            return $base_url . '/threads-wp/' . $directory . $file_name;
+        }
+    
+        return false; // File does not exist
+    }    
 }

@@ -81,6 +81,60 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         add_action( 'thread_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
         add_filter( 'thread_wp_get_post_by_id', array( $this, 'thread_wp_get_post_by_id' ), 10, 2 );
         add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_threads' ), 10, 2 );
+        add_action( 'thread_wp_before_delete_post', array( $this, 'thread_wp_before_delete_post' ), 10, 1 );
+        add_action( 'wp_footer', array( $this, 'add_gallery_hook' ) );
+    }
+
+    public function thread_wp_before_delete_post( $post_id ) {
+        global $wpdb;
+
+        $table_media = $wpdb->prefix . 'threads_media';
+        $table_posts = $wpdb->prefix . 'threads_posts';
+
+        $media = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT m.*, p.post_type FROM {$table_media} AS m LEFT JOIN {$table_posts} AS p ON p.post_id=m.post_id WHERE m.post_id = %d",
+                $post_id 
+            )
+        );
+
+        if ( ! empty( $media  ) ) {
+            foreach( $media as $row ) {
+                // Delete the file
+                $file_manager = new Threads_WP_FileManager();
+                $file_manager->deleteFile( $row->file_path );
+
+                $wpdb->delete( $table_media, array( 'media_id' => $row->media_id ) );
+            }
+        }
+    }
+
+    public function add_gallery_hook() {
+        ?>
+        <script>
+            jQuery(document).ready(function($) {
+                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
+                    // Modify the content here using your custom logic.                    
+                    return post;
+                });
+
+                wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
+                    var threadDiv;
+                    if ( post.images && post.images.length > 0 ) {
+                        threadDiv = jQuery('.threads-wp-thread[data-postid="' + post.post_id + '"]');
+                        threadDiv.find('.threads-wp-thread-content').after( '<div class="threads-wp-content-images"></div>' );
+                        jQuery.each(post.images, function(i, image ) {
+                            console.log(image.url);
+                            threadDiv.find('.threads-wp-content-images').prepend(
+                                `<div class="" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url})" /></div>`
+                            );
+                        });
+                    }
+                     //-> 'This is a test string' (from the above usage example)
+                });
+            });
+        </script>
+        <?php
     }
 
     public function add_tab( $tabs = array() ) {
@@ -133,6 +187,30 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
             do_action( 'threads_wp_after_image_upload_complete', $post_id, $media_ids );
         }
     }
+
+    private function transform_media( $media, $post ) {
+        $obj = array();
+        $file_manager = new Threads_WP_FileManager( $post->user_id );
+        if ( ! empty( $media ) ) {
+            foreach ( $media as $media_item ) {
+                //unset( $media_item->file_path );
+                $file_path = $media_item->file_path;
+                if ( ! file_exists( $file_path ) ) {
+                    continue;
+                }
+                // Use pathinfo() to get the file name
+                $file_info = pathinfo($file_path);
+
+                // Access the 'filename' key in the $file_info array to get the file name
+                $file_name = $file_info['basename'];
+                $media_item->url = $file_manager->getFileUrl( $file_name );
+                $obj[] = $media_item;
+            }
+        }
+        
+        return $obj;
+    }
+
     public function thread_wp_get_post_by_id( $post = array(), $post_id = 0 ) {
         global $wpdb;
         $media = $wpdb->get_results(
@@ -143,7 +221,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         );
 
         if ( ! empty( $media ) ) {
-            $post->images = $media;
+            $post->images = $this->transform_media( $media, $post );
         } 
         return $post;
     }
@@ -166,7 +244,6 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
     }
 
     public function add_image_to_posts_threads( $posts = array() ) {
-        error_log( print_r( $posts, true ) );
         if ( ! empty( $posts ) ) {
             foreach ( $posts as $index => $post ) {
                 //$post = new Threads_WP_Post( $post );
@@ -175,7 +252,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
                 $media = $this->get_images_by_post_id( $post_id );
                 
                 if ( ! empty( $media ) ) {
-                    $posts[ $index ]->images = $media;
+                    $posts[ $index ]->images = $this->transform_media( $media, $post );
                 }
             }
         }
