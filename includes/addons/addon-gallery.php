@@ -113,10 +113,10 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         ?>
         <script>
             jQuery(document).ready(function($) {
-                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
+                /*wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
                     // Modify the content here using your custom logic.                    
                     return post;
-                });
+                });*/
 
                 wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
                     var threadDiv;
@@ -166,7 +166,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         $user_id = get_current_user_id();
         $file_manager = new Threads_WP_FileManager( $user_id );
         $media_ids = array();
-        if ( ! empty( $_FILES['post_images'] ) ) {
+        if ( ! empty( $_FILES['post_images'] ) && count( $_FILES['post_images']['error'] ) == 0 ) {
             foreach( $_FILES['post_images']['name'] as $index => $value ) {
                 $file_path = $file_manager->uploadFile( array(
                     'name' => $_FILES['post_images']['name'][ $index ],

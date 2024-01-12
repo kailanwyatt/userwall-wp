@@ -108,7 +108,7 @@ class Threads_WP_AJAX_Manager {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = wp_kses_post( $_POST['content'] );
+        $post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
         $post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
@@ -141,7 +141,7 @@ class Threads_WP_AJAX_Manager {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = wp_kses_post( $_POST['content'] );
+        $post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
         $post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
@@ -182,7 +182,7 @@ class Threads_WP_AJAX_Manager {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = wp_kses_post( $_POST['content'] );
+        $post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
         $post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST ) : 'post';
 
@@ -294,7 +294,7 @@ class Threads_WP_AJAX_Manager {
         $current_user_id = get_current_user_id();
 
         // Get post content from the form
-        $post_content = wp_kses_post( $_POST['content'] );
+        $post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
         $post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
