@@ -2,6 +2,15 @@
     <!-- Loop through threads -->
     <# _.each(data, function(thread) { #>
         <div class="threads-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}">
+            <div class="threads-wp-author-section">
+                <div class="threads-wp-author-image-wrapper">
+                    <a href="{{ thread.author_url}}" title="{{ thread.author_name }}"><img src="{{ thread.author_avatar_url }}" class="threads-wp-author-image" /></a>
+                </div>
+                <div class="threads-wp-author-image-info">
+                    <a href="{{ thread.author_url}}" title="{{ thread.author_name }}">{{ thread.author_name}}</a> {{ thread.action }}
+                    <div class="threads-wp-wall-time" data-time-post="{{ thread.post_timestamp }}"></div>
+                </div>
+            </div>
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
             <?php do_action( 'threads_wp_before_post_content' ); ?>
             <div class="threads-wp-thread-content">
@@ -11,15 +20,12 @@
             <div class="threads-wp-thread-media"></div>
             <# if ( thread.user_id == threadsWPObject.user_id ) { #>
             <!-- Edit Form (hidden by default) -->
-            <div class="edit-form" style="display: none;">
+            <div class="edit-form threads-edit-post-section" style="display: none;">
                 <div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
                 <button class="save-button"><?php esc_html_e('Save Changes', 'threads-wp'); ?></button>
                 <button class="cancel-button"><?php esc_html_e('Cancel Changes', 'threads-wp'); ?></button>
             </div>
             <# } #>
-            <div class="threads-wp-thread-author">
-                {{ thread.user_id }}
-            </div>
             <?php if ( is_user_logged_in() ) : ?>
             <!-- Action Area -->
             <div class="threads-wp-thread-actions" style="display: none;">
@@ -66,29 +72,31 @@
             </div>
             */ ?>
 
-            <div class="">
-                <div class="threads-wp-reaction-count" aria-label="<?php esc_html_e('Reactions count', 'threads-wp'); ?>">
-                    {{ thread.reactions_count }}
+            <div class="threads-wp-activity-section">
+                <div class="threads-wp-reaction-count threads-wp-activity-block" aria-label="<?php esc_html_e('Reactions count', 'threads-wp'); ?>">
+                    <span class="span-count">{{ thread.reactions_count }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" fill="none" stroke-width="1.5"/>
                     </svg>
                 </div>
                 <!-- Comment Count -->
-                <div class="threads-wp-comment-count" aria-label="<?php esc_html_e('Comment Count', 'threads-wp'); ?>">
-                    {{ thread.comments_count }}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="threads-wp-comment-count threads-wp-activity-block" aria-label="<?php esc_html_e('Comment Count', 'threads-wp'); ?>">
+                    <span class="thread-wp-comment-span">{{ thread.comments_count }}</span>
+                    <span class="thread-wp-comment-img">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="9" stroke="currentColor" fill="none" stroke-width="1.5"/>
                         <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.5"/>
                         <line x1="7" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.5"/>
                         <line x1="7" y1="17" x2="17" y2="17" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
+                        </svg>
+                    </span>
                 </div>
             </div>
             <?php if ( is_user_logged_in() ) : ?>
             <!-- comment box -->
             <div class="comment-edit-form">
                 <div id="quill-comment-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
-                <button class="comment-submit-button">Post</button>
+                <button class="comment-submit-button"><?php esc_html_e( 'Share Comment', 'threads-wp' ); ?></button>
             </div>
             <?php endif; ?>
 
@@ -103,6 +111,15 @@
     
     <# _.each(data, function(comment) { #>
         <div class="threads-wp-comment" data-commentid="{{ comment.comment_id }}">
+            <div class="threads-wp-author-section">
+                <div class="threads-wp-author-image-wrapper">
+                    <a href="{{ comment.author_url}}" title="{{ comment.author_name }}"><img src="{{ comment.author_avatar_url }}" class="threads-wp-author-image" /></a>
+                </div>
+                <div class="threads-wp-author-image-info">
+                    <a href="{{ comment.author_url}}" title="{{ comment.author_name }}">{{ comment.author_name}}</a>
+                    <div class="threads-wp-wall-time" data-time-post="{{ comment.comment_timestamp }}"></div>
+                </div>
+            </div>
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
             <!-- Comment content and author -->
             <div class="threads-wp-comment-content">

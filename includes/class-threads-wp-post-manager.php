@@ -2,13 +2,60 @@
 class Threads_WP_Post_Manager {
     private $table_posts;
     private $wpdb;
+    private $authors;
 
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
         $this->table_posts = $wpdb->prefix . 'threads_posts';
+        $this->authors = array();
     }
 
+    private function get_author_info( $user_id = 0 ) {
+        // Ensure the user ID is an integer
+        $user_id = intval($user_id);
+
+        if ( ! $user_id ) {
+            return array(
+                'author_name'       => '',
+                'author_url'        => '',
+                'author_avatar_url' => '',
+            );
+        }
+
+        // If the author is not in the array. Add it now to reduce DB calls.
+        if ( empty( $this->authors[ $user_id ] ) ) {
+            // Get the user by user ID
+            $user = get_userdata($user_id);
+
+            // Check if user exists
+            if ($user === false) {
+                // Return empty array.
+                return array(
+                    'author_name'       => '',
+                    'author_url'        => '',
+                    'author_avatar_url' => '',
+                );
+            }
+
+            // Get the author's display name
+            $author_name = $user->display_name;
+
+            // Get the author URL
+            $author_url = get_author_posts_url($user_id);
+
+            // Get the avatar URL
+            $author_avatar_url = get_avatar_url( $user_id, apply_filters( 'threads_wp_avatar_size', array('size' => 50), $user_id ) );
+
+            $this->authors[ $user_id ] = array(
+                'author_name'       => $author_name,
+                'author_url'        => $author_url,
+                'author_avatar_url' => $author_avatar_url,
+            );
+        }
+
+        return apply_filters( 'threads_wp_get_author_info', $this->authors[ $user_id ], $user_id );
+    }
     /**
      * Create a new post.
      *
@@ -133,6 +180,8 @@ class Threads_WP_Post_Manager {
                 $post_id
             )
         );
+        $post = $this->transform_post( $post );
+        
         return apply_filters('thread_wp_get_post_by_id', $post, $post_id);
     }
 
@@ -151,7 +200,11 @@ class Threads_WP_Post_Manager {
                 $limit
             )
         );
-
+        if ( ! empty( $posts ) ) {
+            foreach ( $posts as $index => $post ) {
+                $posts[] = $this->transform_post( $post );
+            }
+        }
         return apply_filters('thread_wp_get_posts_by_user_id', $posts, $user_id, $limit);
     }
 
@@ -164,7 +217,12 @@ class Threads_WP_Post_Manager {
      */
     public function get_posts_by_group($group_id, $limit = -1) {
         // Implement the query to fetch posts by group ID here
-
+        $posts = array();
+        if ( ! empty( $posts ) ) {
+            foreach ( $posts as $index => $post ) {
+                $posts[] = $this->transform_post( $post );
+            }
+        }
         return apply_filters('thread_wp_get_posts_by_group', $posts, $group_id, $limit);
     }
 
@@ -191,9 +249,33 @@ class Threads_WP_Post_Manager {
         );
 
         $posts = $this->wpdb->get_results($query);
+        if ( ! empty( $posts ) ) {
+            foreach ( $posts as $index => $post ) {
+                $posts[] = $this->transform_post( $post );
+            }
+        }
         return apply_filters('thread_wp_get_posts_latest', $posts, $last_post_id, $limit);
     }
 
+    private function transform_post( $post = array() ) {
+        error_log( 'Before' . print_r( $post,true ));
+        $author_info = $this->get_author_info( $post->user_id );
+        $modified_post = $post;
+        $modified_post->author_url = $author_info['author_url'];
+        $modified_post->author_avatar_url = $author_info['author_avatar_url'];
+        $modified_post->author_name = $author_info['author_name'];
+        // Get timestamp for post.
+        if ( isset( $modified_post->creation_date ) ) {
+            $modified_post->post_timestamp = strtotime( $post->creation_date );
+        }
+
+        // Get timestamp for comment
+        if ( isset( $modified_post->comment_date ) ) {
+            $modified_post->comment_timestamp = strtotime( $post->comment_date );
+        }
+        error_log( 'after' . print_r( $post,true ));
+        return apply_filters( 'threads_wp_post_return_object', $modified_post );
+    } 
     /**
      * Get the latest posts since a given post ID.
      *
@@ -233,6 +315,12 @@ class Threads_WP_Post_Manager {
                 $post_id
             )
         );
+
+        if ( ! empty( $posts ) ) {
+            foreach ( $posts as $index => $post ) {
+                $posts[] = $this->transform_post( $post );
+            }
+        }
 
         return apply_filters('thread_wp_get_posts', $posts, $last_post_id, $limit);
     }
@@ -460,6 +548,7 @@ class Threads_WP_Post_Manager {
                 $comment_id
             )
         );
+        $comment = $this->transform_post( $comment );
 
         return apply_filters('thread_wp_get_comment_by_id', $comment, $comment_id);
     }
@@ -507,16 +596,17 @@ class Threads_WP_Post_Manager {
                 $limit
             )
         );
-    
+        error_log( $this->wpdb->last_query . ' ' . print_r( $results, true ) );
         $comments = array();
-    
-        foreach ($results as $result) {
-            $comment = $result;
+       
+        foreach ($results as $comment) {
+            //$comment = $result;
+            $comment->child_comments = array();
             $child_comments = $this->get_comments_recursive($post_id, $comment->comment_id, $limit, $comments_table);
             if (!empty($child_comments)) {
                 $comment->child_comments = $child_comments;
             }
-            $comments[] = $comment;
+            $comments[] = $this->transform_post( $comment );
         }
     
         return $comments;

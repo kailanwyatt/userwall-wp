@@ -71,14 +71,6 @@ input[type="text"] {
     border-radius: 5px;
 }
 
-button.submit-button {
-    background-color: #0079d3;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
 /* Style the currently active tab */
 .threads-tab.active {
     background-color: #0079d3;

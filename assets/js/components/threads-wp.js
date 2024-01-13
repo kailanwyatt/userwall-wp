@@ -1,7 +1,8 @@
 // Import Quill
 import Quill from 'quill';
 import ToolbarEmoji from 'quill-emoji';
-
+var editor_theme = 'snow';
+var editor_config = [];
 class ThreadWPHelper {
     constructor() {
       
@@ -186,7 +187,6 @@ function transformThreads( threads ) {
     .map(function (thread) {
         // Apply the doEmbed method to the post_content
         //thread.post_content = window.ThreadWPHelper.doEmbed(thread.post_content);
-        console.log( thread );
         return wp.hooks.applyFilters('thread_wp_content_filter', thread);
     });
 }
@@ -214,28 +214,56 @@ function renderThreads(threads, position = 'top' ) {
         if (quillContainer) {
             // Initialize Quill editor
             const quill = new Quill(quillContainer, {
-                theme: 'snow', // You can use a different theme if needed
+                theme: editor_theme, // You can use a different theme if needed
                 placeholder: threadsWPObject.reply_placeholder,
             });
         }
         if ( ! jQuery('.threads-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
-            console.log( 'not loaded ' );
             if ( position == 'top' ) {
                 jQuery('.threads-wp-reddit-thread').prepend(renderedHtml.html());
             } else {
                 jQuery('.threads-wp-reddit-thread').append(renderedHtml.html());
             }
             wp.hooks.doAction('threads_wp_post_rendered', thread);
-        } else {
-            console.log( 'loaded' );
         }
+    });
+}
+
+function updateTime() {
+    jQuery('.threads-wp-wall-time[data-time-post]').each(function() {
+        var postTime = jQuery(this).data('time-post') * 1000; // Assuming the timestamp is in seconds
+        var currentTime = new Date().getTime();
+        var diff = currentTime - postTime;
+
+        var seconds = Math.floor(diff / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        var days = Math.floor(hours / 24);
+
+        var formattedTime;
+
+        if (days >= 1) {
+            formattedTime = new Date(postTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } else if (hours >= 1) {
+            formattedTime = hours + ' hr' + (hours > 1 ? 's' : '') + ' ago';
+        } else if (minutes >= 1) {
+            formattedTime = minutes + ' min' + (minutes > 1 ? 's' : '') + ' ago';
+        } else {
+            formattedTime = seconds + ' sec' + (seconds !== 1 ? 's' : '') + ' ago';
+        }
+
+        jQuery(this).html(formattedTime);
     });
 }
 
 jQuery(document).ready(function($) {
     wp.hooks.addAction('threads_wp_post_rendered', 'renderEditor', function(thread) {
-        
+        updateTime();
     });
+    wp.hooks.addAction('threads_wp_comment_rendered', 'renderEditor', function(thread) {
+        updateTime();
+    });
+    
     class ThreadsWPPlugin {
         constructor() {
             this.previousUrl = null;
@@ -249,9 +277,14 @@ jQuery(document).ready(function($) {
             this.initializeQuillEditor();
             this.initializeLiveUpdates();
         }
-    
+
         initialize() {
             var classObj = this;
+        
+            // Update time every minute
+            updateTime();
+            setInterval(updateTime, 60000);
+
             // Attach click event to the form submit button
             jQuery('#threads-wp-post-form').on('submit', this.submitForm.bind(this));
     
@@ -277,10 +310,8 @@ jQuery(document).ready(function($) {
             });
 
             jQuery(document).on('click', '.comment-submit-button', function() {
-                console.log( 'comm ');
                 var $thread = jQuery(this).closest('.threads-wp-thread');
                 const postID = $thread.data('postid');
-                //const content = $editForm.find('.post-quill-editor-edit').html();
                 const quill = new Quill(`#quill-comment-editor-edit-${postID}`);
                 const content = quill.root.innerHTML; // Get Quill editor content
                 // Perform an AJAX request to save the changes
@@ -352,8 +383,9 @@ jQuery(document).ready(function($) {
                                     }
 
                                     thread.find('.threads-wp-comment-section').prepend(commentHtml.html());
+                                    wp.hooks.doAction('threads_wp_comment_rendered', comment);
                                 });
-                                
+                                wp.hooks.doAction('threads_wp_comment_all_rendered', comment);
                             }
                         },
                         error: function(error) {
@@ -491,8 +523,7 @@ jQuery(document).ready(function($) {
                 if ( isComment ) {
                      // Initialize Quill editor for editing
                     let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`, {
-                        theme: 'snow'
-                        // ... (Quill editor configurations)
+                        theme: editor_theme
                     });
                     // Populate Quill editor with existing content
                     const existingContent = $content.html();
@@ -500,7 +531,7 @@ jQuery(document).ready(function($) {
                 } else {
                      // Initialize Quill editor for editing
                     let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}`, {
-                        theme: 'snow'
+                        theme: editor_theme
                         // ... (Quill editor configurations)
                     });
                     // Populate Quill editor with existing content
@@ -536,7 +567,6 @@ jQuery(document).ready(function($) {
                     const quill = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`);
                     content = quill.root.innerHTML; // Get Quill editor content
                 } else {
-                    //const content = $editForm.find('.post-quill-editor-edit').html();
                     const quill = new Quill(`#quill-editor-edit-${postID}`);
                     content = quill.root.innerHTML; // Get Quill editor content
                 }
@@ -582,7 +612,7 @@ jQuery(document).ready(function($) {
                             if (quillContainer) {
                                 // Initialize Quill editor
                                 const quill = new Quill(quillContainer, {
-                                    theme: 'snow', // You can use a different theme if needed
+                                    theme: editor_theme, // You can use a different theme if needed
                                     placeholder: 'Edit your thread here...',
                                 });
                             }
@@ -612,7 +642,7 @@ jQuery(document).ready(function($) {
                 
                 // Initialize Quill editor inside the reply form using the dynamic ID
                 var quill = new Quill('#' + quillEditorId, {
-                    theme: 'snow', // You can customize the Quill editor's theme
+                    theme: editor_theme, // You can customize the Quill editor's theme
                 });
                 
                 // Handle submit button click
@@ -863,7 +893,7 @@ jQuery(document).ready(function($) {
         initializeReplyForm() {
             // Initialize Quill rich text editor
             const quill = new Quill('[data-comment-reply]', {
-              theme: 'snow',
+              theme: editor_theme,
               modules: {
                 toolbar: [
                   ['bold', 'italic', 'strike'], // Text formatting options
@@ -910,8 +940,11 @@ jQuery(document).ready(function($) {
 
         initializeQuillEditor() {
             const that = this;
+            if ( ! jQuery('.post-quill-editor' ).length ) {
+                return;
+            }
             const quillPostEditor = new Quill('.post-quill-editor', {
-              theme: 'snow',
+              theme: editor_theme,
               modules: {
                 toolbar: '#toolbar'
               }
@@ -919,7 +952,6 @@ jQuery(document).ready(function($) {
 
             quillPostEditor.on('text-change', function(delta, oldDelta, source) {
                 // Extract the link URL from the editor content
-                //var content = jQuery('.post-quill-editor .ql-editor').text();
                 var content = quillPostEditor.getText();
                 var url = that.extractFirstLink(content);
                  

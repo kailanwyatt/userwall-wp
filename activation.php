@@ -28,6 +28,7 @@ function threads_wp_activate() {
         post_content TEXT,
         post_type VARCHAR(20) NOT NULL,
         post_status VARCHAR(20) NOT NULL,
+        post_action VARCHAR(20) NOT NULL,
         creation_date DATETIME NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,
         INDEX user_id_index (user_id),
@@ -37,7 +38,7 @@ function threads_wp_activate() {
     // SQL query to create the 'threads_plugin_comments' table
     $sql_query_comments = "CREATE TABLE IF NOT EXISTS $table_comments (
         comment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        parent_id BIGINT,
+        parent_id BIGINT NOT NULL,
         comment_content TEXT,
         comment_date DATETIME NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,

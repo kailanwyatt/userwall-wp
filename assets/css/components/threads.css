@@ -25,10 +25,8 @@
 
 /* Style each individual comment */
 .threads-wp-comment {
-    border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
-    background-color: #f9f9f9;
     position: relative;
 }
 
@@ -97,4 +95,73 @@
 .thread-wp-wall-image {
     width: 100%;
     height: auto;
+}
+
+.threads-wp-author-section {
+    display: flex;
+}
+
+.threads-wp-author h3 {
+    margin: 0px;
+    font-size: 1.2rem;
+}
+
+.threads-wp-author-image-wrapper {
+    margin-right: 10px;
+}
+
+.threads-wp-author-image-wrapper img {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.threads-wp-wall-time {
+    font-size: 0.8rem;
+}
+
+.threads-wp-activity-section {
+    display: flex;
+    justify-content: space-around;
+}
+
+.threads-wp-activity-block {
+    display: flex;
+    align-items: center;
+}
+
+.threads-wp-activity-section  span {
+    width: 20px;  /* Set width equal to the SVG width */
+    height: 20px; /* Set height equal to the SVG height */
+    text-align: center; /* To center the text horizontally */
+    line-height: 20px; /* To center the text vertically */
+    font-size: 14px; /* Adjust as needed */
+}
+
+.threads-wp-activity-section svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+.threads-wp-activity-section, 
+.threads-wp-author-section,
+.hreads-wp-thread-content,
+.threads-edit-post-section,
+.ql-container {
+    margin-bottom: 20px;
+}
+
+.threads-wp-reddit-thread input[type="submit"],
+.threads-wp-form-wrapper .submit-button,
+.comment-submit-button,
+.threads-wp-reply-button {
+    border: 0px;
+    padding: 10px 30px;
+    background-color: #0079d3;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
 }
