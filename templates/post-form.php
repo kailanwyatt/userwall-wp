@@ -1,70 +1,50 @@
 <?php if ( is_user_logged_in() ) : ?>
 <div class="threads-wp-form-wrapper">
     <form id="threads-wp-post-form" enctype='multipart/form-data'>
-    <ul class="threads-tabs">
-        <?php if ( ! empty(  $post_tabs ) && count( $post_tabs ) > 1 ) : ?>
-            <?php foreach ( $post_tabs as $tab => $label ) : ?>
-            <li class="threads-tab" data-tab="<?php echo esc_attr( $tab ); ?>"><?php echo esc_html( $label ); ?></li>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </ul>
-    <?php if ( ! empty( $post_tabs ) ) : ?>
         <div class="threads-tab-content-wrapper">
-        <?php foreach ( $post_tabs as $tab  => $label ) : ?>
-        <?php switch( $tab ) {
-            case 'post':
-                ?>
-                <div class="threads-tab-content" data-tab="post">
-                    <!-- Post content input -->
-                    <div class="threads-wp-post-section">
-                        <div id="quill-editor-post-form" class="post-quill-editor"></div>
-                        <div id="toolbar">
-                            <!-- Add font size dropdown -->
-                            <select class="ql-size">
-                                <option value="small"></option>
-                                <!-- Note a missing, thus falsy value, is used to reset to default -->
-                                <option selected></option>
-                                <option value="large"></option>
-                                <option value="huge"></option>
-                            </select>
-                            <!-- Add a bold button -->
-                            <button class="ql-bold"></button>
-                            <!-- Add subscript and superscript buttons -->
-                            <button class="ql-script" value="sub"></button>
-                            <button class="ql-script" value="super"></button>
-                        </div>
+            <div class="threads-tab-content" data-tab="post">
+                <!-- Post content input -->
+                <div class="threads-wp-post-section">
+                    <div id="quill-editor-post-form" class="post-quill-editor"></div>
+                    <div id="thread-wp-post-toolbar">
+                        <!-- Add font size dropdown -->
+                        <select class="ql-size">
+                            <option value="small"></option>
+                            <!-- Note a missing, thus falsy value, is used to reset to default -->
+                            <option selected></option>
+                            <option value="large"></option>
+                            <option value="huge"></option>
+                        </select>
+                        <!-- Add a bold button -->
+                        <button class="ql-bold"></button>
+                        <!-- Add subscript and superscript buttons -->
+                        <button class="ql-script" value="sub"></button>
+                        <button class="ql-script" value="super"></button>
+                    </div>
+                    <div class="threads-wp-post-types">
+                        <ul>
+                            <li><a href="#" class="threads-wp-post-type" data-type="image">Image</a></li>
+                            <li><a href="#" class="threads-wp-post-type" data-type="polls">Polls</a></li>
+                            <li><a href="#" class="threads-wp-post-type" data-type="event">Event</a></li>
+                            <li><a href="#" class="threads-wp-post-type" data-type="article">Article</a></li>
+                            <li><a href="#" class="threads-wp-post-type" data-type="file">File</a></li>
+                            <li><a href="#" class="threads-wp-post-type" data-type="link">Link</a></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="rich-preview-container">
-                    <!-- Rich preview will be displayed here -->
-                </div>
-                <?php
-                break;
-            case 'poll':
-                ?>
-                 <div class="threads-tab-content" data-tab="poll">
-                    <!-- Poll content input -->
-                    <textarea placeholder="Ask a question..."></textarea>
-                    <!-- Poll options -->
-                    <input type="text" placeholder="Option 1">
-                    <input type="text" placeholder="Option 2">
-                    <button class="add-option">Add Option</button>
-                </div>
-                <?php
-                break;
-            default:
-                do_action( 'threads_wp_tab_content', $tab );
-        }
-        ?>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-    <button class="submit-button">Submit</button>
+            </div>
+            <div class="rich-preview-container">
+                <!-- Rich preview will be displayed here -->
+            </div>
+            <?php do_action( 'threads_wp_after_post_form' ); ?>
+        </div>
+        <div class="threads-wp-post-submission-wrapper">
+            <button class="submit-button">Submit</button>
+        </div>
     </form>
 </div>
 <?php endif; ?>
-
-<div id="reddit-container" data-thread="posts" data-thread-wrapper data-post_type="all" data-per_page="30">
+<div id="reddit-container" data-thread="<?php echo absint( $type ); ?>" data-object-id="<?php absint( $object_id ); ?>" data-thread-wrapper data-post_type="<?php echo absint( $type ); ?>" data-per_page="<?php echo absint( $per_page ); ?>" data-page="1">
     <div class="threads-wp-reddit-thread"></div>
     <div class="loading-indicator" style="display: none;">Loading...</div>
 </div>

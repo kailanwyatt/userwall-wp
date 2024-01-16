@@ -1,4 +1,7 @@
+<script type="text/html" id="tmpl-thread-shared-post">
+</script>
 <script type="text/html" id="tmpl-thread-wp-feed-template">
+    <?php do_action( 'wp_threads_header' ); ?>
     <!-- Loop through threads -->
     <# _.each(data, function(thread) { #>
         <div class="threads-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}">
@@ -11,7 +14,9 @@
                     <div class="threads-wp-wall-time" data-time-post="{{ thread.post_timestamp }}"></div>
                 </div>
             </div>
+            <?php if ( is_user_logged_in() ) : ?> 
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
+            <?php endif; ?>
             <?php do_action( 'threads_wp_before_post_content' ); ?>
             <div class="threads-wp-thread-content">
                 {{{ thread.post_content }}}
@@ -75,27 +80,39 @@
             <div class="threads-wp-activity-section">
                 <div class="threads-wp-reaction-count threads-wp-activity-block" aria-label="<?php esc_html_e('Reactions count', 'threads-wp'); ?>">
                     <span class="span-count">{{ thread.reactions_count }}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                    </svg>
-                </div>
-                <!-- Comment Count -->
-                <div class="threads-wp-comment-count threads-wp-activity-block" aria-label="<?php esc_html_e('Comment Count', 'threads-wp'); ?>">
-                    <span class="thread-wp-comment-span">{{ thread.comments_count }}</span>
                     <span class="thread-wp-comment-img">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                        <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="7" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="7" y1="17" x2="17" y2="17" stroke="currentColor" stroke-width="1.5"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
                         </svg>
                     </span>
+                    <span><?php esc_html_e('Like', 'threads-wp'); ?></span>
+                </div>
+
+                <!-- Comment Count -->
+                <div class="threads-wp-comment-count threads-wp-activity-block" aria-label="<?php esc_html_e('Comment Count', 'threads-wp'); ?>">
+                    <span class="thread-wp-comment-img">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                    </svg>
+                    </span>
+                    <span class="thread-wp-comment-span">{{ thread.comments_count }} comments</span>
+                </div>
+
+                <div class="threads-wp-share threads-wp-activity-block" aria-label="<?php esc_html_e('Share', 'threads-wp'); ?>">
+                    <span class="thread-wp-comment-img">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                        </svg>
+                    </span>
+                    <span><?php esc_html_e('Share', 'threads-wp'); ?></span>
                 </div>
             </div>
             <?php if ( is_user_logged_in() ) : ?>
             <!-- comment box -->
             <div class="comment-edit-form">
-                <div id="quill-comment-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
+                <div class="threads-wp-reply-editor">
+                    <div id="quill-comment-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
+                </div>
                 <button class="comment-submit-button"><?php esc_html_e( 'Share Comment', 'threads-wp' ); ?></button>
             </div>
             <?php endif; ?>
@@ -104,6 +121,7 @@
             <div class="threads-wp-comment-section"></div>
         </div>
     <# }); #>
+    <?php do_action('threads_wp_footer' ); ?>
 </script>
 
 <script type="text/html" id="tmpl-reddit-style-thread-comment-template">
@@ -120,7 +138,9 @@
                     <div class="threads-wp-wall-time" data-time-post="{{ comment.comment_timestamp }}"></div>
                 </div>
             </div>
+            <?php if ( is_user_logged_in() ) : ?> 
             <div class="threads-wp-ellipsis" aria-hidden="true">&#8942;</div>
+            <?php endif; ?>
             <!-- Comment content and author -->
             <div class="threads-wp-comment-content">
                 {{{ comment.comment_content }}}

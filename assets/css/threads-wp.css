@@ -945,16 +945,81 @@
 }
 
 .ql-container.ql-snow {
-    border: 1px solid;
+    border: 1px solid #9b9c9d;
     margin-top: 20px;
-    border-top: 1px solid !important;
     border-radius: 6px;
+    border-bottom: 0px ! important;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-bottom: 0px;
+    min-height: 100px;
 }
 
 .ql-toolbar.ql-snow {
-    border: 0px;
+    border: 1px solid #9b9c9d;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: #f9f9f9;
 }
 
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+    border-top: 1px solid;
+  }
+
+.threads-wp-reply-editor {
+    display: flex;
+    flex-direction: column-reverse;
+    margin-bottom: 20px;
+}
+
+/* Basic slider styles */
+.slider-container {
+    position: relative;
+    margin: 0 auto;
+}
+
+.threads-wp-slider {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+.thread-wp-slide {
+    flex: 0 0 100%;
+    text-align: center;
+}
+
+/* Pagination styles */
+.slider-pagination {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.pagination-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #333;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+/* Navigation arrow styles */
+
+.slider-nav {
+    position: absolute;
+    top: 50%; /* Vertically center the nav */
+    transform: translateY(-50%); /* Adjust for centering */
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.slider-nav [data-slide-left],
+.slider-nav [data-slide-right] {
+    cursor: pointer;
+}
 /* Style the form container */
 #threads-wp-post-form {
     background-color: #fff;
@@ -1082,6 +1147,16 @@ input[type="text"] {
     border: 1px solid #ccc;
 }
 
+.thread-wp-gallery-arrow {
+    width: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    height: 40px;
+}
+
+.thread-wp-gallery-arrow svg {
+    
+}
 /* Style each individual thread */
 .threads-wp-thread {
     background-color: #ffffff;
@@ -1208,6 +1283,7 @@ input[type="text"] {
 .threads-wp-activity-section {
     display: flex;
     justify-content: space-around;
+    padding-top: 20px;
 }
 
 .threads-wp-activity-block {
@@ -1215,12 +1291,13 @@ input[type="text"] {
     align-items: center;
 }
 
-.threads-wp-activity-section  span {
+.threads-wp-activity-section  .thread-wp-comment-img {
     width: 20px;  /* Set width equal to the SVG width */
     height: 20px; /* Set height equal to the SVG height */
     text-align: center; /* To center the text horizontally */
     line-height: 20px; /* To center the text vertically */
     font-size: 14px; /* Adjust as needed */
+    margin-right: 4px;
 }
 
 .threads-wp-activity-section svg {
@@ -1248,4 +1325,20 @@ input[type="text"] {
     border: none;
     cursor: pointer;
     border-radius: 6px;
+}
+
+.threads-wp-comment-count.threads-wp-activity-block,
+.threads-wp-reaction-count.threads-wp-activity-block {
+    cursor: pointer;
+}
+
+.threads-wp-post-types ul {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+}
+
+
+.threads-wp-post-types ul a {
+    text-decoration: none;
 }

@@ -124,6 +124,7 @@
 .threads-wp-activity-section {
     display: flex;
     justify-content: space-around;
+    padding-top: 20px;
 }
 
 .threads-wp-activity-block {
@@ -131,12 +132,13 @@
     align-items: center;
 }
 
-.threads-wp-activity-section  span {
+.threads-wp-activity-section  .thread-wp-comment-img {
     width: 20px;  /* Set width equal to the SVG width */
     height: 20px; /* Set height equal to the SVG height */
     text-align: center; /* To center the text horizontally */
     line-height: 20px; /* To center the text vertically */
     font-size: 14px; /* Adjust as needed */
+    margin-right: 4px;
 }
 
 .threads-wp-activity-section svg {
@@ -164,4 +166,20 @@
     border: none;
     cursor: pointer;
     border-radius: 6px;
+}
+
+.threads-wp-comment-count.threads-wp-activity-block,
+.threads-wp-reaction-count.threads-wp-activity-block {
+    cursor: pointer;
+}
+
+.threads-wp-post-types ul {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+}
+
+
+.threads-wp-post-types ul a {
+    text-decoration: none;
 }

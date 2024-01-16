@@ -77,7 +77,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
 
     public function hooks() {
         add_filter( 'thread_wp_post_tabs', array( $this, 'add_tab' ) );
-        add_action( 'threads_wp_tab_content', array( $this, 'tab_content' ) );
+        add_action( 'threads_wp_after_post_form', array( $this, 'post_form_addition' ) );
         add_action( 'thread_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
         add_filter( 'thread_wp_get_post_by_id', array( $this, 'thread_wp_get_post_by_id' ), 10, 2 );
         add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_threads' ), 10, 2 );
@@ -111,26 +111,76 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
 
     public function add_gallery_hook() {
         ?>
+        <div id="imageModal">Test</div>
         <script>
             jQuery(document).ready(function($) {
-                /*wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
+                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
                     // Modify the content here using your custom logic.                    
                     return post;
-                });*/
+                });
+                var imageModal = $('#imageModal').ThreadWPModal({
+                    content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
+                    showCloseBtn: true,
+                    openTransition: 'fade',
+                    closeTransition: 'fade',
+                    openSpeed: 500,
+                    closeSpeed: 500,
+                    onOpen: function() {
+                        console.log('Modal opened.');
+                    },
+                    onClose: function() {
+                        console.log('Modal closed.');
+                    }
+                })[0];
+                jQuery( document ).on( 'click', '.thread-wp-wall-image', function( e ) {
+                    e.preventDefault();
+                    imageModal.openModal();
+                });
+
+                wp.hooks.addAction('threads_wp_after_post_submitted', 'resetGallery', function() {
+                    jQuery('.image-preview').remove();
+                    jQuery('#image-upload').val('');
+                });
 
                 wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
                     var threadDiv;
                     if ( post.images && post.images.length > 0 ) {
                         threadDiv = jQuery('.threads-wp-thread[data-postid="' + post.post_id + '"]');
-                        threadDiv.find('.threads-wp-thread-content').after( '<div class="threads-wp-content-images"></div>' );
+                        threadDiv.find('.threads-wp-thread-content').after( `<div class="threads-wp-content-images threads-wp-slider threads-wp-image-slider" data-gallery="` + post.post_id + `"></div>` );
                         jQuery.each(post.images, function(i, image ) {
-                            console.log(image.url);
                             threadDiv.find('.threads-wp-content-images').prepend(
-                                `<div class="" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url})" /></div>`
+                                `<div class="threads-wp-content-image-item thread-wp-slide" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url}" /></div>`
                             );
                         });
+
+
+                        jQuery(".threads-wp-image-slider").ThreadWPSlider({
+                            slideClass: 'thread-wp-slide',
+                            slideWrapperClass: 'slider-container',
+                            showArrows: true,
+                            leftArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-left><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+</svg>
+</span>`,
+                            rightArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-right><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+</svg>
+</span>`,
+                            showPagination: true,
+                            slideSpeed: 500,
+                            draggable: false,
+                            keyboardNavigation: true,
+                            onLeftSlide: function(currentSlide) {
+                                console.log("Left slide event: " + currentSlide);
+                            },
+                            onRightSlide: function(currentSlide) {
+                                console.log("Right slide event: " + currentSlide);
+                            },
+                            onSlide: function(currentSlide) {
+                                console.log("Slide event: " + currentSlide);
+                            }
+                        });
                     }
-                     //-> 'This is a test string' (from the above usage example)
                 });
             });
         </script>
@@ -142,16 +192,10 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         return $tabs;
     }
 
-    public function tab_content() {
+    public function post_form_addition() {
         ?>
-        <div class="threads-tab-content" data-tab="image">
-            <!-- Content textarea -->
-            <textarea name="image_content" placeholder="Write your content here"></textarea>
-            <!-- Image upload area -->
-            <div class="image-upload-area">
-                <label for="image-upload" class="upload-label">Click to Upload Images</label>
-                <input type="file" name="post_images[]" accept="image/*" id="image-upload" multiple>
-            </div>
+        <div class="image-upload-area" style="display: none;">
+            <input type="file" name="post_images[]" style="display: none;" accept="image/*" id="image-upload" multiple>
         </div>
         <?php
     }
@@ -166,21 +210,23 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         $user_id = get_current_user_id();
         $file_manager = new Threads_WP_FileManager( $user_id );
         $media_ids = array();
-        if ( ! empty( $_FILES['post_images'] ) && count( $_FILES['post_images']['error'] ) == 0 ) {
+        if ( ! empty( $_FILES['post_images'] ) ) {
             foreach( $_FILES['post_images']['name'] as $index => $value ) {
-                $file_path = $file_manager->uploadFile( array(
-                    'name' => $_FILES['post_images']['name'][ $index ],
-                    'full_path' => $_FILES['post_images']['full_path'][ $index ],
-                    'type' => $_FILES['post_images']['type'][ $index ],
-                    'tmp_name' => $_FILES['post_images']['tmp_name'][ $index ],
-                    'error' => $_FILES['post_images']['error'][ $index ],
-                    'size' => $_FILES['post_images']['size'][ $index ],
-                ));
+                if (  $_FILES['post_images']['error'][ $index ] == 0 ) {
+                    $file_path = $file_manager->uploadFile( array(
+                        'name' => $_FILES['post_images']['name'][ $index ],
+                        'full_path' => $_FILES['post_images']['full_path'][ $index ],
+                        'type' => $_FILES['post_images']['type'][ $index ],
+                        'tmp_name' => $_FILES['post_images']['tmp_name'][ $index ],
+                        'error' => $_FILES['post_images']['error'][ $index ],
+                        'size' => $_FILES['post_images']['size'][ $index ],
+                    ));
 
-                $insert_result = $wpdb->insert( $wpdb->prefix . 'threads_media', array('post_id' => $post_id, 'file_path' => $file_path ) );
-                if ( $insert_result !== false ) {
-                    $media_ids[] = $insert_result;
-                    do_action( 'threads_wp_after_image_added', $insert_result, $post_id,  $file_path );
+                    $insert_result = $wpdb->insert( $wpdb->prefix . 'threads_media', array('post_id' => $post_id, 'file_path' => $file_path ) );
+                    if ( $insert_result !== false ) {
+                        $media_ids[] = $insert_result;
+                        do_action( 'threads_wp_after_image_added', $insert_result, $post_id,  $file_path );
+                    }
                 }
             }
 

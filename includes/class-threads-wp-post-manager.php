@@ -258,7 +258,6 @@ class Threads_WP_Post_Manager {
     }
 
     private function transform_post( $post = array() ) {
-        error_log( 'Before' . print_r( $post,true ));
         $author_info = $this->get_author_info( $post->user_id );
         $modified_post = $post;
         $modified_post->author_url = $author_info['author_url'];
@@ -273,7 +272,6 @@ class Threads_WP_Post_Manager {
         if ( isset( $modified_post->comment_date ) ) {
             $modified_post->comment_timestamp = strtotime( $post->comment_date );
         }
-        error_log( 'after' . print_r( $post,true ));
         return apply_filters( 'threads_wp_post_return_object', $modified_post );
     } 
     /**
@@ -301,28 +299,71 @@ class Threads_WP_Post_Manager {
     }
 
 
-    public function get_posts($last_post_id = 0, $limit = 30) {
+    public function get_posts( $args = array() ) {
+        $defaults = array(
+            'type'      => 'posts',
+            'per_page'  => '30',
+            'page'      => 1,
+            'object_id' => 0,
+        );
+        
+        $args = wp_parse_args( $args, $defaults );
+        
+        $page = intval($args['page']); // Sanitize the page value
+        $per_page = intval($args['per_page']); // Sanitize the per_page value
+        $offset = ($page - 1) * $per_page;
+
+        // Create a WHERE clause based on the conditions in $args
+        $where_clause = "1 = %d"; // Default condition
+        $where_values = array(1); // Default value for the default condition
+
         // Implement the query to fetch the latest posts since $last_post_id here
         $tables = Threads_WP_Table_Manager::get_table_names();
-        $post_id = '1';
-        $posts = $this->wpdb->get_results(
-            $this->wpdb->prepare(
-                "SELECT p.*, 
-                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
-                (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-                FROM {$this->table_posts} p
-                WHERE 1 = %d ORDER BY post_id DESC",
-                $post_id
-            )
+
+        // Create a WHERE clause based on the conditions in $args
+        $where_clause = "1 = 1"; // Default condition
+        
+        if ($args['type'] === 'posts') {
+            // Add a condition based on the type
+            //$where_clause = "post_type = %s";
+            $post_type = sanitize_text_field($args['type']); // Sanitize the post_type
+            //$where_values[] = $post_type;
+        }
+        
+        if ($args['object_id'] !== 0 && $args['type'] === 'user-posts' ) {
+            // Add a condition based on the object_id
+            $where_clause .= " AND user_id = %d";
+            $object_id = intval($args['object_id']); // Sanitize the object_id
+            $where_values[] = $object_id;
+        }
+        
+        // Add additional conditions based on other $args as needed
+        
+        // Build the SQL query
+        $limit = intval($per_page); // Sanitize the limit
+        $sql_query = $this->wpdb->prepare(
+            "SELECT p.*, 
+            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
+            FROM {$this->table_posts} p
+            WHERE {$where_clause}
+            ORDER BY post_id DESC
+            LIMIT %d
+            OFFSET %d", // Add the LIMIT and OFFSET clauses
+            $limit, // Pass the limit value
+            $offset, // Pass the offset value
+            ...$where_values // Pass the array of values
         );
 
+        $posts = $this->wpdb->get_results($sql_query);
+        error_log( $this->wpdb->last_query );
         if ( ! empty( $posts ) ) {
             foreach ( $posts as $index => $post ) {
                 $posts[] = $this->transform_post( $post );
             }
         }
 
-        return apply_filters('thread_wp_get_posts', $posts, $last_post_id, $limit);
+        return apply_filters('thread_wp_get_posts', $posts, $args );
     }
 
     /**
@@ -596,11 +637,10 @@ class Threads_WP_Post_Manager {
                 $limit
             )
         );
-        error_log( $this->wpdb->last_query . ' ' . print_r( $results, true ) );
+
         $comments = array();
        
         foreach ($results as $comment) {
-            //$comment = $result;
             $comment->child_comments = array();
             $child_comments = $this->get_comments_recursive($post_id, $comment->comment_id, $limit, $comments_table);
             if (!empty($child_comments)) {

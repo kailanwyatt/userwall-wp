@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.threadModal = function(options) {
+    $.fn.ThreadWPModal = function(options) {
         var settings = $.extend({
             content: '',
             showCloseBtn: true,
@@ -16,7 +16,7 @@
             var $modal = $(this);
 
             // Open the modal
-            var openModal = function() {
+            var openModal = function(content) {
                 if (settings.openTransition === 'fade') {
                     $modal.fadeIn(settings.openSpeed);
                 } else if (settings.openTransition === 'animation') {

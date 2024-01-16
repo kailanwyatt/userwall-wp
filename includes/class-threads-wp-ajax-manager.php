@@ -231,9 +231,19 @@ class Threads_WP_AJAX_Manager {
     }
 
     public function fetch_data_by_thread() {
+        $per_page  = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 30;
+        $page      = ! empty( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
+        $object_id = ! empty( $_GET['object_id'] ) ? absint( $_GET['object_id'] ) : 30;
+        $post_type = ! empty( $_GET['post_type'] ) ? absint( $_GET['post_type'] ) : 'posts';
+        $args = array(
+            'per_page'  => $per_page,
+            'page'      => $page,
+            'object_id' => $object_id,
+            'type'      => $post_type,
+        );
         $post_manager = new Threads_WP_Post_Manager();
-        $posts = $post_manager->get_posts();
-        wp_send_json($posts);
+        $posts = $post_manager->get_posts( $args );
+        wp_send_json(array( 'threads' => $posts, 'params' => $args ) );
     }
 
     public function fetch_latest_thread_notice() {

@@ -1,10 +1,27 @@
 .ql-container.ql-snow {
-    border: 1px solid;
+    border: 1px solid #9b9c9d;
     margin-top: 20px;
-    border-top: 1px solid !important;
     border-radius: 6px;
+    border-bottom: 0px ! important;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-bottom: 0px;
+    min-height: 100px;
 }
 
 .ql-toolbar.ql-snow {
-    border: 0px;
+    border: 1px solid #9b9c9d;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+    border-top: 1px solid;
+  }
+
+.threads-wp-reply-editor {
+    display: flex;
+    flex-direction: column-reverse;
+    margin-bottom: 20px;
 }

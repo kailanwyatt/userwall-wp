@@ -39,6 +39,13 @@ require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-table-manager.p
 $addons_manager = new Threads_WP_Addons();
 $addons_manager->load_addons();
 
+require_once( THREADS_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
+function threads_wp_loaded() {
+    if ( class_exists('UM') ) {
+        //require_once( THREADS_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
+    }
+}
+add_action( 'wp', 'threads_wp_loaded' );
 // Autoloader for include files (excluding addons)
 //spl_autoload_register('threads_wp_autoload');
 
@@ -119,7 +126,7 @@ if (!class_exists('Threads_WP')) {
 
         public function enqueue_assets() {
             // Enqueue JavaScript
-            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util', 'wp-hooks'), '1.0', true);
+            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util', 'wp-hooks', 'jquery-ui-core'), '1.0', true);
             
             $ajax_nonce = wp_create_nonce('threads_wp_nonce');
 

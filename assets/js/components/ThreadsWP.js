@@ -1,6 +1,9 @@
 // Import Quill
 import Quill from 'quill';
 import ToolbarEmoji from 'quill-emoji';
+//import Masonry from 'masonry-layout';
+
+//window.threadsWP.Masonry = Masonry;
 var editor_theme = 'snow';
 var editor_config = [];
 class ThreadWPHelper {
@@ -229,6 +232,59 @@ function renderThreads(threads, position = 'top' ) {
     });
 }
 
+function setReadMore() {
+    return;
+    // Maximum number of characters to show initially
+    var maxLength = 300;
+    
+    // Iterate over each thread content
+    jQuery('.threads-wp-thread-content').each(function() {
+        var $content = jQuery(this);
+        var contentText = $content.text();
+        
+        if (contentText.length > maxLength) {
+            // Truncate the text
+            var truncatedText = contentText.substring(0, maxLength);
+            
+            // Check if the truncated text ends with an opening HTML tag
+            var lastOpeningTagIndex = truncatedText.lastIndexOf('<');
+            var lastClosingTagIndex = truncatedText.lastIndexOf('>');
+            
+            if (lastOpeningTagIndex > lastClosingTagIndex) {
+                // Find the corresponding closing tag
+                var tagNameStart = lastOpeningTagIndex + 1;
+                var tagNameEnd = truncatedText.indexOf(' ', tagNameStart);
+                if (tagNameEnd === -1) {
+                    tagNameEnd = truncatedText.indexOf('>', tagNameStart);
+                }
+                var tagName = truncatedText.substring(tagNameStart, tagNameEnd);
+                
+                // Create the truncated content by adding the closing tag
+                truncatedText = contentText.substring(0, lastOpeningTagIndex) +
+                    '</' + tagName + '>';
+            }
+            
+            // Create the "Read More" link
+            var readMoreLink = jQuery('<a href="#" class="read-more">Read More</a>');
+            
+            // Hide the content and add the "Read More" link
+            $content.html(truncatedText + '... ').append(readMoreLink);
+            
+            // Hide or show the full content when the link is clicked
+            readMoreLink.on('click', function(e) {
+                e.preventDefault();
+                $content.toggleClass('expanded');
+                if ($content.hasClass('expanded')) {
+                    $content.html(contentText + ' ');
+                    readMoreLink.text('Read Less');
+                } else {
+                    $content.html(truncatedText + '... ');
+                    readMoreLink.text('Read More');
+                }
+            });
+        }
+    });
+}
 function updateTime() {
     jQuery('.threads-wp-wall-time[data-time-post]').each(function() {
         var postTime = jQuery(this).data('time-post') * 1000; // Assuming the timestamp is in seconds
@@ -259,6 +315,7 @@ function updateTime() {
 jQuery(document).ready(function($) {
     wp.hooks.addAction('threads_wp_post_rendered', 'renderEditor', function(thread) {
         updateTime();
+        setReadMore();
     });
     wp.hooks.addAction('threads_wp_comment_rendered', 'renderEditor', function(thread) {
         updateTime();
@@ -299,6 +356,16 @@ jQuery(document).ready(function($) {
                 event.stopPropagation();
             });
 
+            jQuery( document ).on( 'click', '.threads-wp-post-type', function( e ) {
+                e.preventDefault();
+                var obj = jQuery( this );
+                var type = obj.data( 'type' );
+                switch( type ) {
+                    case 'image':
+                        jQuery('#image-upload').trigger( 'click' );
+                        break;
+                }
+            });
             // Attach click events to actions
             jQuery(document).on( 'click', '.threads-wp-action', this.handleActionClick.bind(this));
 
@@ -385,7 +452,7 @@ jQuery(document).ready(function($) {
                                     thread.find('.threads-wp-comment-section').prepend(commentHtml.html());
                                     wp.hooks.doAction('threads_wp_comment_rendered', comment);
                                 });
-                                wp.hooks.doAction('threads_wp_comment_all_rendered', comment);
+                                wp.hooks.doAction('threads_wp_comment_all_rendered', response.data.comments );
                             }
                         },
                         error: function(error) {
@@ -443,7 +510,7 @@ jQuery(document).ready(function($) {
             jQuery('#image-upload').change(function() {
                 // Clear existing image previews
                 jQuery('.image-preview').remove();
-        
+                jQuery( '.image-upload-area' ).show();
                 // Get selected files
                 const files = jQuery(this)[0].files;
                 if (files.length > 0) {
@@ -551,7 +618,7 @@ jQuery(document).ready(function($) {
                 $editForm.hide();
                 $content.show();
             });
-        
+            
             // Function to save changes via AJAX
             $(document).on('click','.save-button', function() {
                 const isComment = $(this).closest('.threads-wp-comment').length ? true : false;
@@ -665,14 +732,15 @@ jQuery(document).ready(function($) {
                             if (response.success) {
                                 // Update your comment section with response.data
                                 var template = wp.template('reddit-style-thread-comment-template');
-                                var newThreads = transformComments(response.data.comments);
-                                var html = template(newThreads);
+                                var newComments = transformComments(response.data.comments);
+                                var html = template(newComments);
                                 var commentHtml = jQuery( '<div class="tempWrap">' + html + '</div>' );
                                 commentHtml.find('.threads-wp-reply').remove();
                                 commentHtml.find('.threads-wp-comment-reply-section').remove();
                                 commentContainer.find('.threads-wp-comment-reply-section').prepend(commentHtml.html());
                                 // Clear the comment input field
                                 quill.root.innerHTML = '';
+                                wp.hooks.doAction('threads_wp_comment_rendered', newComments );
                             } else {
                                 console.error('Error:', response.data);
                             }
@@ -688,7 +756,8 @@ jQuery(document).ready(function($) {
         fetchAndRenderPosts($div) {
             const postType = $div.data('post_type');
             const perPage = $div.data('per_page');
-    
+            const page = $div.data('page');
+            const objectId = $div.data('object_id');
             // Perform an AJAX request to fetch data based on the attributes
             jQuery.ajax({
                 url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
@@ -698,11 +767,13 @@ jQuery(document).ready(function($) {
                     action: 'fetch_data_by_thread', // Create this AJAX action in your main plugin file
                     post_type: postType,
                     per_page: perPage,
+                    page: page,
+                    object_id: objectId,
                     nonce: threadsWPObject.nonce,
                 },
                 success: function (response) {
                     // Handle the response here (e.g., render the fetched data)
-                    renderThreads( response, 'bottom' );
+                    renderThreads( response.threads, 'bottom' );
                 },
                 error: function (error) {
                     console.error('Error fetching data:', error);
@@ -813,7 +884,8 @@ jQuery(document).ready(function($) {
                     renderThreads( response.data.threads );
                     // Reset post form.
                     quill.root.innerHTML = '';
-                    // Handle the response here (e.g., display a success message)
+
+                    wp.hooks.doAction('threads_wp_after_post_submitted', response, formData );
                 },
                 error: function(error) {
                     // Handle errors here (e.g., display an error message)
@@ -946,7 +1018,7 @@ jQuery(document).ready(function($) {
             const quillPostEditor = new Quill('.post-quill-editor', {
               theme: editor_theme,
               modules: {
-                toolbar: '#toolbar'
+                toolbar: '#thread-wp-post-toolbar'
               }
             });
 
@@ -1053,6 +1125,7 @@ jQuery(document).ready(function($) {
                             } else {
                                 $div.find('.threads-wp-new-threads').html('New ' + message+ ' posts' );
                             }
+                            wp.hooks.doAction('threads_wp_new_posts_available', response );
                         }
                     },
                     error: (error) => {

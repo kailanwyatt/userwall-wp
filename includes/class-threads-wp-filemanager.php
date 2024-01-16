@@ -41,7 +41,7 @@ class Threads_WP_FileManager {
         $file_extension = $file_info['extension']; // File extension
 
         // Generate a unique file name based on user/group ID and a timestamp
-        $unique_filename = $this->user_id . '_' . time() . '_' . sanitize_title( $file_name );
+    $unique_filename = hash('sha256', $this->user_id . '_' . time() . '_' . sanitize_title( $file_name ) );
 
         // Construct the full path to the uploaded file
         $file_path = $this->upload_dir . $unique_filename . '.' . $file_extension;
