@@ -34,28 +34,22 @@ class ThreadWPHelper {
     }
 
     convertLinksAndHashtags(content) {
-
         if (typeof content !== 'string') {
             // Handle cases where content is not a string
             return '';
         }
     
-        const hashtagUrl = "https://example.com/hashtag-page";
+        const userUrl = "https://example.com/u/";
     
         const urlRegex = /https?:\/\/[^\s<>]+/g;
-    
-        // Regular expression to match hashtags in the content
         const hashtagRegex = /#(\w+)/g;
+        const userRegex = /@(\w+)/g; // New regex to match @user
     
         // Replace URLs with clickable links, removing any immediately following closing tags
         const contentWithLinks = content.replace(urlRegex, function (url) {
-            // Check if there is a closing tag immediately after the URL
             const nextChar = content[content.indexOf(url) + url.length];
             const isClosingTag = nextChar && nextChar === '>';
-    
-            // Remove the closing tag if present
             const cleanedUrl = isClosingTag ? url.slice(0, -1) : url;
-    
             return `<a href="${cleanedUrl}" target="_blank">${cleanedUrl}</a>`;
         });
     
@@ -65,7 +59,14 @@ class ThreadWPHelper {
             return `<a href="${hashtagUrlWithParam}" target="_blank">${hashtag}</a>`;
         });
     
-        return contentWithHashtags;
+        // Replace @user with clickable links
+        const contentWithUsers = contentWithHashtags.replace(userRegex, function (user) {
+            const username = user.substring(1); // Remove "@" symbol
+            const userUrlWithUsername = `${userUrl}${username}`;
+            return `<a href="${userUrlWithUsername}" target="_blank">${user}</a>`;
+        });
+    
+        return contentWithUsers;
     }
 
     // Public method that can be accessed from outside the class
@@ -189,7 +190,7 @@ function transformThreads( threads ) {
     })
     .map(function (thread) {
         // Apply the doEmbed method to the post_content
-        //thread.post_content = window.ThreadWPHelper.doEmbed(thread.post_content);
+        thread.post_content = window.ThreadWPHelper.doEmbed(thread.post_content);
         return wp.hooks.applyFilters('thread_wp_content_filter', thread);
     });
 }
@@ -1045,6 +1046,10 @@ jQuery(document).ready(function($) {
                         jQuery('.rich-preview-container').html('');
                     }
                 }
+            });
+
+            jQuery('.post-quill-editor').ThreadsWPMention({
+                editor: quillPostEditor
             });
         }
 

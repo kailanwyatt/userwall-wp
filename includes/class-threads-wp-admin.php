@@ -18,6 +18,8 @@ class Threads_WP_Admin {
         add_action( 'admin_init', array( $this->settings_api, 'admin_init' ) );
         add_action( 'admin_init', array( $this, 'process_addon_action' ) );
         add_action('admin_notices', array( $this, 'admin_notices' ) );
+        $template = new Threads_Template();
+        add_action( 'admin_enqueue_scripts',  array($template, 'enqueue_assets' ) );
     }
 
     public static function get_instance() {
@@ -27,6 +29,13 @@ class Threads_WP_Admin {
         return self::$instance;
     }
 
+    public function enqueue_admin_scripts() {
+        // Enqueue your scripts and styles here
+        // Example:
+        wp_enqueue_style('my-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
+        wp_enqueue_script('my-admin-script', plugin_dir_url(__FILE__) . 'admin-script.js', array('jquery'), '1.0', true);
+    }
+    
     public function add_menu() {
         
         add_menu_page(
@@ -105,20 +114,37 @@ class Threads_WP_Admin {
     }
 
     public function posts_page() {
-        if( ! class_exists( 'WP_List_Table' ) ) {
+        $this->add_post_template();
+        return;
+        if ( isset( $_GET['add-post'] ) ) {
+            
+        } else {
+            $this->posts_view_template();
+        }
+    }
+
+    private function add_post_template() {
+        include( THREADS_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php' );
+        include( THREADS_WP_PLUGIN_DIR . '/templates/tmpls.php' );
+    }
+
+    private function posts_view_template() {
+        if ( ! class_exists( 'WP_List_Table' ) ) {
             require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
         }
         require_once(  THREADS_WP_PLUGIN_DIR . 'includes/admin/tables/posts.php' );
         $posts_table = new Threads_WP_Posts_Table();
+
         echo '<div class="wrap"><h1>Manage Posts</h1>';
         $posts_table->display_notices();
         ?>
+        <a href="<?php echo admin_url( 'admin.php?page=threads-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'threads-wp' ); ?></a>
         <form method="get" action="<?php echo admin_url('admin.php'); ?>">
             <input type="hidden" name="page" value="threads-wp-posts" />
             <?php
-            $posts_table->prepare_items();
-            $posts_table->search_box('Search Posts', 'post_title');
-            $posts_table->display();
+            //$posts_table->prepare_items();
+            //$posts_table->search_box('Search Posts', 'post_title');
+            //$posts_table->display();
             ?>
         </form>
         <?php

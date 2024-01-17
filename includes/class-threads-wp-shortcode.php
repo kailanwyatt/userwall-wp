@@ -13,10 +13,12 @@ class Threads_WP_Shortcode {
         // Extract shortcode attributes with defaults
         $atts = shortcode_atts(
             array(
-                'type'      => 'posts',
-                'per_page'  => '30',
-                'page'  => 1,
-                'object_id' => 0,
+                'type'         => 'posts',
+                'per_page'     => '30',
+                'page'         => 1,
+                'object_id'    => 0,
+                'show_threads' => true,
+                'show_form' => true
             ),
             $atts,
             'threads_wp_post_form'
@@ -25,6 +27,8 @@ class Threads_WP_Shortcode {
         $per_page = absint( $atts['per_page'] );
         $type     = sanitize_text_field( $atts['type'] );
         $object_id = absint( $atts['object_id'] );
+        $show_threads = wp_validate_boolean( $atts['show_threads'] );
+        $show_form    = wp_validate_boolean( $atts['show_form'] );
         // Output the post form
         ob_start();
         $post_tabs = array(

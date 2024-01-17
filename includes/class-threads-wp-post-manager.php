@@ -124,6 +124,10 @@ class Threads_WP_Post_Manager {
     }
 
     public function can_moderate( $post_id = 0, $current_user_id = 0 ) {
+        // Allow admins to be able to moderate anything.
+        if ( current_user_can( 'manage_options' ) ) {
+            return true;
+        }
         $tables = Threads_WP_Table_Manager::get_table_names();
         $query = $this->wpdb->prepare(
             "SELECT p.user_id
@@ -336,9 +340,42 @@ class Threads_WP_Post_Manager {
             $object_id = intval($args['object_id']); // Sanitize the object_id
             $where_values[] = $object_id;
         }
+
+        // Make some query filters only available to admin.
+        if ( current_user_can( 'manage_options' ) ) {
+
+            // Searching content by query.
+            if ( isset( $_REQUESTS['sq'] ) ) {
+                $search_query = sanitize_text_field($_REQUEST['sq']); // The wildcard character
+                $escaped_wildcard = $this->wpdb->esc_like($search_query); // Escaping the wildcard
+                $where_clause .= $this->wpdb->prepare( " AND post_content LIKE %s", $escaped_wildcard );
+            }
+
+            if ( isset( $_REQUESTS['user_id'] ) ) {
+                $user_id = absint($_REQUEST['user_id']);
+                $where_clause .= $this->wpdb->prepare( " AND user_id = %d", $user_id );
+            }
+
+            // Filter for date range.
+            if (isset($_REQUEST['date_from']) && $_REQUEST['date_from'] !== '') {
+                $date_from = sanitize_text_field($_REQUEST['date_from']);
+                $where_clause .= $this->wpdb->prepare(" AND creation_date >= %s", $date_from);
+            }
+            
+            if (isset($_REQUEST['date_end']) && $_REQUEST['date_end'] !== '') {
+                $date_end = sanitize_text_field($_REQUEST['date_end']);
+                $where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $date_end);
+            } else {
+                // If date_end is empty, set it to today
+                $today = date('Y-m-d');
+                $where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $today);
+            }
+        }
         
         // Add additional conditions based on other $args as needed
-        
+        $where_clause = apply_filters( 'threads_wp_get_posts_where_clause', $where_clause, $args );
+
+        //$where_values = apply_filters( 'threads_wp_get_posts_where_values', $where_values, $args );
         // Build the SQL query
         $limit = intval($per_page); // Sanitize the limit
         $sql_query = $this->wpdb->prepare(

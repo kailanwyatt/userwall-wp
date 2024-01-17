@@ -25,6 +25,7 @@ register_deactivation_hook(__FILE__, 'threads_wp_deactivate');
 // Include the addon management class (Threads_WP_Addons)
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-addon.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-post.php' );
+include_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-template.php' );
 include_once THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-addons.php';
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-admin.php' );
 require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-blocks.php' );
@@ -73,7 +74,8 @@ if (!class_exists('Threads_WP')) {
          */
         private function __construct() {
             // Enqueue assets on the front end
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+            $template = new Threads_Template();
+            add_action( 'wp_enqueue_scripts',  array($template, 'enqueue_assets' ) );
 
             // Define the path to the addons folder
             $addons_folder = trailingslashit(plugin_dir_path(__FILE__)) . 'addons';
@@ -123,28 +125,6 @@ if (!class_exists('Threads_WP')) {
                 }
             }
         }
-
-        public function enqueue_assets() {
-            // Enqueue JavaScript
-            wp_enqueue_script('threads-wp-js', plugins_url('assets/js/threads-wp.js', __FILE__), array('jquery', 'wp-util', 'wp-hooks', 'jquery-ui-core'), '1.0', true);
-            
-            $ajax_nonce = wp_create_nonce('threads_wp_nonce');
-
-            // Create an array to pass data to JavaScript
-            $threadsWP_data = array(
-                'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
-                'nonce'    => $ajax_nonce,
-                'user_id'  => get_current_user_id(),
-                'reply_placeholder' => __( 'What are you\'re thoughs?', 'threads-wp' ),
-            );
-
-            // Localize the script with the data
-            wp_localize_script('threads-wp-js', 'threadsWPObject', apply_filters( 'thread_wp_localize_script', $threadsWP_data ) );
-
-
-            // Enqueue CSS
-            wp_enqueue_style('threads-wp-css', plugins_url('assets/css/threads-wp.css', __FILE__), array(), '1.0', 'all');
-        }
     }
 
     // Initialize the Singleton instance
@@ -161,3 +141,32 @@ function add_type_attribute($tag, $handle, $src) {
     return $tag;
 }
 add_filter('script_loader_tag', 'add_type_attribute' , 10, 3);
+
+function fetch_usernames_callback() {
+    // Check for the 'term' in the AJAX request
+    if (isset($_GET['term'])) {
+        $search_term = sanitize_text_field( trim( str_replace( '@', '', $_GET['term'] ) ) );
+        
+        // Query for users
+        $user_query = new WP_User_Query(array(
+            'search'         => '*' . esc_attr($search_term) . '*',
+            'search_columns' => array('user_login', 'user_nicename'),
+            'number'         => 10, // Limit the number of results
+        ));
+        
+        $users = $user_query->get_results();
+        
+        $usernames = array();
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                $usernames[] = $user->user_login; // or user_nicename, depending on your preference
+            }
+        }
+
+        wp_send_json_success($usernames);
+    }
+
+    wp_send_json_error('No term found');
+}
+add_action('wp_ajax_fetch_usernames', 'fetch_usernames_callback'); // For logged-in users
+add_action('wp_ajax_nopriv_fetch_usernames', 'fetch_usernames_callback'); // For logged-out users

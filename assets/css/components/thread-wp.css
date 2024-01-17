@@ -61,6 +61,7 @@
     display: none;
 }
 
+/*
 textarea,
 input[type="file"],
 input[type="text"] {
@@ -70,6 +71,7 @@ input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+*/
 
 /* Style the currently active tab */
 .threads-tab.active {
@@ -133,5 +135,9 @@ input[type="text"] {
 }
 
 .thread-wp-gallery-arrow svg {
-    
+
+}
+
+.threads-wp-wall-time {
+    cursor: pointer;
 }

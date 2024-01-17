@@ -4,7 +4,7 @@
     <?php do_action( 'wp_threads_header' ); ?>
     <!-- Loop through threads -->
     <# _.each(data, function(thread) { #>
-        <div class="threads-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}">
+        <div class="threads-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}" data-permalink="{{ thread.permalink }}">
             <div class="threads-wp-author-section">
                 <div class="threads-wp-author-image-wrapper">
                     <a href="{{ thread.author_url}}" title="{{ thread.author_name }}"><img src="{{ thread.author_avatar_url }}" class="threads-wp-author-image" /></a>

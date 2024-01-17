@@ -1,0 +1,26 @@
+#suggestion-box {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: absolute;
+    width: 250px; /* Adjust the width as needed */
+    max-height: 200px; /* Adjust height as needed */
+    overflow-y: auto; /* Enables scroll if there are many suggestions */
+    z-index: 1000; /* Ensure it's above other elements */
+    display: none; /* Hide by default */
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f9f9f9;
+}

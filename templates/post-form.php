@@ -1,4 +1,4 @@
-<?php if ( is_user_logged_in() ) : ?>
+<?php if ( is_user_logged_in() && $show_form ) : ?>
 <div class="threads-wp-form-wrapper">
     <form id="threads-wp-post-form" enctype='multipart/form-data'>
         <div class="threads-tab-content-wrapper">
@@ -44,7 +44,9 @@
     </form>
 </div>
 <?php endif; ?>
+<?php if ( $show_threads ) : ?>
 <div id="reddit-container" data-thread="<?php echo absint( $type ); ?>" data-object-id="<?php absint( $object_id ); ?>" data-thread-wrapper data-post_type="<?php echo absint( $type ); ?>" data-per_page="<?php echo absint( $per_page ); ?>" data-page="1">
     <div class="threads-wp-reddit-thread"></div>
     <div class="loading-indicator" style="display: none;">Loading...</div>
 </div>
+<?php endif; ?>

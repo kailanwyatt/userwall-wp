@@ -16,6 +16,8 @@ class Threads_WP_Base_Addon {
         $this->addon_id      = $this->get_id();
         $this->file          = $this->get_file_path();
         $this->hooks();
+        add_action( 'wp_footer', array( $this, 'add_js' ) );
+        add_action( 'admin_footer', array( $this, 'add_admin_footer_js' ) );
     }
 
     // Abstract methods to be implemented by subclasses
@@ -62,5 +64,19 @@ class Threads_WP_Base_Addon {
 
     public function hooks() {
 
+    }
+
+    /**
+     * This will render JS in the footer of the frontend / admin page where threads are rendered or submitted.
+     */
+    public function add_js() {
+
+    }
+
+    public function add_admin_footer_js() {
+        $current_screen = get_current_screen();
+        if ( $current_screen->id === "threads-wp_page_threads-wp-posts" ) {
+            $this->add_js();
+        }
     }
 }

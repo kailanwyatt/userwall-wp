@@ -82,7 +82,6 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
         add_filter( 'thread_wp_get_post_by_id', array( $this, 'thread_wp_get_post_by_id' ), 10, 2 );
         add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_threads' ), 10, 2 );
         add_action( 'thread_wp_before_delete_post', array( $this, 'thread_wp_before_delete_post' ), 10, 1 );
-        add_action( 'wp_footer', array( $this, 'add_gallery_hook' ) );
     }
 
     public function thread_wp_before_delete_post( $post_id ) {
@@ -107,84 +106,6 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
                 $wpdb->delete( $table_media, array( 'media_id' => $row->media_id ) );
             }
         }
-    }
-
-    public function add_gallery_hook() {
-        ?>
-        <div id="imageModal">Test</div>
-        <script>
-            jQuery(document).ready(function($) {
-                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
-                    // Modify the content here using your custom logic.                    
-                    return post;
-                });
-                var imageModal = $('#imageModal').ThreadWPModal({
-                    content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
-                    showCloseBtn: true,
-                    openTransition: 'fade',
-                    closeTransition: 'fade',
-                    openSpeed: 500,
-                    closeSpeed: 500,
-                    onOpen: function() {
-                        console.log('Modal opened.');
-                    },
-                    onClose: function() {
-                        console.log('Modal closed.');
-                    }
-                })[0];
-                jQuery( document ).on( 'click', '.thread-wp-wall-image', function( e ) {
-                    e.preventDefault();
-                    imageModal.openModal();
-                });
-
-                wp.hooks.addAction('threads_wp_after_post_submitted', 'resetGallery', function() {
-                    jQuery('.image-preview').remove();
-                    jQuery('#image-upload').val('');
-                });
-
-                wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
-                    var threadDiv;
-                    if ( post.images && post.images.length > 0 ) {
-                        threadDiv = jQuery('.threads-wp-thread[data-postid="' + post.post_id + '"]');
-                        threadDiv.find('.threads-wp-thread-content').after( `<div class="threads-wp-content-images threads-wp-slider threads-wp-image-slider" data-gallery="` + post.post_id + `"></div>` );
-                        jQuery.each(post.images, function(i, image ) {
-                            threadDiv.find('.threads-wp-content-images').prepend(
-                                `<div class="threads-wp-content-image-item thread-wp-slide" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url}" /></div>`
-                            );
-                        });
-
-
-                        jQuery(".threads-wp-image-slider").ThreadWPSlider({
-                            slideClass: 'thread-wp-slide',
-                            slideWrapperClass: 'slider-container',
-                            showArrows: true,
-                            leftArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-left><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-</svg>
-</span>`,
-                            rightArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-right><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-</svg>
-</span>`,
-                            showPagination: true,
-                            slideSpeed: 500,
-                            draggable: false,
-                            keyboardNavigation: true,
-                            onLeftSlide: function(currentSlide) {
-                                console.log("Left slide event: " + currentSlide);
-                            },
-                            onRightSlide: function(currentSlide) {
-                                console.log("Right slide event: " + currentSlide);
-                            },
-                            onSlide: function(currentSlide) {
-                                console.log("Slide event: " + currentSlide);
-                            }
-                        });
-                    }
-                });
-            });
-        </script>
-        <?php
     }
 
     public function add_tab( $tabs = array() ) {
@@ -303,5 +224,83 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
             }
         }
         return $posts;
+    }
+
+    public function add_js() {
+        ?>
+        <div id="imageModal">Test</div>
+        <script>
+            jQuery(document).ready(function($) {
+                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
+                    // Modify the content here using your custom logic.                    
+                    return post;
+                });
+                var imageModal = jQuery('#imageModal').ThreadWPModal({
+                    content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
+                    showCloseBtn: true,
+                    openTransition: 'fade',
+                    closeTransition: 'fade',
+                    openSpeed: 500,
+                    closeSpeed: 500,
+                    onOpen: function() {
+                        console.log('Modal opened.');
+                    },
+                    onClose: function() {
+                        console.log('Modal closed.');
+                    }
+                })[0];
+                jQuery( document ).on( 'click', '.thread-wp-wall-image', function( e ) {
+                    e.preventDefault();
+                    imageModal.openModal();
+                });
+
+                wp.hooks.addAction('threads_wp_after_post_submitted', 'resetGallery', function() {
+                    jQuery('.image-preview').remove();
+                    jQuery('#image-upload').val('');
+                });
+
+                wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
+                    var threadDiv;
+                    if ( post.images && post.images.length > 0 ) {
+                        threadDiv = jQuery('.threads-wp-thread[data-postid="' + post.post_id + '"]');
+                        threadDiv.find('.threads-wp-thread-content').after( `<div class="threads-wp-content-images threads-wp-slider threads-wp-image-slider" data-gallery="` + post.post_id + `"></div>` );
+                        jQuery.each(post.images, function(i, image ) {
+                            threadDiv.find('.threads-wp-content-images').prepend(
+                                `<div class="threads-wp-content-image-item thread-wp-slide" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url}" /></div>`
+                            );
+                        });
+
+
+                        jQuery(".threads-wp-image-slider").ThreadWPSlider({
+                            slideClass: 'thread-wp-slide',
+                            slideWrapperClass: 'slider-container',
+                            showArrows: true,
+                            leftArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-left><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+</svg>
+</span>`,
+                            rightArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-right><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+</svg>
+</span>`,
+                            showPagination: true,
+                            slideSpeed: 500,
+                            draggable: false,
+                            keyboardNavigation: true,
+                            onLeftSlide: function(currentSlide) {
+                                console.log("Left slide event: " + currentSlide);
+                            },
+                            onRightSlide: function(currentSlide) {
+                                console.log("Right slide event: " + currentSlide);
+                            },
+                            onSlide: function(currentSlide) {
+                                console.log("Slide event: " + currentSlide);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+        <?php
     }
 }
