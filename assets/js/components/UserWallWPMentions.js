@@ -14,7 +14,7 @@
         // Function to fetch user suggestions
         var fetchUserSuggestions = function(searchTerm) {
             $.ajax({
-                url: threadsWPObject.ajax_url, // Use the localized variable
+                url: userwallWPObject.ajax_url, // Use the localized variable
                 type: 'GET',
                 data: {
                     action: 'fetch_usernames', // Use the localized variable

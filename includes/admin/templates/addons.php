@@ -1,7 +1,7 @@
 <?php
 
 // Instantiate the addon management class
-$addons_manager = new Threads_WP_Addons();
+$addons_manager = new UserWall_WP_Addons();
 
 // Register and load addons
 $addons = array();

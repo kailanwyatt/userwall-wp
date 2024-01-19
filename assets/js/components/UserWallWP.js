@@ -3,10 +3,10 @@ import Quill from 'quill';
 import ToolbarEmoji from 'quill-emoji';
 //import Masonry from 'masonry-layout';
 
-//window.threadsWP.Masonry = Masonry;
+//window.userwallWP.Masonry = Masonry;
 var editor_theme = 'snow';
 var editor_config = [];
-class ThreadWPHelper {
+class UserWallWPHelper {
     constructor() {
       
     }
@@ -181,16 +181,16 @@ class ThreadWPHelper {
   }
   
 // Create an instance of the class
-window.ThreadWPHelper = new ThreadWPHelper();
+window.UserWallWPHelper = new UserWallWPHelper();
 
-function transformThreads( threads ) {
-    return threads
+function transformPosts( userwall ) {
+    return userwall
     .filter(function (thread) {
-      return thread.post_id !== ''; // Only keep threads with non-empty post_id
+      return thread.post_id !== ''; // Only keep userwall with non-empty post_id
     })
     .map(function (thread) {
         // Apply the doEmbed method to the post_content
-        thread.post_content = window.ThreadWPHelper.doEmbed(thread.post_content);
+        thread.post_content = window.UserWallWPHelper.doEmbed(thread.post_content);
         return wp.hooks.applyFilters('thread_wp_content_filter', thread);
     });
 }
@@ -198,17 +198,17 @@ function transformThreads( threads ) {
 function transformComments( comments ) {
     return comments.map(function (comment) {
         // Apply the doEmbed method to the comment_content
-        comment.comment_content = window.ThreadWPHelper.doEmbed(comment.comment_content);
+        comment.comment_content = window.UserWallWPHelper.doEmbed(comment.comment_content);
         return wp.hooks.applyFilters('thread_wp_content_comment_filter', comment );
     });
 }
-function renderThreads(threads, position = 'top' ) {
+function renderPosts(userwall, position = 'top' ) {
     var template_id = 'userwall-wp-feed-template';
     var template = wp.template(template_id);
-    var newThreads = transformThreads( threads );
+    var newPosts = transformPosts( userwall );
 
     var html, renderedHtml;
-    jQuery.each(newThreads, function (i, thread) {
+    jQuery.each(newPosts, function (i, thread) {
         html = template({ thread });
         renderedHtml = jQuery('<div class="tempWrap">' + html + '</div>');
         const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
@@ -219,7 +219,7 @@ function renderThreads(threads, position = 'top' ) {
             // Initialize Quill editor
             const quill = new Quill(quillContainer, {
                 theme: editor_theme, // You can use a different theme if needed
-                placeholder: threadsWPObject.reply_placeholder,
+                placeholder: userwallWPObject.reply_placeholder,
             });
         }
         if ( ! jQuery('.userwall-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
@@ -228,7 +228,7 @@ function renderThreads(threads, position = 'top' ) {
             } else {
                 jQuery('.userwall-wp-reddit-thread').append(renderedHtml.html());
             }
-            wp.hooks.doAction('threads_wp_post_rendered', thread);
+            wp.hooks.doAction('userwall_wp_post_rendered', thread);
         }
     });
 }
@@ -314,11 +314,11 @@ function updateTime() {
 }
 
 jQuery(document).ready(function($) {
-    wp.hooks.addAction('threads_wp_post_rendered', 'renderEditor', function(thread) {
+    wp.hooks.addAction('userwall_wp_post_rendered', 'renderEditor', function(thread) {
         updateTime();
         setReadMore();
     });
-    wp.hooks.addAction('threads_wp_comment_rendered', 'renderEditor', function(thread) {
+    wp.hooks.addAction('userwall_wp_comment_rendered', 'renderEditor', function(thread) {
         updateTime();
     });
     
@@ -384,19 +384,19 @@ jQuery(document).ready(function($) {
                 const content = quill.root.innerHTML; // Get Quill editor content
                 // Perform an AJAX request to save the changes
                 $.ajax({
-                    url: threadsWPObject.ajax_url,
+                    url: userwallWPObject.ajax_url,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        action: 'threads_wp_post_comment', // Create this AJAX action in your main plugin file
+                        action: 'userwall_wp_post_comment', // Create this AJAX action in your main plugin file
                         post_id: postID,
                         content: content,
-                        nonce: threadsWPObject.nonce
+                        nonce: userwallWPObject.nonce
                     },
                     success: function(response) {
                         var template = wp.template('reddit-style-thread-comment-template');
-                        var newThreads = transformComments(response.data.comments);
-                        var html = template(newThreads);;
+                        var newPosts = transformComments(response.data.comments);
+                        var html = template(newPosts);;
                         $thread.find('.userwall-wp-comment-section').prepend(html);
                         // Clear the comment input field
                         quill.root.innerHTML = '';
@@ -414,20 +414,20 @@ jQuery(document).ready(function($) {
                 const postID = parseInt( thread.data('postid') );
                 
                 if ( thread.find('.userwall-wp-comment-section').is(':empty')) {
-                   // Perform AJAX request to load comments threads
+                   // Perform AJAX request to load comments userwall
                     $.ajax({
-                        url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                        url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                         type: 'GET',
                         data: {
-                            action: 'threads_wp_load_comments', // Create this AJAX action in your PHP code
+                            action: 'userwall_wp_load_comments', // Create this AJAX action in your PHP code
                             post_id: postID, // Send the post ID to the server
-                            nonce: threadsWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
+                            nonce: userwallWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
                         },
                         success: function(response) {
                             if ( response.data.comments.length && response.data.comments.length > 0 ) {
                                 var template = wp.template('reddit-style-thread-comment-template');
-                                var newThreads = transformComments( response.data.comments );
-                                jQuery.each( newThreads, function( index, comment ) {
+                                var newPosts = transformComments( response.data.comments );
+                                jQuery.each( newPosts, function( index, comment ) {
                                     var template = wp.template('reddit-style-thread-comment-template');
 
                                     var commentData = comment;
@@ -451,14 +451,14 @@ jQuery(document).ready(function($) {
                                     }
 
                                     thread.find('.userwall-wp-comment-section').prepend(commentHtml.html());
-                                    wp.hooks.doAction('threads_wp_comment_rendered', comment);
+                                    wp.hooks.doAction('userwall_wp_comment_rendered', comment);
                                 });
-                                wp.hooks.doAction('threads_wp_comment_all_rendered', response.data.comments );
+                                wp.hooks.doAction('userwall_wp_comment_all_rendered', response.data.comments );
                             }
                         },
                         error: function(error) {
                             // Handle errors here (e.g., display an error message)
-                            console.error('Error loading comments threads:', error);
+                            console.error('Error loading comments userwall:', error);
                         },
                     });
                 } else {
@@ -466,7 +466,7 @@ jQuery(document).ready(function($) {
                 }
             });
 
-            jQuery( document ).on('click', '.userwall-wp-new-threads', function( e ) {
+            jQuery( document ).on('click', '.userwall-wp-new-userwall', function( e ) {
                 e.preventDefault();
                 var $div = jQuery(this).closest('[data-thread]');
                 const postType = $div.data('post_type');
@@ -475,9 +475,9 @@ jQuery(document).ready(function($) {
                 // Initialize variables to keep track of the highest post ID and the corresponding element
                 var highestPostId = -1;
                 var $elementWithHighestId = null;
-                var $threads = $div.find('.userwall-wp-thread'); 
+                var $userwall = $div.find('.userwall-wp-thread'); 
                 // Iterate through each element to find the highest post ID
-                $threads.each(function() {
+                $userwall.each(function() {
                     var postId = parseInt(jQuery(this).data('postid'));
                     
                     // Check if the current post ID is higher than the highest found so far
@@ -488,19 +488,19 @@ jQuery(document).ready(function($) {
                 });
 
                 jQuery.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                     type: 'POST',
                     dataType: 'json', // Adjust the data type based on your server response
                     data: {
                         action: 'fetch_latest_thread', // Create this AJAX action in your main plugin file
                         post_type: postType,
                         per_page: perPage,
-                        nonce: threadsWPObject.nonce,
+                        nonce: userwallWPObject.nonce,
                         post_id: highestPostId,
                     },
                     success: function (response) {
-                        jQuery('.userwall-wp-new-threads').remove();
-                        renderThreads( response.data.threads );
+                        jQuery('.userwall-wp-new-userwall').remove();
+                        renderPosts( response.data.userwall );
                     },
                     error: function (error) {
                         console.error('Error fetching data:', error);
@@ -553,7 +553,7 @@ jQuery(document).ready(function($) {
 
                 // Perform AJAX request for form submission
                 $.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                     type: 'POST',
                     data: formData,
                     contentType: false,
@@ -641,32 +641,32 @@ jQuery(document).ready(function($) {
 
                 // Perform an AJAX request to save the changes
                 $.ajax({
-                    url: threadsWPObject.ajax_url,
+                    url: userwallWPObject.ajax_url,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        action: isComment ? 'threads_wp_update_comment' : 'threads_wp_update_post', // Create this AJAX action in your main plugin file
+                        action: isComment ? 'userwall_wp_update_comment' : 'userwall_wp_update_post', // Create this AJAX action in your main plugin file
                         post_id: postID,
                         comment_id: commentID,
                         content: content,
-                        nonce: threadsWPObject.nonce
+                        nonce: userwallWPObject.nonce
                     },
                     success: function(response) {
                         if ( isComment ) {
                             // Handle success, e.g., update the post content display
                             const $content = $commentDiv.find('.userwall-wp-comment-content');
                             var template = wp.template('reddit-style-thread-comment-template');
-                            var newThreads = transformComments(response.data.comments);
+                            var newPosts = transformComments(response.data.comments);
 
-                            var html = template(newThreads);
+                            var html = template(newPosts);
                             $commentDiv.replaceWith(html);
                         } else {
                             // Handle success, e.g., update the post content display
                             const $content = $postDiv;
                             var template = wp.template('userwall-wp-feed-template');
-                            var newThreads = transformThreads(response.data.threads);
+                            var newPosts = transformPosts(response.data.userwall);
 
-                            var html = template(newThreads);
+                            var html = template(newPosts);
                             $content.replaceWith(html);
                             // Hide the edit form
                             $editForm.hide();
@@ -720,13 +720,13 @@ jQuery(document).ready(function($) {
                     // Perform an AJAX request to submit the comment
                     $.ajax({
                         type: 'POST',
-                        url: threadsWPObject.ajax_url,
+                        url: userwallWPObject.ajax_url,
                         data: {
                             action: 'thread_wp_comment_reply', // AJAX action hook
                             post_id: postId,
                             commentId: commentId,
                             commentContent: replyContent,
-                            nonce: threadsWPObject.nonce, // Nonce value (localized in your template)
+                            nonce: userwallWPObject.nonce, // Nonce value (localized in your template)
                         },
                         success: function (response) {
                             // Handle the AJAX response here (update the comment section, etc.)
@@ -741,7 +741,7 @@ jQuery(document).ready(function($) {
                                 commentContainer.find('.userwall-wp-comment-reply-section').prepend(commentHtml.html());
                                 // Clear the comment input field
                                 quill.root.innerHTML = '';
-                                wp.hooks.doAction('threads_wp_comment_rendered', newComments );
+                                wp.hooks.doAction('userwall_wp_comment_rendered', newComments );
                             } else {
                                 console.error('Error:', response.data);
                             }
@@ -761,7 +761,7 @@ jQuery(document).ready(function($) {
             const objectId = $div.data('object_id');
             // Perform an AJAX request to fetch data based on the attributes
             jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                 type: 'GET',
                 dataType: 'json', // Adjust the data type based on your server response
                 data: {
@@ -770,11 +770,11 @@ jQuery(document).ready(function($) {
                     per_page: perPage,
                     page: page,
                     object_id: objectId,
-                    nonce: threadsWPObject.nonce,
+                    nonce: userwallWPObject.nonce,
                 },
                 success: function (response) {
                     // Handle the response here (e.g., render the fetched data)
-                    renderThreads( response.threads, 'bottom' );
+                    renderPosts( response.userwall, 'bottom' );
                 },
                 error: function (error) {
                     console.error('Error fetching data:', error);
@@ -794,20 +794,20 @@ jQuery(document).ready(function($) {
             const perPage = $container.data('per_page');
 
             $.ajax({
-                url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                 type: 'POST',
                 data: {
-                    action: 'threads_wp_load_more_posts', // Create this AJAX action in your main plugin file
+                    action: 'userwall_wp_load_more_posts', // Create this AJAX action in your main plugin file
                     per_page: perPage,
                 },
                 success: function(response) {
                     if (response.success) {
                         if (response.data.posts.length > 0) {
                             var template = wp.template( 'userwall-wp-feed-template' );
-                            var newThreads = response.data.threads( response.data.threads );
+                            var newPosts = response.data.userwall( response.data.userwall );
                             
-                            var html = template( newThreads );
-                            jQuery('.userwall-wp-new-threads').remove();
+                            var html = template( newPosts );
+                            jQuery('.userwall-wp-new-userwall').remove();
                             $container.find('.userwall-wp-reddit-thread').append( html );
                             page++;
                         } else {
@@ -835,16 +835,16 @@ jQuery(document).ready(function($) {
         
         initializeTabs() {
             // Initialize the first tab as active
-            jQuery('.threads-tab:first-child').addClass('active');
-            jQuery('.threads-tab-content:first-child').addClass('active');
+            jQuery('.userwall-tab:first-child').addClass('active');
+            jQuery('.userwall-tab-content:first-child').addClass('active');
     
             // Switch tabs when clicked
-            jQuery('.threads-tab').click(function() {
-                jQuery('.threads-tab').removeClass('active');
-                jQuery('.threads-tab-content').removeClass('active');
+            jQuery('.userwall-tab').click(function() {
+                jQuery('.userwall-tab').removeClass('active');
+                jQuery('.userwall-tab-content').removeClass('active');
                 var tab = jQuery(this).data('tab');
                 jQuery(this).addClass('active');
-                jQuery('.threads-tab-content[data-tab="' + tab + '"]').addClass('active');
+                jQuery('.userwall-tab-content[data-tab="' + tab + '"]').addClass('active');
             });
         }
     
@@ -858,7 +858,7 @@ jQuery(document).ready(function($) {
             const quill = new Quill('.post-quill-editor'); // Initialize Quill (if not already done)
             const content = quill.root.innerHTML;
 
-            var tab = jQuery('.threads-tab.active').data('tab');
+            var tab = jQuery('.userwall-tab.active').data('tab');
             var form = jQuery('#userwall-wp-post-form')[0];
 
             const formData = new FormData(form);
@@ -868,13 +868,13 @@ jQuery(document).ready(function($) {
                 formData.append('content', content );
             }
 
-            formData.append( 'action', 'threads_wp_save_post' );
-            formData.append( 'nonce', threadsWPObject.nonce );
+            formData.append( 'action', 'userwall_wp_save_post' );
+            formData.append( 'nonce', userwallWPObject.nonce );
             formData.append( 'post_tab', tab );
             
             // Perform AJAX request to save the post
             jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
+                url: userwallWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
                 type: 'POST',
                 enctype: 'multipart/form-data',
                 processData: false,  // Important!
@@ -882,11 +882,11 @@ jQuery(document).ready(function($) {
                 cache: false,
                 data: formData,
                 success: function(response) {
-                    renderThreads( response.data.threads );
+                    renderPosts( response.data.userwall );
                     // Reset post form.
                     quill.root.innerHTML = '';
 
-                    wp.hooks.doAction('threads_wp_after_post_submitted', response, formData );
+                    wp.hooks.doAction('userwall_wp_after_post_submitted', response, formData );
                 },
                 error: function(error) {
                     // Handle errors here (e.g., display an error message)
@@ -923,16 +923,16 @@ jQuery(document).ready(function($) {
                 return;
             }
             var data = {
-                action: 'threads_wp_posts_action',
+                action: 'userwall_wp_posts_action',
                 action_type: actionType, // The action type you want to perform
                 post_id: $thread.data('postid'), // The post ID associated with the action
-                nonce: threadsWPObject.nonce 
+                nonce: userwallWPObject.nonce 
             };
     
             // Perform the AJAX request
             jQuery.ajax({
                 type: 'POST',
-                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
+                url: userwallWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
                 data: data,
                 success: function(response) {
                     // Handle the AJAX response here based on the actionType
@@ -988,12 +988,12 @@ jQuery(document).ready(function($) {
       
               // Perform AJAX request to save the reply
               jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Define the AJAX URL
+                url: userwallWPObject.ajax_url, // Define the AJAX URL
                 type: 'POST',
                 data: {
-                  action: 'threads_wp_save_reply', // Create this AJAX action in your main plugin file
+                  action: 'userwall_wp_save_reply', // Create this AJAX action in your main plugin file
                   reply_content: replyContent,
-                  nonce: threadsWPObject.nonce,
+                  nonce: userwallWPObject.nonce,
                 },
                 success: function(response) {
                   // Handle the response here (e.g., display a success message)
@@ -1097,9 +1097,9 @@ jQuery(document).ready(function($) {
                 // Initialize variables to keep track of the highest post ID and the corresponding element
                 var highestPostId = -1;
                 var $elementWithHighestId = null;
-                var $threads = $div.find('.userwall-wp-thread'); 
+                var $userwall = $div.find('.userwall-wp-thread'); 
                 // Iterate through each element to find the highest post ID
-                $threads.each(function() {
+                $userwall.each(function() {
                     var postId = parseInt(jQuery(this).data('postid'));
                     
                     // Check if the current post ID is higher than the highest found so far
@@ -1110,14 +1110,14 @@ jQuery(document).ready(function($) {
                 });
                 // Use jQuery's AJAX method to make a GET request to your server
                 jQuery.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                     type: 'GET',
                     dataType: 'json', // Adjust the data type based on your server response
                     data: {
                         action: 'fetch_latest_thread_notice', // Create this AJAX action in your main plugin file
                         post_type: postType,
                         per_page: perPage,
-                        nonce: threadsWPObject.nonce,
+                        nonce: userwallWPObject.nonce,
                         post_id: highestPostId,
                     },
                     success: (response) => {
@@ -1125,12 +1125,12 @@ jQuery(document).ready(function($) {
                         
                         if ( response.data.message > 0 ) {
                             // Update your template with the new data
-                            if ( ! $div.find('.userwall-wp-new-threads').length ) {
-                                $div.prepend('<div class="userwall-wp-new-threads">New ' + message + ' posts</div>');
+                            if ( ! $div.find('.userwall-wp-new-userwall').length ) {
+                                $div.prepend('<div class="userwall-wp-new-userwall">New ' + message + ' posts</div>');
                             } else {
-                                $div.find('.userwall-wp-new-threads').html('New ' + message+ ' posts' );
+                                $div.find('.userwall-wp-new-userwall').html('New ' + message+ ' posts' );
                             }
-                            wp.hooks.doAction('threads_wp_new_posts_available', response );
+                            wp.hooks.doAction('userwall_wp_new_posts_available', response );
                         }
                     },
                     error: (error) => {
@@ -1250,6 +1250,6 @@ jQuery(document).ready(function($) {
     window.UserWallWPPlugin = UserWallWPPlugin;
     
     // Create an instance of the UserWallWPPlugin class
-    const threadsWP = new UserWallWPPlugin();
+    const userwallWP = new UserWallWPPlugin();
     
 });

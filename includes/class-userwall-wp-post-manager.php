@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_Post_Manager {
+class UserWall_WP_Post_Manager {
     private $table_posts;
     private $wpdb;
     private $authors;
@@ -7,7 +7,7 @@ class Threads_WP_Post_Manager {
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->table_posts = $wpdb->prefix . 'threads_posts';
+        $this->table_posts = $wpdb->prefix . 'userwall_posts';
         $this->authors = array();
     }
 
@@ -45,7 +45,7 @@ class Threads_WP_Post_Manager {
             $author_url = get_author_posts_url($user_id);
 
             // Get the avatar URL
-            $author_avatar_url = get_avatar_url( $user_id, apply_filters( 'threads_wp_avatar_size', array('size' => 50), $user_id ) );
+            $author_avatar_url = get_avatar_url( $user_id, apply_filters( 'userwall_wp_avatar_size', array('size' => 50), $user_id ) );
 
             $this->authors[ $user_id ] = array(
                 'author_name'       => $author_name,
@@ -54,7 +54,7 @@ class Threads_WP_Post_Manager {
             );
         }
 
-        return apply_filters( 'threads_wp_get_author_info', $this->authors[ $user_id ], $user_id );
+        return apply_filters( 'userwall_wp_get_author_info', $this->authors[ $user_id ], $user_id );
     }
     /**
      * Create a new post.
@@ -128,7 +128,7 @@ class Threads_WP_Post_Manager {
         if ( current_user_can( 'manage_options' ) ) {
             return true;
         }
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $query = $this->wpdb->prepare(
             "SELECT p.user_id
             FROM {$this->table_posts} p
@@ -153,7 +153,7 @@ class Threads_WP_Post_Manager {
      */
     public function delete_post($post_id) {
         do_action( 'thread_wp_before_delete_post', $post_id );
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
 
         // Delete comments
         $result = $this->wpdb->delete($tables['comments'], array('post_id' => $post_id));
@@ -173,7 +173,7 @@ class Threads_WP_Post_Manager {
      * @return object|false Post object on success, false on failure.
      */
     public function get_post_by_id($post_id) {
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $post = $this->wpdb->get_row(
             $this->wpdb->prepare(
                 "SELECT p.*, 
@@ -239,7 +239,7 @@ class Threads_WP_Post_Manager {
      */
     public function get_posts_latest($last_post_id = 0, $limit = 30) {
         // Implement the query to fetch the latest posts since $last_post_id here
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $query = $this->wpdb->prepare(
             "SELECT p.*, 
             (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
@@ -276,7 +276,7 @@ class Threads_WP_Post_Manager {
         if ( isset( $modified_post->comment_date ) ) {
             $modified_post->comment_timestamp = strtotime( $post->comment_date );
         }
-        return apply_filters( 'threads_wp_post_return_object', $modified_post );
+        return apply_filters( 'userwall_wp_post_return_object', $modified_post );
     } 
     /**
      * Get the latest posts since a given post ID.
@@ -287,7 +287,7 @@ class Threads_WP_Post_Manager {
      */
     public function get_posts_latest_count($last_post_id = 0, $limit = 30) {
         // Implement the query to fetch the latest posts since $last_post_id here
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $query = $this->wpdb->prepare(
             "SELECT COUNT(p.post_id)
             FROM {$this->table_posts} p
@@ -322,7 +322,7 @@ class Threads_WP_Post_Manager {
         $where_values = array(1); // Default value for the default condition
 
         // Implement the query to fetch the latest posts since $last_post_id here
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
 
         // Create a WHERE clause based on the conditions in $args
         $where_clause = "1 = 1"; // Default condition
@@ -373,9 +373,9 @@ class Threads_WP_Post_Manager {
         }
         
         // Add additional conditions based on other $args as needed
-        $where_clause = apply_filters( 'threads_wp_get_posts_where_clause', $where_clause, $args );
+        $where_clause = apply_filters( 'userwall_wp_get_posts_where_clause', $where_clause, $args );
 
-        //$where_values = apply_filters( 'threads_wp_get_posts_where_values', $where_values, $args );
+        //$where_values = apply_filters( 'userwall_wp_get_posts_where_values', $where_values, $args );
         // Build the SQL query
         $limit = intval($per_page); // Sanitize the limit
         $sql_query = $this->wpdb->prepare(
@@ -412,7 +412,7 @@ class Threads_WP_Post_Manager {
      * @return bool Whether the report was successful or not.
      */
     public function report_post($post_id, $reporter_user_id, $report_reason) {
-        $table_reports = $wpdb->prefix . 'threads_reports';
+        $table_reports = $wpdb->prefix . 'userwall_reports';
 
         $insert_data = array(
             'reporter_user_id' => $reporter_user_id,
@@ -441,7 +441,7 @@ class Threads_WP_Post_Manager {
         // Implement the logic to add a record in your database table
         // to indicate that $user_id has blocked $blocked_user_id for $post_id
 
-        $table_blocklist = $wpdb->prefix . 'threads_blocklist';
+        $table_blocklist = $wpdb->prefix . 'userwall_blocklist';
 
         $insert_data = array(
             'user_id' => $user_id,
@@ -472,7 +472,7 @@ class Threads_WP_Post_Manager {
         // Implement the logic to add a record in your database table
         // to indicate that $user_id is following $author_id for $post_id
 
-        $table_followers = $wpdb->prefix . 'threads_user_followers';
+        $table_followers = $wpdb->prefix . 'userwall_user_followers';
 
         $insert_data = array(
             'user_id' => $user_id,
@@ -499,7 +499,7 @@ class Threads_WP_Post_Manager {
      * @return bool Whether the user successfully saved the post to bookmarks or not.
      */
     public function save_post_to_bookmarks($user_id = 0, $post_id = 0) {
-        $table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
+        $table_bookmarks = $wpdb->prefix . 'userwall_bookmarks';
 
         $insert_data = array(
             'user_id' => $user_id,
@@ -526,7 +526,7 @@ class Threads_WP_Post_Manager {
      * @return int|false The new comment ID on success, false on failure.
      */
     public function add_comment($user_id, $post_id, $comment_content, $parent_comment = 0 ) {
-        $table_comments = $this->wpdb->prefix . 'threads_comments';
+        $table_comments = $this->wpdb->prefix . 'userwall_comments';
 
         $insert_data = array(
             'user_id' => $user_id,
@@ -557,7 +557,7 @@ class Threads_WP_Post_Manager {
      * @return bool Whether the like/reaction was successfully added or not.
      */
     public function add_like_or_reaction($user_id, $post_id, $reaction_type) {
-        $table_likes = $wpdb->prefix . 'threads_likes';
+        $table_likes = $wpdb->prefix . 'userwall_likes';
 
         $insert_data = array(
             'user_id' => $user_id,
@@ -578,7 +578,7 @@ class Threads_WP_Post_Manager {
      * @return bool Whether the deletion was successful or not.
      */
     public function delete_comment($comment_id) {
-        $table_comments = $wpdb->prefix . 'threads_comments';
+        $table_comments = $wpdb->prefix . 'userwall_comments';
 
         do_action('thread_wp_before_delete_comment', $comment_id);
         $result = $this->wpdb->delete($table_comments, array('comment_id' => $comment_id));
@@ -617,7 +617,7 @@ class Threads_WP_Post_Manager {
      * @return object|false Comment object on success, false on failure.
      */
     public function get_comment_by_id($comment_id) {
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $comment = $this->wpdb->get_row(
             $this->wpdb->prepare(
                 "SELECT c.*
@@ -638,7 +638,7 @@ class Threads_WP_Post_Manager {
      * @return object|false Comment object on success, false on failure.
      */
     public function get_comment_by_id3($comment_id) {
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $comment = $this->wpdb->get_row(
             $this->wpdb->prepare(
                 "SELECT c.*
@@ -659,7 +659,7 @@ class Threads_WP_Post_Manager {
      * @return array List of comment objects for the post.
      */
     public function get_comments_by_post_id($post_id, $limit = 5) {
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         $comments = $this->get_comments_recursive($post_id, 0, $limit, $tables['comments']);
     
         return apply_filters('thread_wp_get_comments_by_post_id', $comments, $post_id, $limit);
@@ -697,7 +697,7 @@ class Threads_WP_Post_Manager {
      * @return bool Whether the update was successful or not.
      */
     public function update_comment($comment_id, $new_content) {
-        $tables = Threads_WP_Table_Manager::get_table_names();
+        $tables = UserWall_WP_Table_Manager::get_table_names();
         // Sanitize and validate data as needed
 
         $update_data = array(

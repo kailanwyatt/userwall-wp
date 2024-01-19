@@ -20,13 +20,13 @@ require_once( USERWALL_WP_PLUGIN_DIR . 'activation.php');
 require_once( USERWALL_WP_PLUGIN_DIR . 'deactivation.php');
 
 // Register the activation hook
-register_activation_hook(__FILE__, 'threads_wp_activate');
+register_activation_hook(__FILE__, 'userwall_wp_activate');
 
 
 // Hook into plugin deactivation
-register_deactivation_hook(__FILE__, 'threads_wp_deactivate');
+register_deactivation_hook(__FILE__, 'userwall_wp_deactivate');
 
-// Include the addon management class (Threads_WP_Addons)
+// Include the addon management class (UserWall_WP_Addons)
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php' );
 include_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php' );
@@ -40,24 +40,24 @@ require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-shortcode.php
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-filemanager.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-table-manager.php' );
 
-// Create an instance of the Threads_WP_Addons class
-$addons_manager = new Threads_WP_Addons();
+// Create an instance of the UserWall_WP_Addons class
+$addons_manager = new UserWall_WP_Addons();
 $addons_manager->load_addons();
 
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
-function threads_wp_loaded() {
+function userwall_wp_loaded() {
     if ( class_exists('UM') ) {
         //require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
     }
 }
-add_action( 'wp', 'threads_wp_loaded' );
+add_action( 'wp', 'userwall_wp_loaded' );
 // Autoloader for include files (excluding addons)
-//spl_autoload_register('threads_wp_autoload');
+//spl_autoload_register('userwall_wp_autoload');
 
-function threads_wp_autoload($class_name) {
+function userwall_wp_autoload($class_name) {
     
     // If our class doesn't have our prefix, don't load it.
-	if ( 0 !== strpos( $class_name, 'Threads_WP_' ) ) {
+	if ( 0 !== strpos( $class_name, 'UserWall_WP_' ) ) {
 		return;
 	}
     $class_file = 'class-' . str_replace('_', '-', strtolower($class_name)) . '.php';
@@ -69,8 +69,8 @@ function threads_wp_autoload($class_name) {
     }
 }
 
-if (!class_exists('Threads_WP')) {
-    class Threads_WP {
+if (!class_exists('UserWall_WP')) {
+    class UserWall_WP {
         private static $instance;
 
         /**
@@ -78,7 +78,7 @@ if (!class_exists('Threads_WP')) {
          */
         private function __construct() {
             // Enqueue assets on the front end
-            $template = new Threads_Template();
+            $template = new UserWall_Template();
             add_action( 'wp_enqueue_scripts',  array($template, 'enqueue_assets' ) );
 
             // Define the path to the addons folder
@@ -91,7 +91,7 @@ if (!class_exists('Threads_WP')) {
         /**
          * Get the Singleton instance.
          *
-         * @return Threads_WP Singleton instance.
+         * @return UserWall_WP Singleton instance.
          */
         public static function get_instance() {
             if (null === self::$instance) {
@@ -132,7 +132,7 @@ if (!class_exists('Threads_WP')) {
     }
 
     // Initialize the Singleton instance
-    Threads_WP::get_instance();
+    UserWall_WP::get_instance();
 }
 
 function add_type_attribute($tag, $handle, $src) {

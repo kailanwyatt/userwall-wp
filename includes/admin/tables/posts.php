@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_Posts_Table extends WP_List_Table {
+class UserWall_WP_Posts_Table extends WP_List_Table {
     private $table_posts;
     private $table_comments;
     private $table_likes;
@@ -19,22 +19,22 @@ class Threads_WP_Posts_Table extends WP_List_Table {
 
     public function __construct() {
         global $wpdb;
-        $this->table_posts = $wpdb->prefix . 'threads_posts';
-        $this->table_comments = $wpdb->prefix . 'threads_comments';
-        $this->table_likes = $wpdb->prefix . 'threads_likes';
-        $this->table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
-        $this->table_media = $wpdb->prefix . 'threads_media';
-        $this->table_albums = $wpdb->prefix . 'threads_albums';
-        $this->table_reports = $wpdb->prefix . 'threads_reports';
-        $this->table_user_reputation = $wpdb->prefix . 'threads_user_reputation';
-        $this->table_badges = $wpdb->prefix . 'threads_badges';
-        $this->table_hashtags = $wpdb->prefix . 'threads_hashtags';
-        $this->table_user_settings = $wpdb->prefix . 'threads_user_settings';
-        $this->table_notifications = $wpdb->prefix . 'threads_notifications';
-        $this->table_search_history = $wpdb->prefix . 'threads_search_history';
-        $this->table_user_followers = $wpdb->prefix . 'threads_user_followers';
-        $this->table_user_following = $wpdb->prefix . 'threads_user_following';
-        $this->table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
+        $this->table_posts = $wpdb->prefix . 'userwall_posts';
+        $this->table_comments = $wpdb->prefix . 'userwall_comments';
+        $this->table_likes = $wpdb->prefix . 'userwall_likes';
+        $this->table_bookmarks = $wpdb->prefix . 'userwall_bookmarks';
+        $this->table_media = $wpdb->prefix . 'userwall_media';
+        $this->table_albums = $wpdb->prefix . 'userwall_albums';
+        $this->table_reports = $wpdb->prefix . 'userwall_reports';
+        $this->table_user_reputation = $wpdb->prefix . 'userwall_user_reputation';
+        $this->table_badges = $wpdb->prefix . 'userwall_badges';
+        $this->table_hashtags = $wpdb->prefix . 'userwall_hashtags';
+        $this->table_user_settings = $wpdb->prefix . 'userwall_user_settings';
+        $this->table_notifications = $wpdb->prefix . 'userwall_notifications';
+        $this->table_search_history = $wpdb->prefix . 'userwall_search_history';
+        $this->table_user_followers = $wpdb->prefix . 'userwall_user_followers';
+        $this->table_user_following = $wpdb->prefix . 'userwall_user_following';
+        $this->table_user_notifications = $wpdb->prefix . 'userwall_user_notifications';
         
         parent::__construct([
             'singular' => 'post',

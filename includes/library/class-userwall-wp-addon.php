@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_Base_Addon {
+class UserWall_WP_Base_Addon {
     protected $addon_name = '';
     protected $addon_description = '';
     protected $addon_author = '';
@@ -67,7 +67,7 @@ class Threads_WP_Base_Addon {
     }
 
     /**
-     * This will render JS in the footer of the frontend / admin page where threads are rendered or submitted.
+     * This will render JS in the footer of the frontend / admin page where userwall are rendered or submitted.
      */
     public function add_js() {
 

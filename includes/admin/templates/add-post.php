@@ -23,7 +23,7 @@
             </th>
             <td>
                 <div class="userwall-wp-admin-posts-wrapper">
-                    <?php echo do_shortcode( '[threads_wp_post_form show_threads="false"]'); ?>
+                    <?php echo do_shortcode( '[userwall_wp_post_form show_userwall="false"]'); ?>
                 </div>
             </td>
         </tr>
@@ -58,7 +58,7 @@
                     <button id="apply-filter">Apply Filter</button>
                 </div>
                 <div class="userwall-wp-admin-posts-wrapper">
-                    <?php echo do_shortcode( '[threads_wp_post_form show_form="false"]'); ?>
+                    <?php echo do_shortcode( '[userwall_wp_post_form show_form="false"]'); ?>
                 </div>
             </td>
         </tr>

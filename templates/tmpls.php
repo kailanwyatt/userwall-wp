@@ -1,8 +1,8 @@
 <script type="text/html" id="tmpl-thread-shared-post">
 </script>
 <script type="text/html" id="tmpl-userwall-wp-feed-template">
-    <?php do_action( 'wp_threads_header' ); ?>
-    <!-- Loop through threads -->
+    <?php do_action( 'wp_userwall_header' ); ?>
+    <!-- Loop through userwall -->
     <# _.each(data, function(thread) { #>
         <div class="userwall-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}" data-permalink="{{ thread.permalink }}">
             <div class="userwall-wp-author-section">
@@ -17,15 +17,15 @@
             <?php if ( is_user_logged_in() ) : ?> 
             <div class="userwall-wp-ellipsis" aria-hidden="true">&#8942;</div>
             <?php endif; ?>
-            <?php do_action( 'threads_wp_before_post_content' ); ?>
+            <?php do_action( 'userwall_wp_before_post_content' ); ?>
             <div class="userwall-wp-thread-content">
                 {{{ thread.post_content }}}
             </div>
-            <?php do_action( 'threads_wp_after_post_content' ); ?>
+            <?php do_action( 'userwall_wp_after_post_content' ); ?>
             <div class="userwall-wp-thread-media"></div>
-            <# if ( thread.user_id == threadsWPObject.user_id ) { #>
+            <# if ( thread.user_id == userwallWPObject.user_id ) { #>
             <!-- Edit Form (hidden by default) -->
-            <div class="edit-form threads-edit-post-section" style="display: none;">
+            <div class="edit-form userwall-edit-post-section" style="display: none;">
                 <div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
                 <button class="save-button"><?php esc_html_e('Save Changes', 'userwall-wp'); ?></button>
                 <button class="cancel-button"><?php esc_html_e('Cancel Changes', 'userwall-wp'); ?></button>
@@ -34,7 +34,7 @@
             <?php if ( is_user_logged_in() ) : ?>
             <!-- Action Area -->
             <div class="userwall-wp-thread-actions" style="display: none;">
-                <# if ( thread.user_id == threadsWPObject.user_id ) { #>
+                <# if ( thread.user_id == userwallWPObject.user_id ) { #>
                 <!-- Edit action -->
                 <span class="userwall-wp-action" data-action="<?php esc_html_e('Edit', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'userwall-wp'); ?>"><?php esc_html_e('Edit', 'userwall-wp'); ?></span>
 
@@ -55,7 +55,7 @@
 
                 <!-- Follow action -->
                 <span class="userwall-wp-action" data-action="<?php esc_html_e('Follow', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Follow', 'userwall-wp'); ?>"><?php esc_html_e('Follow', 'userwall-wp'); ?></span>
-                <?php do_action( 'threads_wp_after_post_action' ); ?>
+                <?php do_action( 'userwall_wp_after_post_action' ); ?>
                 <# } #>
             </div>
             <?php endif; ?>
@@ -121,7 +121,7 @@
             <div class="userwall-wp-comment-section"></div>
         </div>
     <# }); #>
-    <?php do_action('threads_wp_footer' ); ?>
+    <?php do_action('userwall_wp_footer' ); ?>
 </script>
 
 <script type="text/html" id="tmpl-reddit-style-thread-comment-template">
@@ -146,7 +146,7 @@
                 {{{ comment.comment_content }}}
             </div>
 
-            <# if ( comment.user_id == threadsWPObject.user_id ) { #>
+            <# if ( comment.user_id == userwallWPObject.user_id ) { #>
             <!-- Edit Form (hidden by default) -->
             <div class="comment-thread-edit-form" style="display: none;">
                 <div id="quill-editor-edit-{{ comment.post_id }}-{{ comment.comment_id }}" class="post-quill-editor-edit"></div>
@@ -161,7 +161,7 @@
             <?php if ( is_user_logged_in() ) : ?>
             <!-- Action Area -->
             <div class="userwall-wp-thread-actions" style="display: none;">
-                <# if ( comment.user_id == threadsWPObject.user_id ) { #>
+                <# if ( comment.user_id == userwallWPObject.user_id ) { #>
                 <!-- Edit action -->
                 <span class="userwall-wp-action" data-action="<?php esc_html_e('Edit', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'userwall-wp'); ?>"><?php esc_html_e('Edit', 'userwall-wp'); ?></span>
 

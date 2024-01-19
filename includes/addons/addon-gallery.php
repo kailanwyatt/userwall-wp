@@ -1,12 +1,12 @@
 <?php
-class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
     private $table;
 
     public function __construct() {
        
         parent::__construct();
         global $wpdb;
-        $this->table = $wpdb->prefix . 'threads_media';
+        $this->table = $wpdb->prefix . 'userwall_media';
     }
     public function get_id() {
         return 'gallery';
@@ -21,7 +21,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'userwall-wp' );
+        return __( 'UserWallWP', 'userwall-wp' );
     }
 
     public function get_version() {
@@ -31,11 +31,11 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
     public function activate_addon() {
         global $wpdb;
         
-        $table_posts = $wpdb->prefix . 'threads_posts';
-        $table_media = $wpdb->prefix . 'threads_media';
-        $table_albums = $wpdb->prefix . 'threads_albums';
+        $table_posts = $wpdb->prefix . 'userwall_posts';
+        $table_media = $wpdb->prefix . 'userwall_media';
+        $table_albums = $wpdb->prefix . 'userwall_albums';
 
-       // SQL query to create the 'threads_media' table
+       // SQL query to create the 'userwall_media' table
         $sql_query_media = "CREATE TABLE IF NOT EXISTS $table_media (
             media_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             file_path VARCHAR(255) NOT NULL,
@@ -62,7 +62,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
     public function deactivate_addon() {
         global $wpdb;
 
-        $table_media = $wpdb->prefix . 'threads_media';
+        $table_media = $wpdb->prefix . 'userwall_media';
 
         // SQL queries to drop the tables
         $sql_queries = array(
@@ -77,18 +77,18 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
 
     public function hooks() {
         add_filter( 'thread_wp_post_tabs', array( $this, 'add_tab' ) );
-        add_action( 'threads_wp_after_post_form', array( $this, 'post_form_addition' ) );
+        add_action( 'userwall_wp_after_post_form', array( $this, 'post_form_addition' ) );
         add_action( 'thread_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
         add_filter( 'thread_wp_get_post_by_id', array( $this, 'thread_wp_get_post_by_id' ), 10, 2 );
-        add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_threads' ), 10, 2 );
+        add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_userwall' ), 10, 2 );
         add_action( 'thread_wp_before_delete_post', array( $this, 'thread_wp_before_delete_post' ), 10, 1 );
     }
 
     public function thread_wp_before_delete_post( $post_id ) {
         global $wpdb;
 
-        $table_media = $wpdb->prefix . 'threads_media';
-        $table_posts = $wpdb->prefix . 'threads_posts';
+        $table_media = $wpdb->prefix . 'userwall_media';
+        $table_posts = $wpdb->prefix . 'userwall_posts';
 
         $media = $wpdb->get_results(
             $wpdb->prepare(
@@ -100,7 +100,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
         if ( ! empty( $media  ) ) {
             foreach( $media as $row ) {
                 // Delete the file
-                $file_manager = new Threads_WP_FileManager();
+                $file_manager = new UserWall_WP_FileManager();
                 $file_manager->deleteFile( $row->file_path );
 
                 $wpdb->delete( $table_media, array( 'media_id' => $row->media_id ) );
@@ -129,7 +129,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
         }
         
         $user_id = get_current_user_id();
-        $file_manager = new Threads_WP_FileManager( $user_id );
+        $file_manager = new UserWall_WP_FileManager( $user_id );
         $media_ids = array();
         if ( ! empty( $_FILES['post_images'] ) ) {
             foreach( $_FILES['post_images']['name'] as $index => $value ) {
@@ -143,21 +143,21 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
                         'size' => $_FILES['post_images']['size'][ $index ],
                     ));
 
-                    $insert_result = $wpdb->insert( $wpdb->prefix . 'threads_media', array('post_id' => $post_id, 'file_path' => $file_path ) );
+                    $insert_result = $wpdb->insert( $wpdb->prefix . 'userwall_media', array('post_id' => $post_id, 'file_path' => $file_path ) );
                     if ( $insert_result !== false ) {
                         $media_ids[] = $insert_result;
-                        do_action( 'threads_wp_after_image_added', $insert_result, $post_id,  $file_path );
+                        do_action( 'userwall_wp_after_image_added', $insert_result, $post_id,  $file_path );
                     }
                 }
             }
 
-            do_action( 'threads_wp_after_image_upload_complete', $post_id, $media_ids );
+            do_action( 'userwall_wp_after_image_upload_complete', $post_id, $media_ids );
         }
     }
 
     private function transform_media( $media, $post ) {
         $obj = array();
-        $file_manager = new Threads_WP_FileManager( $post->user_id );
+        $file_manager = new UserWall_WP_FileManager( $post->user_id );
         if ( ! empty( $media ) ) {
             foreach ( $media as $media_item ) {
                 //unset( $media_item->file_path );
@@ -210,10 +210,10 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
         return ! empty( $media ) ? $media : false;
     }
 
-    public function add_image_to_posts_threads( $posts = array() ) {
+    public function add_image_to_posts_userwall( $posts = array() ) {
         if ( ! empty( $posts ) ) {
             foreach ( $posts as $index => $post ) {
-                //$post = new Threads_WP_Post( $post );
+                //$post = new UserWall_WP_Post( $post );
                 //$post_id = $post->get_post_id();
                 $post_id = $post->post_id;
                 $media = $this->get_images_by_post_id( $post_id );
@@ -235,7 +235,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
                     // Modify the content here using your custom logic.                    
                     return post;
                 });
-                var imageModal = jQuery('#imageModal').ThreadWPModal({
+                var imageModal = jQuery('#imageModal').UserWallWPModal({
                     content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
                     showCloseBtn: true,
                     openTransition: 'fade',
@@ -254,12 +254,12 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
                     imageModal.openModal();
                 });
 
-                wp.hooks.addAction('threads_wp_after_post_submitted', 'resetGallery', function() {
+                wp.hooks.addAction('userwall_wp_after_post_submitted', 'resetGallery', function() {
                     jQuery('.image-preview').remove();
                     jQuery('#image-upload').val('');
                 });
 
-                wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
+                wp.hooks.addAction('userwall_wp_post_rendered', 'customAction', function(post){
                     var threadDiv;
                     if ( post.images && post.images.length > 0 ) {
                         threadDiv = jQuery('.userwall-wp-thread[data-postid="' + post.post_id + '"]');
@@ -271,7 +271,7 @@ class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
                         });
 
 
-                        jQuery(".userwall-wp-image-slider").ThreadWPSlider({
+                        jQuery(".userwall-wp-image-slider").UserWallWPSlider({
                             slideClass: 'userwall-wp-slide',
                             slideWrapperClass: 'slider-container',
                             showArrows: true,

@@ -1,4 +1,4 @@
 <?php
-function threads_wp_get_addons() {
+function userwall_wp_get_addons() {
 
 }

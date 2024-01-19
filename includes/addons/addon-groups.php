@@ -1,5 +1,5 @@
 <?php
-class UserWallWP_Addon_Groups extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
     public function get_id() {
         return 'groups';
     }
@@ -13,7 +13,7 @@ class UserWallWP_Addon_Groups extends Threads_WP_Base_Addon {
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'userwall-wp' );
+        return __( 'UserWallWP', 'userwall-wp' );
     }
 
     public function get_version() {
@@ -23,10 +23,10 @@ class UserWallWP_Addon_Groups extends Threads_WP_Base_Addon {
     public function activate_addon() {
         global $wpdb;
         
-        $table_posts = $wpdb->prefix . 'threads_posts';
-        $table_groups = $wpdb->prefix . 'threads_groups';
+        $table_posts = $wpdb->prefix . 'userwall_posts';
+        $table_groups = $wpdb->prefix . 'userwall_groups';
 
-        // SQL query to create the 'threads_plugin_groups' table
+        // SQL query to create the 'userwall_plugin_groups' table
         $sql_query_groups = "CREATE TABLE IF NOT EXISTS $table_groups (
             group_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             group_name VARCHAR(255) NOT NULL,
@@ -54,7 +54,7 @@ class UserWallWP_Addon_Groups extends Threads_WP_Base_Addon {
     public function deactivate_addon() {
         global $wpdb;
 
-        $table_groups = $wpdb->prefix . 'threads_groups';
+        $table_groups = $wpdb->prefix . 'userwall_groups';
 
         // SQL queries to drop the tables
         $sql_queries = array(

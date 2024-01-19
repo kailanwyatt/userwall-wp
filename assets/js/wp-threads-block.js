@@ -1,9 +1,9 @@
-// wp-threads-block.js
+// wp-userwall-block.js
 import { registerBlockType } from '@wordpress/blocks';
 //const { registerBlockType } = wp.blocks;
 const { TextControl } = wp.components;
 
-registerBlockType('wp-threads/thread-post', {
+registerBlockType('wp-userwall/thread-post', {
     title: 'Thread Post',
     icon: 'shield',
     category: 'common',

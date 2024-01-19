@@ -2,14 +2,14 @@
 require_once(  USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-settings.php' );
 
 
-class Threads_WP_Admin {
+class UserWall_WP_Admin {
     private static $instance;
 
     private $settings_api;
 
     private $dashboard_page_key;
 
-    private $option_active_addons = 'threads_wp_active_addons';
+    private $option_active_addons = 'userwall_wp_active_addons';
 
     private function __construct() {
         $this->dashboard_page_key = 'userwall-wp-dashboard';
@@ -18,7 +18,7 @@ class Threads_WP_Admin {
         add_action( 'admin_init', array( $this->settings_api, 'admin_init' ) );
         add_action( 'admin_init', array( $this, 'process_addon_action' ) );
         add_action('admin_notices', array( $this, 'admin_notices' ) );
-        $template = new Threads_Template();
+        $template = new UserWall_Template();
         add_action( 'admin_enqueue_scripts',  array($template, 'enqueue_assets' ) );
     }
 
@@ -39,8 +39,8 @@ class Threads_WP_Admin {
     public function add_menu() {
         
         add_menu_page(
-            'Threads WP',
-            'Threads WP',
+            'User WallP',
+            'User Wall',
             'manage_options',
             $this->dashboard_page_key,
             array($this, 'dashboard_page'),
@@ -48,7 +48,7 @@ class Threads_WP_Admin {
         );
 
         // Instantiate the addon management class
-        $addons_manager = new Threads_WP_Addons();
+        $addons_manager = new UserWall_WP_Addons();
 
         // Additional menus
         $this->add_submenu('Posts', 'Posts', 'userwall-wp-posts', array($this, 'posts_page'));
@@ -133,7 +133,7 @@ class Threads_WP_Admin {
             require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
         }
         require_once(  USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/posts.php' );
-        $posts_table = new Threads_WP_Posts_Table();
+        $posts_table = new UserWall_WP_Posts_Table();
 
         echo '<div class="wrap"><h1>Manage Posts</h1>';
         $posts_table->display_notices();
@@ -172,7 +172,7 @@ class Threads_WP_Admin {
                 return;
             }
             // Instantiate the addon management class
-            $addons_manager = new Threads_WP_Addons();
+            $addons_manager = new UserWall_WP_Addons();
             $addons = $addons_manager->register_addons();
             $addon = $addons_manager->get_addon_by_id( $addon_id );
             echo '<div class="notice notice-success is-dismissible">';
@@ -189,7 +189,7 @@ class Threads_WP_Admin {
             $active_addons_ids = array_keys( $active_addons );
             $redirect_url = admin_url('admin.php?page=userwall-wp-addons');
             // Instantiate the addon management class
-            $addons_manager = new Threads_WP_Addons();
+            $addons_manager = new UserWall_WP_Addons();
             $addons_manager->register_addons();
             $addons = $addons_manager->get_addons();
             if ($_POST['addon_action'] === 'activate') {
@@ -213,7 +213,7 @@ class Threads_WP_Admin {
                         $active_addons[$addon_id] = $addon_array;
                         update_option( $this->option_active_addons, $active_addons);
                         $addons_manager->activate_addon($addon_id);
-                        do_action( 'threads_wp_after_addon_activated', $addon_id );
+                        do_action( 'userwall_wp_after_addon_activated', $addon_id );
                         $redirect_url = add_query_arg( array( 'addon_status' => 'activated', 'addon_id' => $addon_id ), $redirect_url );
                     }
                 }
@@ -227,7 +227,7 @@ class Threads_WP_Admin {
                     // Deactivate addon by ID
                     $addons_manager->deactivate_addon( $addon_id );
                     $redirect_url = add_query_arg( array( 'addon_status' => 'deactivated', 'addon_id' => $addon_id ), $redirect_url );
-                    do_action( 'threads_wp_after_addon_activated', $addon_id );
+                    do_action( 'userwall_wp_after_addon_activated', $addon_id );
                 }
             }
             wp_redirect( $redirect_url );
@@ -237,4 +237,4 @@ class Threads_WP_Admin {
 }
 
 // Initialize the admin class
-Threads_WP_Admin::get_instance();
+UserWall_WP_Admin::get_instance();

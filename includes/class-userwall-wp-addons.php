@@ -1,11 +1,11 @@
 <?php
-class Threads_WP_Addons {
+class UserWall_WP_Addons {
     private $addons = array();
 
     private $active_addons;
 
     public function __construct() {
-        $this->active_addons = get_option('threads_wp_active_addons', []);
+        $this->active_addons = get_option('userwall_wp_active_addons', []);
     }
 
     public function register_addons($addons = array() ) {
@@ -16,7 +16,7 @@ class Threads_WP_Addons {
         $addons = $this->register_internal_addons($addons);
 
         // Register third-party addons via filter
-        $addons = apply_filters('threads_wp_register_addons', $addons);
+        $addons = apply_filters('userwall_wp_register_addons', $addons);
 
         $this->addons = $addons;
     }
@@ -40,8 +40,8 @@ class Threads_WP_Addons {
             $class_name = basename($addon_file, '.php');
             $class_name = ucfirst( str_replace( 'addon-', '', $class_name ) );
             $class_name = 'UserWallWP_Addon_' . $class_name;
-            // Check if the class exists and if it's an instance of Threads_WP_Base_Addon
-            if (class_exists($class_name) && is_subclass_of($class_name, 'Threads_WP_Base_Addon')) {
+            // Check if the class exists and if it's an instance of UserWall_WP_Base_Addon
+            if (class_exists($class_name) && is_subclass_of($class_name, 'UserWall_WP_Base_Addon')) {
                 $addon_id = strtolower(str_replace('UserWallWP_Addon_', '', $class_name));
                 // Instantiate the class and add it to the addons array
                 $addons[ $addon_id ] = new $class_name();
@@ -66,14 +66,14 @@ class Threads_WP_Addons {
 
     public function get_installed_addons() {
         // Get the list of installed addons from your storage mechanism
-        $addons = get_option('threads_wp_installed_addons', array()); // You can use options to store addon data
+        $addons = get_option('userwall_wp_installed_addons', array()); // You can use options to store addon data
 
         // Create an array to hold the addon objects
         $addon_objects = array();
 
         // Iterate through the installed addons and create addon objects
         foreach ($addons as $addon) {
-            $addon_object = new Threads_WP_Addon(
+            $addon_object = new UserWall_WP_Addon(
                 $addon['id'],
                 $addon['name'],
                 $addon['description'],

@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.ThreadWPSlider = function(options) {
+    $.fn.UserWallWPSlider = function(options) {
         var settings = $.extend({
             slideClass: 'slide',
             slideWrapperClass: 'slider-wrapper',
@@ -131,5 +131,5 @@
         });
     };
 
-    window.ThreadWPSlider = $.fn.ThreadWPSlider;
+    window.UserWallWPSlider = $.fn.UserWallWPSlider;
 }(jQuery));

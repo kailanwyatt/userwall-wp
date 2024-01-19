@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_Post_Core {
+class UserWall_WP_Post_Core {
 
     public function hooks() {
         add_action('init', array($this, 'add_rewrite_rules'));
@@ -11,7 +11,7 @@ class Threads_WP_Post_Core {
     public function add_rewrite_rules() {
         add_rewrite_rule('^u/([^/]*)/thread/([0-9]+)?', 'index.php?username=$matches[1]&thread_id=$matches[2]', 'top');
 
-        add_rewrite_rule('^u/([^/]*)/threads/?$', 'index.php?username=$matches[1]&all_threads=1', 'top');
+        add_rewrite_rule('^u/([^/]*)/userwall/?$', 'index.php?username=$matches[1]&all_userwall=1', 'top');
 
         add_rewrite_rule('^u/([^/]*)/?$', 'index.php?username=$matches[1]&user_profile=1', 'top');
     }
@@ -19,7 +19,7 @@ class Threads_WP_Post_Core {
     public function register_query_vars($vars) {
         $vars[] = 'username';
         $vars[] = 'thread_id';
-        $vars[] = 'all_threads';
+        $vars[] = 'all_userwall';
         $vars[] = 'user_profile';
         return $vars;
     }
@@ -29,7 +29,7 @@ class Threads_WP_Post_Core {
         $username = get_query_var('username');
         $thread_id = get_query_var('thread_id');
         $username = get_query_var('username');
-        $all_threads = get_query_var('all_threads');
+        $all_userwall = get_query_var('all_userwall');
         $user_profile = get_query_var('user_profile');
 
         if ($username) {
@@ -52,9 +52,9 @@ class Threads_WP_Post_Core {
             }
         }
 
-        if ($username && $all_threads) {
-            // Load template for all threads of a user
-            include(get_template_directory() . '/all-threads-template.php');
+        if ($username && $all_userwall) {
+            // Load template for all userwall of a user
+            include(get_template_directory() . '/all-userwall-template.php');
             exit;
         }
 
@@ -66,5 +66,5 @@ class Threads_WP_Post_Core {
     }
 }
 
-$thread_wp_core = new Threads_WP_Post_Core();
+$thread_wp_core = new UserWall_WP_Post_Core();
 $thread_wp_core->hooks();

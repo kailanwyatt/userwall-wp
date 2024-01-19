@@ -1,27 +1,27 @@
 <?php
 
 // Define the activation function
-function threads_wp_activate() {
+function userwall_wp_activate() {
     global $wpdb;
 
-    // Define the table names with the "threads_" prefix
-    $table_posts = $wpdb->prefix . 'threads_posts';
-    $table_comments = $wpdb->prefix . 'threads_comments';
-    $table_likes = $wpdb->prefix . 'threads_likes';
-    $table_bookmarks = $wpdb->prefix . 'threads_bookmarks';
-    $table_reports = $wpdb->prefix . 'threads_reports';
-    $table_user_reputation = $wpdb->prefix . 'threads_user_reputation';
-    $table_badges = $wpdb->prefix . 'threads_badges';
-    $table_hashtags = $wpdb->prefix . 'threads_hashtags';
-    $table_user_settings = $wpdb->prefix . 'threads_user_settings';
-    $table_notifications = $wpdb->prefix . 'threads_notifications';
-    $table_search_history = $wpdb->prefix . 'threads_search_history';
-    $table_user_followers = $wpdb->prefix . 'threads_user_followers';
-    $table_user_following =  $wpdb->prefix . 'threads_user_following';
-    $table_user_notifications = $wpdb->prefix . 'threads_user_notifications';
-    $table_blocklist = $wpdb->prefix . 'threads_blocklist';
+    // Define the table names with the "userwall_" prefix
+    $table_posts = $wpdb->prefix . 'userwall_posts';
+    $table_comments = $wpdb->prefix . 'userwall_comments';
+    $table_likes = $wpdb->prefix . 'userwall_likes';
+    $table_bookmarks = $wpdb->prefix . 'userwall_bookmarks';
+    $table_reports = $wpdb->prefix . 'userwall_reports';
+    $table_user_reputation = $wpdb->prefix . 'userwall_user_reputation';
+    $table_badges = $wpdb->prefix . 'userwall_badges';
+    $table_hashtags = $wpdb->prefix . 'userwall_hashtags';
+    $table_user_settings = $wpdb->prefix . 'userwall_user_settings';
+    $table_notifications = $wpdb->prefix . 'userwall_notifications';
+    $table_search_history = $wpdb->prefix . 'userwall_search_history';
+    $table_user_followers = $wpdb->prefix . 'userwall_user_followers';
+    $table_user_following =  $wpdb->prefix . 'userwall_user_following';
+    $table_user_notifications = $wpdb->prefix . 'userwall_user_notifications';
+    $table_blocklist = $wpdb->prefix . 'userwall_blocklist';
 
-    // SQL query to create the 'threads_plugin_posts' table
+    // SQL query to create the 'userwall_plugin_posts' table
     $sql_query_posts = "CREATE TABLE IF NOT EXISTS $table_posts (
         post_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         post_title VARCHAR(255) NOT NULL,
@@ -35,7 +35,7 @@ function threads_wp_activate() {
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
     
-    // SQL query to create the 'threads_plugin_comments' table
+    // SQL query to create the 'userwall_plugin_comments' table
     $sql_query_comments = "CREATE TABLE IF NOT EXISTS $table_comments (
         comment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         parent_id BIGINT NOT NULL,
@@ -49,7 +49,7 @@ function threads_wp_activate() {
         FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
     )";
     
-    // SQL query to create the 'threads_plugin_likes' table
+    // SQL query to create the 'userwall_plugin_likes' table
     $sql_query_likes = "CREATE TABLE IF NOT EXISTS $table_likes (
         like_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -61,7 +61,7 @@ function threads_wp_activate() {
         FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
     )";
     
-    // SQL query to create the 'threads_plugin_bookmarks' table
+    // SQL query to create the 'userwall_plugin_bookmarks' table
     $sql_query_bookmarks = "CREATE TABLE IF NOT EXISTS $table_bookmarks (
         bookmark_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -77,7 +77,7 @@ function threads_wp_activate() {
 
 
 
-// SQL query to create the 'threads_reports' table
+// SQL query to create the 'userwall_reports' table
 $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
     report_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     reporter_user_id BIGINT UNSIGNED NOT NULL,
@@ -90,7 +90,7 @@ $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
     FOREIGN KEY (reported_content_id) REFERENCES $table_posts(post_id)
 )";
 
-// SQL query to create the 'threads_user_reputation' table
+// SQL query to create the 'userwall_user_reputation' table
 $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation (
     reputation_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
@@ -99,14 +99,14 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
     FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
 )";
 
-    // SQL query to create the 'wp_threads_hashtags' table
+    // SQL query to create the 'wp_userwall_hashtags' table
     $sql_query_hashtags = "CREATE TABLE IF NOT EXISTS $table_hashtags (
         hashtag_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         hashtag_text VARCHAR(255) NOT NULL,
         INDEX hashtag_text_index (hashtag_text)
     )";
 
-    // SQL query to create the 'wp_threads_user_settings' table
+    // SQL query to create the 'wp_userwall_user_settings' table
     $sql_query_user_settings = "CREATE TABLE IF NOT EXISTS $table_user_settings (
         setting_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -117,7 +117,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_notifications' table
+    // SQL query to create the 'wp_userwall_notifications' table
     $sql_query_notifications = "CREATE TABLE IF NOT EXISTS $table_notifications (
         notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         notification_type VARCHAR(255) NOT NULL,
@@ -131,7 +131,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (receiver_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_search_history' table
+    // SQL query to create the 'wp_userwall_search_history' table
     $sql_query_search_history = "CREATE TABLE IF NOT EXISTS $table_search_history (
         search_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -151,7 +151,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (follower_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_user_notifications' table
+    // SQL query to create the 'wp_userwall_user_notifications' table
     $sql_query_user_notifications = "CREATE TABLE IF NOT EXISTS $table_user_notifications (
         notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -162,7 +162,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
     )";
 
 
-    // SQL query to create the 'threads_reports' table
+    // SQL query to create the 'userwall_reports' table
     $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
         report_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         reporter_user_id BIGINT UNSIGNED NOT NULL,
@@ -175,14 +175,14 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (reported_content_id) REFERENCES $table_posts(post_id)
     )";
 
-    // SQL query to create the 'wp_threads_hashtags' table
+    // SQL query to create the 'wp_userwall_hashtags' table
     $sql_query_hashtags = "CREATE TABLE IF NOT EXISTS $table_hashtags (
         hashtag_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         hashtag_text VARCHAR(255) NOT NULL,
         INDEX hashtag_text_index (hashtag_text)
     )";
 
-    // SQL query to create the 'wp_threads_user_settings' table
+    // SQL query to create the 'wp_userwall_user_settings' table
     $sql_query_user_settings = "CREATE TABLE IF NOT EXISTS $table_user_settings (
         setting_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -193,7 +193,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_notifications' table
+    // SQL query to create the 'wp_userwall_notifications' table
     $sql_query_notifications = "CREATE TABLE IF NOT EXISTS $table_notifications (
         notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         notification_type VARCHAR(255) NOT NULL,
@@ -207,7 +207,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (receiver_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_search_history' table
+    // SQL query to create the 'wp_userwall_search_history' table
     $sql_query_search_history = "CREATE TABLE IF NOT EXISTS $table_search_history (
         search_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -227,7 +227,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (follower_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_user_following' table
+    // SQL query to create the 'wp_userwall_user_following' table
     $sql_query_user_following = "CREATE TABLE IF NOT EXISTS $table_user_following (
         following_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -238,7 +238,7 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (following_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
-    // SQL query to create the 'wp_threads_user_notifications' table
+    // SQL query to create the 'wp_userwall_user_notifications' table
     $sql_query_user_notifications = "CREATE TABLE IF NOT EXISTS $table_user_notifications (
         notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,

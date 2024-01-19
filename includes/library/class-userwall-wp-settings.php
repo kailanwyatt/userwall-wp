@@ -19,7 +19,7 @@ class WP_Custom_Settings_API {
     }
 
     public function admin_init() {
-        register_setting( 'threads_wp', 'threads_wp' );
+        register_setting( 'userwall_wp', 'userwall_wp' );
         $this->init_general_main_settings();
         $this->init_general_secondary_settings();
         $this->init_advanced_settings();
@@ -43,8 +43,8 @@ class WP_Custom_Settings_API {
     }
 
     public function example_field_callback() {
-        $options = get_option( 'threads_wp' );
-        echo '<input type="text" name="threads_wp[example_field]" value="' . esc_attr( $options['example_field'] ?? '' ) . '"/>';
+        $options = get_option( 'userwall_wp' );
+        echo '<input type="text" name="userwall_wp[example_field]" value="' . esc_attr( $options['example_field'] ?? '' ) . '"/>';
     }
 
     private function init_general_secondary_settings() {
@@ -97,7 +97,7 @@ class WP_Custom_Settings_API {
 
     public function show_forms() {
         echo '<form method="post" action="options.php">';
-        settings_fields( 'threads_wp' );
+        settings_fields( 'userwall_wp' );
 
         $current_tab = $this->get_current_tab();
         switch ( $current_tab ) {

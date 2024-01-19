@@ -1,5 +1,5 @@
 <?php
-class UserWallWP_Addon_Files extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Files extends UserWall_WP_Base_Addon {
 
     public function __construct() {
         parent::__construct();

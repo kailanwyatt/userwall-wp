@@ -1,5 +1,5 @@
 <?php
-class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
     public function get_id() {
         return 'polls';
     }
@@ -13,7 +13,7 @@ class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'userwall-wp' );
+        return __( 'UserWallWP', 'userwall-wp' );
     }
 
     public function get_version() {
@@ -23,12 +23,12 @@ class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
     public function activate_addon() {
         global $wpdb;
         
-        $table_posts = $wpdb->prefix . 'threads_posts';
-        $table_polls = $wpdb->prefix . 'threads_polls';
-        $table_poll_votes = $wpdb->prefix . 'threads_poll_votes';
-        $table_poll_options = $wpdb->prefix . 'threads_poll_options';
+        $table_posts = $wpdb->prefix . 'userwall_posts';
+        $table_polls = $wpdb->prefix . 'userwall_polls';
+        $table_poll_votes = $wpdb->prefix . 'userwall_poll_votes';
+        $table_poll_options = $wpdb->prefix . 'userwall_poll_options';
 
-        // SQL query to create the 'threads_polls' table
+        // SQL query to create the 'userwall_polls' table
         $sql_query_polls = "CREATE TABLE IF NOT EXISTS $table_polls (
             poll_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             question_text TEXT NOT NULL,
@@ -41,7 +41,7 @@ class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
             FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
         )";
 
-        // SQL query to create the 'threads_poll_votes' table
+        // SQL query to create the 'userwall_poll_votes' table
         $sql_query_poll_votes = "CREATE TABLE IF NOT EXISTS $table_poll_votes (
             vote_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user_id BIGINT UNSIGNED NOT NULL,
@@ -53,13 +53,13 @@ class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
             FOREIGN KEY (poll_id) REFERENCES $table_polls(poll_id)
         )";
 
-        // SQL query to create the 'wp_threads_poll_options' table
+        // SQL query to create the 'wp_userwall_poll_options' table
         $sql_query_poll_options = "CREATE TABLE IF NOT EXISTS $table_poll_options (
             option_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             poll_id INT UNSIGNED NOT NULL,
             option_text TEXT NOT NULL,
             INDEX poll_id_index (poll_id),
-            FOREIGN KEY (poll_id) REFERENCES wp_threads_polls(poll_id)
+            FOREIGN KEY (poll_id) REFERENCES wp_userwall_polls(poll_id)
         )";
 
          // Array of SQL queries for the first 5 tables
@@ -81,9 +81,9 @@ class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
     public function deactivate_addon() {
         global $wpdb;
 
-        $table_polls = $wpdb->prefix . 'threads_polls';
-        $table_poll_votes = $wpdb->prefix . 'threads_poll_votes';
-        $table_poll_options = $wpdb->prefix . 'threads_poll_options';
+        $table_polls = $wpdb->prefix . 'userwall_polls';
+        $table_poll_votes = $wpdb->prefix . 'userwall_poll_votes';
+        $table_poll_options = $wpdb->prefix . 'userwall_poll_options';
 
         // SQL queries to drop the tables
         $sql_queries = array(

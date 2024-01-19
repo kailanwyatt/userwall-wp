@@ -1,8 +1,8 @@
 <?php if ( is_user_logged_in() && $show_form ) : ?>
 <div class="userwall-wp-form-wrapper">
     <form id="userwall-wp-post-form" enctype='multipart/form-data'>
-        <div class="threads-tab-content-wrapper">
-            <div class="threads-tab-content" data-tab="post">
+        <div class="userwall-tab-content-wrapper">
+            <div class="userwall-tab-content" data-tab="post">
                 <!-- Post content input -->
                 <div class="userwall-wp-post-section">
                     <div id="quill-editor-post-form" class="post-quill-editor"></div>
@@ -36,7 +36,7 @@
             <div class="rich-preview-container">
                 <!-- Rich preview will be displayed here -->
             </div>
-            <?php do_action( 'threads_wp_after_post_form' ); ?>
+            <?php do_action( 'userwall_wp_after_post_form' ); ?>
         </div>
         <div class="userwall-wp-post-submission-wrapper">
             <button class="submit-button">Submit</button>
@@ -44,7 +44,7 @@
     </form>
 </div>
 <?php endif; ?>
-<?php if ( $show_threads ) : ?>
+<?php if ( $show_userwall ) : ?>
 <div id="reddit-container" data-thread="<?php echo absint( $type ); ?>" data-object-id="<?php absint( $object_id ); ?>" data-thread-wrapper data-post_type="<?php echo absint( $type ); ?>" data-per_page="<?php echo absint( $per_page ); ?>" data-page="1">
     <div class="userwall-wp-reddit-thread"></div>
     <div class="loading-indicator" style="display: none;">Loading...</div>

@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_Post {
+class UserWall_WP_Post {
     /**
      * @var int
      */

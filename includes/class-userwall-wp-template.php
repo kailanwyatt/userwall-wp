@@ -1,5 +1,5 @@
 <?php
-class Threads_Template {
+class UserWall_Template {
     // Get a template from the plugin's templates folder
     public static function get_template($template_name) {
         // Check if the template file exists in the theme folder
@@ -18,10 +18,10 @@ class Threads_Template {
         // Enqueue JavaScript
         wp_enqueue_script('userwall-wp-js', USERWALL_WP_PLUGIN_URL . '/assets/js/userwall-wp.js' , array('jquery', 'wp-util', 'wp-hooks', 'jquery-ui-core'), '1.0', true);
         
-        $ajax_nonce = wp_create_nonce('threads_wp_nonce');
+        $ajax_nonce = wp_create_nonce('userwall_wp_nonce');
 
         // Create an array to pass data to JavaScript
-        $threadsWP_data = array(
+        $userwallWP_data = array(
             'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
             'nonce'    => $ajax_nonce,
             'user_id'  => get_current_user_id(),
@@ -29,7 +29,7 @@ class Threads_Template {
         );
 
         // Localize the script with the data
-        wp_localize_script('userwall-wp-js', 'threadsWPObject', apply_filters( 'thread_wp_localize_script', $threadsWP_data ) );
+        wp_localize_script('userwall-wp-js', 'userwallWPObject', apply_filters( 'thread_wp_localize_script', $userwallWP_data ) );
 
 
         // Enqueue CSS

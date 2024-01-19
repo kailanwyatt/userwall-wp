@@ -1,5 +1,5 @@
 <?php
-class Threads_WP_FileManager {
+class UserWall_WP_FileManager {
     private $upload_dir; // Directory path for file uploads
     private $post_type; // Post type (user or post)
     private $user_id; // User ID or group ID

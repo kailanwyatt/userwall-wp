@@ -19,7 +19,7 @@ class WP_Thread_Integration_Ultimate_Member {
 
     public function custom_tab_content($args) {
         $current_user_profile_id = um_profile_id();
-        echo do_shortcode('[threads_wp_post_form type="user-posts" per_page="5" object_id="' . $current_user_profile_id . '"]');
+        echo do_shortcode('[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $current_user_profile_id . '"]');
     }
 }
 
