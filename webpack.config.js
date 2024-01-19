@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
-  entry: './assets/js/threads-wp.js', // Your main JavaScript entry file
+  entry: './assets/js/userwall-wp.js', // Your main JavaScript entry file
   output: {
-    filename: 'threads-wp.js', // Output filename
+    filename: 'userwall-wp.js', // Output filename
     path: path.resolve(__dirname, 'assets/js'), // Output directory
   },
   module: {

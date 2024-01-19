@@ -197,8 +197,8 @@ class Threads_WP_Posts_Table extends WP_List_Table {
 
     public function get_bulk_actions() {
         $actions = [
-            'bulk-draft' => __('Change to Draft', 'threads-wp'),
-            'bulk-publish' => __('Publish', 'threads-wp'),
+            'bulk-draft' => __('Change to Draft', 'userwall-wp'),
+            'bulk-publish' => __('Publish', 'userwall-wp'),
         ];
     
         return $actions;

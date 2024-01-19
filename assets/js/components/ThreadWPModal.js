@@ -42,13 +42,13 @@
             };
 
             // Update content and close button visibility
-            $modal.find('.threads-wp-modal-right').html(settings.content);
+            $modal.find('.userwall-wp-modal-right').html(settings.content);
             if (!settings.showCloseBtn) {
-                $modal.find('.threads-wp-close').hide();
+                $modal.find('.userwall-wp-close').hide();
             }
 
             // Public methods
-            $modal.on('click', '.threads-wp-close', function() {
+            $modal.on('click', '.userwall-wp-close', function() {
                 closeModal();
             });
 

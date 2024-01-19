@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.ThreadsWPMention = function(options) {
+    $.fn.UserWallWPMention = function(options) {
         // Default settings
         var settings = $.extend({
             // Default settings like URL to fetch users, etc.
@@ -103,6 +103,6 @@
 
         return this;
     };
-    window.ThreadsWPMention = $.fn.ThreadsWPMention;
+    window.UserWallWPMention = $.fn.UserWallWPMention;
 }(jQuery));
 

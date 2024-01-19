@@ -20,7 +20,7 @@
     border-top: 1px solid;
   }
 
-.threads-wp-reply-editor {
+.userwall-wp-reply-editor {
     display: flex;
     flex-direction: column-reverse;
     margin-bottom: 20px;

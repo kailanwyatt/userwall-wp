@@ -1,9 +1,9 @@
 <style>
-    .threads-wp-admin-posts-wrapper {
+    .userwall-wp-admin-posts-wrapper {
         max-width: 600px
     }
     .comment-edit-form,
-    .threads-wp-activity-section {
+    .userwall-wp-activity-section {
         display: none;
     }
     .filter-container {
@@ -15,21 +15,21 @@
     }
 </style>
 <div class="wrap">
-    <h2><?php esc_html_e('Add Post', 'threads-wp' ); ?></h2>
+    <h2><?php esc_html_e('Add Post', 'userwall-wp' ); ?></h2>
     <table class="form-table">
         <tr>
             <th scope="row">
-                <label for="new_post"><?php esc_html_e('Add Post Details', 'threads-wp' ); ?></label>
+                <label for="new_post"><?php esc_html_e('Add Post Details', 'userwall-wp' ); ?></label>
             </th>
             <td>
-                <div class="threads-wp-admin-posts-wrapper">
+                <div class="userwall-wp-admin-posts-wrapper">
                     <?php echo do_shortcode( '[threads_wp_post_form show_threads="false"]'); ?>
                 </div>
             </td>
         </tr>
         <tr>
             <th scope="row">
-                <label for="posts"><?php esc_html_e('Posts', 'threads-wp' ); ?></label>
+                <label for="posts"><?php esc_html_e('Posts', 'userwall-wp' ); ?></label>
             </th>
             <td>
             <div class="filter-container">
@@ -57,7 +57,7 @@
                     
                     <button id="apply-filter">Apply Filter</button>
                 </div>
-                <div class="threads-wp-admin-posts-wrapper">
+                <div class="userwall-wp-admin-posts-wrapper">
                     <?php echo do_shortcode( '[threads_wp_post_form show_form="false"]'); ?>
                 </div>
             </td>

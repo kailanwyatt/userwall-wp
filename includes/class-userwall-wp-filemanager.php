@@ -17,7 +17,7 @@ class Threads_WP_FileManager {
         // The uploads directory path is stored in the 'path' element of the returned array
         $uploads_path = $upload_dir['basedir'];
 
-        $directory = $uploads_path . '/threads-wp/';
+        $directory = $uploads_path . '/userwall-wp/';
         if ($this->post_type === 'user') {
             $directory .= 'users-uploads/';
         } elseif ($this->post_type === 'post') {
@@ -139,12 +139,12 @@ class Threads_WP_FileManager {
         // The uploads directory path is stored in the 'path' element of the returned array
         $uploads_path = $upload_dir['basedir'];
 
-        //$directory = $uploads_path . '/threads-wp/';
+        //$directory = $uploads_path . '/userwall-wp/';
         $file_path = $this->upload_dir . $file_name;
         if (file_exists($file_path)) {
             $upload_dir = wp_upload_dir();
             $base_url = $upload_dir['baseurl'];
-            return $base_url . '/threads-wp/' . $directory . $file_name;
+            return $base_url . '/userwall-wp/' . $directory . $file_name;
         }
     
         return false; // File does not exist

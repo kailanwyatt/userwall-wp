@@ -6,7 +6,7 @@ class Threads_WP_Shortcode {
     }
 
     public function add_tmpls() {
-        include( THREADS_WP_PLUGIN_DIR . 'templates/tmpls.php');
+        include( USERWALL_WP_PLUGIN_DIR . 'templates/tmpls.php');
     }
 
     public function threads_wp_post_form_shortcode( $atts = array() ) {
@@ -32,11 +32,11 @@ class Threads_WP_Shortcode {
         // Output the post form
         ob_start();
         $post_tabs = array(
-            'post' => __( 'Post', 'threads-wp' ),
+            'post' => __( 'Post', 'userwall-wp' ),
         );
 
         $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );
-        include( THREADS_WP_PLUGIN_DIR . 'templates/post-form.php'); // Create a post form template
+        include( USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'); // Create a post form template
         return ob_get_clean();
     }
 }

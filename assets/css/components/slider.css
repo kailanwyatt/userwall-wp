@@ -4,13 +4,13 @@
     margin: 0 auto;
 }
 
-.threads-wp-slider {
+.userwall-wp-slider {
     display: flex;
     overflow: hidden;
     position: relative;
 }
 
-.thread-wp-slide {
+.userwall-wp-slide {
     flex: 0 0 100%;
     text-align: center;
 }

@@ -1,19 +1,19 @@
 <?php
-class ThreadsWP_Addon_Polls extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Polls extends Threads_WP_Base_Addon {
     public function get_id() {
         return 'polls';
     }
 
     public function get_name() {
-        return __( 'Polls', 'thread-wp' );
+        return __( 'Polls', 'userwall-wp' );
     }
 
     public function get_description() {
-        return __( 'Polls', 'thread-wp' );
+        return __( 'Polls', 'userwall-wp' );
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'thread-wp' );
+        return __( 'ThreadWP', 'userwall-wp' );
     }
 
     public function get_version() {
@@ -103,7 +103,7 @@ class ThreadsWP_Addon_Polls extends Threads_WP_Base_Addon {
     }
 
     public function add_poll_tab( $tabs = array() ) {
-        $tabs['poll'] = __( 'Poll', 'threads-wp' );
+        $tabs['poll'] = __( 'Poll', 'userwall-wp' );
         return $tabs;
     }
 }

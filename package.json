@@ -1,7 +1,7 @@
 {
-  "name": "your-project-name",
+  "name": "userwall-wp",
   "version": "1.0.0",
-  "description": "Description of your project",
+  "description": "Microblogging and forum functionality within WordPress",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,7 @@
     "build": "grunt scripts && grunt styles && webpack --config webpack.config.js"
   },
   "keywords": [],
-  "author": "Your Name",
+  "author": "UserWall WP",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.23.7",

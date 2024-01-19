@@ -1,19 +1,19 @@
 <?php
-class ThreadsWP_Addon_Reactions extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Reactions extends Threads_WP_Base_Addon {
     public function get_id() {
         return 'reactions';
     }
 
     public function get_name() {
-        return __( 'Reactions', 'thread-wp' );
+        return __( 'Reactions', 'userwall-wp' );
     }
 
     public function get_description() {
-        return __( 'Reactions', 'thread-wp' );
+        return __( 'Reactions', 'userwall-wp' );
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'thread-wp' );;
+        return __( 'ThreadWP', 'userwall-wp' );;
     }
 
     public function get_version() {
@@ -31,7 +31,7 @@ class ThreadsWP_Addon_Reactions extends Threads_WP_Base_Addon {
 
 function register_threads_wp_addons($addons) {
     // Instantiate your addon class and add it to the addons list
-    $threads_wp_poll_addon = new ThreadsWP_Poll_Addon();
+    $threads_wp_poll_addon = new UserWallWP_Poll_Addon();
     $addons['polls'] = $threads_wp_poll_addon;
 
     // You can add more addons in a similar manner if needed

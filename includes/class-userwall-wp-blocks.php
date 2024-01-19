@@ -17,19 +17,19 @@ class Threads_WP_Blocks {
     public function wp_threads_enqueue_block_editor_assets() {
         wp_enqueue_script(
             'wp-threads-block-script',
-            THREADS_WP_PLUGIN_URL . '/assets/js/wp-threads-block.js',
+            USERWALL_WP_PLUGIN_URL . '/assets/js/wp-threads-block.js',
             array('wp-blocks', 'wp-components', 'wp-editor', 'wp-element')
         );
     
         wp_enqueue_style(
             'wp-threads-block-editor-style',
-            THREADS_WP_PLUGIN_URL . '/assets/css/wp-threads-block-editor.css',
+            USERWALL_WP_PLUGIN_URL . '/assets/css/wp-threads-block-editor.css',
             array('wp-edit-blocks')
         );
     
         wp_enqueue_style(
             'wp-threads-block-style',
-            THREADS_WP_PLUGIN_URL . '/assets/css/wp-threads-block.css'
+            USERWALL_WP_PLUGIN_URL . '/assets/css/wp-threads-block.css'
         );
     }
 }

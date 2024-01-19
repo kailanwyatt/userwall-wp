@@ -26,9 +26,9 @@ class Threads_WP_Addons {
         $addons = array();
 
         // Define the folder path where your addon files are located
-        $addon_dir = THREADS_WP_PLUGIN_ADDONS_DIR;
+        $addon_dir = USERWALL_WP_PLUGIN_ADDONS_DIR;
 
-        // Use glob to find PHP files with class names starting with 'ThreadsWP_Addon_'
+        // Use glob to find PHP files with class names starting with 'UserWallWP_Addon_'
         $addon_files = glob($addon_dir . 'addon-*.php');
 
         // Loop through the found files
@@ -39,10 +39,10 @@ class Threads_WP_Addons {
             // Extract the class name from the file path
             $class_name = basename($addon_file, '.php');
             $class_name = ucfirst( str_replace( 'addon-', '', $class_name ) );
-            $class_name = 'ThreadsWP_Addon_' . $class_name;
+            $class_name = 'UserWallWP_Addon_' . $class_name;
             // Check if the class exists and if it's an instance of Threads_WP_Base_Addon
             if (class_exists($class_name) && is_subclass_of($class_name, 'Threads_WP_Base_Addon')) {
-                $addon_id = strtolower(str_replace('ThreadsWP_Addon_', '', $class_name));
+                $addon_id = strtolower(str_replace('UserWallWP_Addon_', '', $class_name));
                 // Instantiate the class and add it to the addons array
                 $addons[ $addon_id ] = new $class_name();
             }

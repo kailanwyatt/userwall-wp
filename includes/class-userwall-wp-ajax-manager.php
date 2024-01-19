@@ -44,7 +44,7 @@ class Threads_WP_AJAX_Manager {
     public function handle_post_action() {
         // Check for nonce security
         if ( ! $this->is_valid_nonce() ) {
-            wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
         }
 
         // Get the action type from the AJAX request
@@ -101,7 +101,7 @@ class Threads_WP_AJAX_Manager {
     public function threads_wp_update_comment() {
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error(array('message' => __( 'You must be logged in to update comment.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'You must be logged in to update comment.', 'userwall-wp' ) ) );
         }
 
         // Get current user ID
@@ -118,7 +118,7 @@ class Threads_WP_AJAX_Manager {
         $insert_result = $post_manager->update_comment( $comment_id, $post_content );
 
         if ( $insert_result === false ) {
-            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
         } else {
             $comments = $post_manager->get_comment_by_id( $comment_id );
             $return_data = array(
@@ -134,7 +134,7 @@ class Threads_WP_AJAX_Manager {
     public function threads_wp_update_post() {
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error(array('message' => __( 'You must be logged in to create a post.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'You must be logged in to create a post.', 'userwall-wp' ) ) );
         }
 
         // Get current user ID
@@ -154,7 +154,7 @@ class Threads_WP_AJAX_Manager {
         $insert_result = $post_manager->update_post( $post_id, $post_data );
 
         if ( $insert_result === false ) {
-            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
         } else {
             $post = $post_manager->get_post_by_id( $post_id );
             $return_data = array(
@@ -170,12 +170,12 @@ class Threads_WP_AJAX_Manager {
     public function threads_wp_save_post() {
         // Check for nonce security
         if ( ! $this->is_valid_nonce() ) {
-            wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
         }
 
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error(array('message' => __( 'You must be logged in to create a post.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'You must be logged in to create a post.', 'userwall-wp' ) ) );
         }
 
         // Get current user ID
@@ -197,7 +197,7 @@ class Threads_WP_AJAX_Manager {
         $post_manager = new Threads_WP_Post_Manager();
         $insert_result = $post_manager->create_post( $post_data );
         if ( $insert_result === false ) {
-            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'threads-wp' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
         } else {
             $post = $post_manager->get_post_by_id( $insert_result );
             $return_data = array(
@@ -249,7 +249,7 @@ class Threads_WP_AJAX_Manager {
     public function fetch_latest_thread_notice() {
         // Check for nonce security
         if ( ! $this->is_valid_nonce() ) {
-            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
         }
 
         $post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
@@ -261,7 +261,7 @@ class Threads_WP_AJAX_Manager {
     public function fetch_latest_thread() {
         // Check for nonce security
         if ( ! $this->is_valid_nonce() ) {
-            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'threads-wp' ) ) );
+            //wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
         }
 
         $post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
@@ -297,7 +297,7 @@ class Threads_WP_AJAX_Manager {
     public function post_comment() {
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error(array('message' => __( 'You must be logged in to add a comment.', 'threads-wp' ) ) );
+            wp_send_json_error(array('message' => __( 'You must be logged in to add a comment.', 'userwall-wp' ) ) );
         }
 
         // Get current user ID
@@ -317,7 +317,7 @@ class Threads_WP_AJAX_Manager {
         $insert_result = $post_manager->add_comment( $current_user_id, $post_id, $post_content );
 
         if ( $insert_result === false ) {
-            wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'threads-wp' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'userwall-wp' ) ) );
         } else {
             $comments = $post_manager->get_comment_by_id( $insert_result );
             $return_data = array(
@@ -344,7 +344,7 @@ class Threads_WP_AJAX_Manager {
         $insert_result = $post_manager->add_comment( $current_user_id, $post_id, $comment_content, $parent_comment );
 
         if ( $insert_result === false ) {
-            wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'threads-wp' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'userwall-wp' ) ) );
         } else {
             $comments = $post_manager->get_comment_by_id( $insert_result );
             $return_data = array(

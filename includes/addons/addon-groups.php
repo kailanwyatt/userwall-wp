@@ -1,19 +1,19 @@
 <?php
-class ThreadsWP_Addon_Groups extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Groups extends Threads_WP_Base_Addon {
     public function get_id() {
         return 'groups';
     }
 
     public function get_name() {
-        return __( 'Groups', 'thread-wp' );
+        return __( 'Groups', 'userwall-wp' );
     }
 
     public function get_description() {
-        return __( 'Groups', 'thread-wp' );
+        return __( 'Groups', 'userwall-wp' );
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'thread-wp' );
+        return __( 'ThreadWP', 'userwall-wp' );
     }
 
     public function get_version() {

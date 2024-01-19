@@ -1,5 +1,5 @@
 <?php
-require_once(  THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-settings.php' );
+require_once(  USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-settings.php' );
 
 
 class Threads_WP_Admin {
@@ -12,9 +12,9 @@ class Threads_WP_Admin {
     private $option_active_addons = 'threads_wp_active_addons';
 
     private function __construct() {
-        $this->dashboard_page_key = 'threads-wp-dashboard';
+        $this->dashboard_page_key = 'userwall-wp-dashboard';
         add_action('admin_menu', array($this, 'add_menu'));
-        $this->settings_api = new WP_Custom_Settings_API( 'threads-wp-settings' );
+        $this->settings_api = new WP_Custom_Settings_API( 'userwall-wp-settings' );
         add_action( 'admin_init', array( $this->settings_api, 'admin_init' ) );
         add_action( 'admin_init', array( $this, 'process_addon_action' ) );
         add_action('admin_notices', array( $this, 'admin_notices' ) );
@@ -51,22 +51,22 @@ class Threads_WP_Admin {
         $addons_manager = new Threads_WP_Addons();
 
         // Additional menus
-        $this->add_submenu('Posts', 'Posts', 'threads-wp-posts', array($this, 'posts_page'));
-        $this->add_submenu('Comments', 'Comments', 'threads-wp-comments', array($this, 'comments_page'));
+        $this->add_submenu('Posts', 'Posts', 'userwall-wp-posts', array($this, 'posts_page'));
+        $this->add_submenu('Comments', 'Comments', 'userwall-wp-comments', array($this, 'comments_page'));
         if ( $addons_manager->is_active( 'groups' ) ) {
-            $this->add_submenu('Groups', 'Groups', 'threads-wp-groups', array($this, 'groups_page'));
+            $this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page'));
         }
         if ( $addons_manager->is_active( 'polls' ) ) {
-            $this->add_submenu('Polls', 'Polls', 'threads-wp-polls', array($this, 'polls_page'));
+            $this->add_submenu('Polls', 'Polls', 'userwall-wp-polls', array($this, 'polls_page'));
         }
         if ( $addons_manager->is_active( 'gallery' ) ) {
-            $this->add_submenu('Media', 'Media', 'threads-wp-media', array($this, 'media_page'));
-            $this->add_submenu('Albums', 'Albums', 'threads-wp-albums', array($this, 'albums_page'));
+            $this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page'));
+            $this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page'));
         }
-        $this->add_submenu('Reports', 'Reports', 'threads-wp-reports', array($this, 'reports_page'));
-        $this->add_submenu('User Reputation', 'User Reputation', 'threads-wp-user-reputation', array($this, 'user_reputation_page'));
-        $this->add_submenu('Addons', 'Addons', 'threads-wp-addons', array($this, 'addons_page'));
-        $this->add_submenu('Settings', 'Settings', 'threads-wp-settings', array($this, 'settings_page'));
+        $this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page'));
+        $this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page'));
+        $this->add_submenu('Addons', 'Addons', 'userwall-wp-addons', array($this, 'addons_page'));
+        $this->add_submenu('Settings', 'Settings', 'userwall-wp-settings', array($this, 'settings_page'));
     }
 
     private function add_submenu($title, $menu_title, $menu_slug, $callback) {
@@ -124,23 +124,23 @@ class Threads_WP_Admin {
     }
 
     private function add_post_template() {
-        include( THREADS_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php' );
-        include( THREADS_WP_PLUGIN_DIR . '/templates/tmpls.php' );
+        include( USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php' );
+        include( USERWALL_WP_PLUGIN_DIR . '/templates/tmpls.php' );
     }
 
     private function posts_view_template() {
         if ( ! class_exists( 'WP_List_Table' ) ) {
             require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
         }
-        require_once(  THREADS_WP_PLUGIN_DIR . 'includes/admin/tables/posts.php' );
+        require_once(  USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/posts.php' );
         $posts_table = new Threads_WP_Posts_Table();
 
         echo '<div class="wrap"><h1>Manage Posts</h1>';
         $posts_table->display_notices();
         ?>
-        <a href="<?php echo admin_url( 'admin.php?page=threads-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'threads-wp' ); ?></a>
+        <a href="<?php echo admin_url( 'admin.php?page=userwall-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
         <form method="get" action="<?php echo admin_url('admin.php'); ?>">
-            <input type="hidden" name="page" value="threads-wp-posts" />
+            <input type="hidden" name="page" value="userwall-wp-posts" />
             <?php
             //$posts_table->prepare_items();
             //$posts_table->search_box('Search Posts', 'post_title');
@@ -151,7 +151,7 @@ class Threads_WP_Admin {
     }
 
     public function addons_page() {
-        include( THREADS_WP_PLUGIN_DIR . '/includes/admin/templates/addons.php' );
+        include( USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/addons.php' );
     }
 
     public function settings_page() {
@@ -176,7 +176,7 @@ class Threads_WP_Admin {
             $addons = $addons_manager->register_addons();
             $addon = $addons_manager->get_addon_by_id( $addon_id );
             echo '<div class="notice notice-success is-dismissible">';
-            echo '<p>' . sprintf(__('Addon "%s" has been deactivated.', 'threads-wp'), $addon->get_name() ) . '</p>';
+            echo '<p>' . sprintf(__('Addon "%s" has been deactivated.', 'userwall-wp'), $addon->get_name() ) . '</p>';
             echo '</div>';
         }
     }
@@ -187,7 +187,7 @@ class Threads_WP_Admin {
             $addon_id = sanitize_text_field($_POST['addon_id']);
             $active_addons = get_option( $this->option_active_addons, []);
             $active_addons_ids = array_keys( $active_addons );
-            $redirect_url = admin_url('admin.php?page=threads-wp-addons');
+            $redirect_url = admin_url('admin.php?page=userwall-wp-addons');
             // Instantiate the addon management class
             $addons_manager = new Threads_WP_Addons();
             $addons_manager->register_addons();

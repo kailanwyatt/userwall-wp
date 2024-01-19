@@ -1,5 +1,5 @@
 <?php
-class ThreadsWP_Addon_Files extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Files extends Threads_WP_Base_Addon {
 
     public function __construct() {
         parent::__construct();
@@ -18,7 +18,7 @@ class ThreadsWP_Addon_Files extends Threads_WP_Base_Addon {
     }
 
     public function get_author() {
-        return 'ThreadsWP'; // Author of the Files addon
+        return 'UserWallWP'; // Author of the Files addon
     }
 
     public function get_version() {

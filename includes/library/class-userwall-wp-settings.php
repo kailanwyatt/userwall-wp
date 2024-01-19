@@ -73,7 +73,7 @@ class WP_Custom_Settings_API {
         echo '<h2 class="nav-tab-wrapper">';
         foreach ( $this->tabs as $tab => $name ) {
             $class = ( $tab == $this->get_current_tab() ) ? ' nav-tab-active' : '';
-            echo "<a class='nav-tab$class' href='?page=threads-wp-settings&tab=$tab'>$name</a>";
+            echo "<a class='nav-tab$class' href='?page=userwall-wp-settings&tab=$tab'>$name</a>";
         }
         echo '</h2>';
 
@@ -81,7 +81,7 @@ class WP_Custom_Settings_API {
             echo '<ul class="subsubsub">';
             foreach ( $this->subtabs[ $this->get_current_tab() ] as $subtab => $name ) {
                 $class = ( $subtab == $this->get_current_subtab() ) ? ' current' : '';
-                echo "<li><a class='$class' href='?page=threads-wp-settings&tab={$this->get_current_tab()}&subtab=$subtab'>$name</a> | </li>";
+                echo "<li><a class='$class' href='?page=userwall-wp-settings&tab={$this->get_current_tab()}&subtab=$subtab'>$name</a> | </li>";
             }
             echo '</ul>';
         }

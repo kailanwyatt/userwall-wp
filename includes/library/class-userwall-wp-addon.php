@@ -75,7 +75,7 @@ class Threads_WP_Base_Addon {
 
     public function add_admin_footer_js() {
         $current_screen = get_current_screen();
-        if ( $current_screen->id === "threads-wp_page_threads-wp-posts" ) {
+        if ( $current_screen->id === "userwall-wp_page_userwall-wp-posts" ) {
             $this->add_js();
         }
     }

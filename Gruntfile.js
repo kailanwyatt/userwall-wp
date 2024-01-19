@@ -3,17 +3,17 @@ module.exports = function(grunt) {
       concat: {
         js: {
           src: ['node_modules/quill/dist/quill.js', 'assets/js/components/*.js'],
-          dest: 'assets/js/threads-wp.js',
+          dest: 'assets/js/userwall-wp.js',
         },
         css: {
           src: ['node_modules/quill/dist/quill.snow.css', 'assets/css/components/*.css'],
-          dest: 'assets/css/threads-wp.css',
+          dest: 'assets/css/userwall-wp.css',
         },
       },
       uglify: {
         js: {
-          src: 'assets/js/threads-wp.js',
-          dest: 'assets/js/threads-wp.min.js',
+          src: 'assets/js/userwall-wp.js',
+          dest: 'assets/js/userwall-wp.min.js',
         },
       },
       watch: {

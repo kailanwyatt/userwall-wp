@@ -1,5 +1,5 @@
 /* Style the form container */
-#threads-wp-post-form {
+#userwall-wp-post-form {
     background-color: #fff;
     border: 1px solid #e1e8ed;
     padding: 16px;
@@ -9,7 +9,7 @@
 }
 
 /* Style the text area for post content */
-#threads-wp-post-content {
+#userwall-wp-post-content {
     width: 100%;
     min-height: 100px;
     border: none;
@@ -22,7 +22,7 @@
 }
 
 /* Style the post button */
-#threads-wp-post-button {
+#userwall-wp-post-button {
     background-color: #1da1f2;
     color: #fff;
     border: none;
@@ -32,7 +32,7 @@
 }
 
 /* Style the post button on hover */
-#threads-wp-post-button:hover {
+#userwall-wp-post-button:hover {
     background-color: #0d86c9;
 }
 
@@ -83,7 +83,7 @@ input[type="text"] {
     display: block;
 }
 
-.threads-wp-reddit-thread {
+.userwall-wp-reddit-thread {
     background-color: #f7f7f7;
 }
 
@@ -127,17 +127,17 @@ input[type="text"] {
     border: 1px solid #ccc;
 }
 
-.thread-wp-gallery-arrow {
+.userwall-wp-gallery-arrow {
     width: 40px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.3);
     height: 40px;
 }
 
-.thread-wp-gallery-arrow svg {
+.userwall-wp-gallery-arrow svg {
 
 }
 
-.threads-wp-wall-time {
+.userwall-wp-wall-time {
     cursor: pointer;
 }

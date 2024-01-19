@@ -1,5 +1,5 @@
 /* Style each individual thread */
-.threads-wp-thread {
+.userwall-wp-thread {
     background-color: #ffffff;
     border: 1px solid #ccc;
     padding: 10px;
@@ -8,41 +8,41 @@
 }
 
 /* Style the thread content */
-.threads-wp-thread-content {
+.userwall-wp-thread-content {
     font-size: 16px;
 }
 
 /* Style the thread author */
-.threads-wp-thread-author {
+.userwall-wp-thread-author {
     font-size: 12px;
     color: #666;
 }
 
 /* Style the comment section */
-.threads-wp-comment-section {
+.userwall-wp-comment-section {
     margin-top: 10px;
 }
 
 /* Style each individual comment */
-.threads-wp-comment {
+.userwall-wp-comment {
     padding: 10px;
     margin-bottom: 10px;
     position: relative;
 }
 
 /* Style the comment content */
-.threads-wp-comment-content {
+.userwall-wp-comment-content {
     font-size: 14px;
 }
 
 /* Style the comment author */
-.threads-wp-comment-author {
+.userwall-wp-comment-author {
     font-size: 12px;
     color: #888;
 }
 
 /* Style the reply button */
-.threads-wp-reply-button {
+.userwall-wp-reply-button {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -51,12 +51,12 @@
 }
 
 /* Style the reply button on hover */
-.threads-wp-reply-button:hover {
+.userwall-wp-reply-button:hover {
     background-color: #0056b3;
 }
 
 /* Style the ellipsis icon */
-.threads-wp-ellipsis {
+.userwall-wp-ellipsis {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -65,7 +65,7 @@
 }
 
 /* Style the actions area */
-.threads-wp-thread-actions {
+.userwall-wp-thread-actions {
     position: absolute;
     top: 40px; /* Adjust the position as needed */
     right: 10px;
@@ -79,7 +79,7 @@
 }
 
 /* Style the actions */
-.threads-wp-action {
+.userwall-wp-action {
     font-size: 14px;
     color: #007bff;
     display: block; /* Make each action appear on a new line */
@@ -88,51 +88,51 @@
 }
 
 /* Style the actions on hover */
-.threads-wp-action:hover {
+.userwall-wp-action:hover {
     text-decoration: underline;
 }
 
-.thread-wp-wall-image {
+.userwall-wp-wall-image {
     width: 100%;
     height: auto;
 }
 
-.threads-wp-author-section {
+.userwall-wp-author-section {
     display: flex;
 }
 
-.threads-wp-author h3 {
+.userwall-wp-author h3 {
     margin: 0px;
     font-size: 1.2rem;
 }
 
-.threads-wp-author-image-wrapper {
+.userwall-wp-author-image-wrapper {
     margin-right: 10px;
 }
 
-.threads-wp-author-image-wrapper img {
+.userwall-wp-author-image-wrapper img {
     vertical-align: middle;
     width: 50px;
     height: 50px;
     border-radius: 50%;
 }
 
-.threads-wp-wall-time {
+.userwall-wp-wall-time {
     font-size: 0.8rem;
 }
 
-.threads-wp-activity-section {
+.userwall-wp-activity-section {
     display: flex;
     justify-content: space-around;
     padding-top: 20px;
 }
 
-.threads-wp-activity-block {
+.userwall-wp-activity-block {
     display: flex;
     align-items: center;
 }
 
-.threads-wp-activity-section  .thread-wp-comment-img {
+.userwall-wp-activity-section  .userwall-wp-comment-img {
     width: 20px;  /* Set width equal to the SVG width */
     height: 20px; /* Set height equal to the SVG height */
     text-align: center; /* To center the text horizontally */
@@ -141,24 +141,24 @@
     margin-right: 4px;
 }
 
-.threads-wp-activity-section svg {
+.userwall-wp-activity-section svg {
     width: 20px;
     height: 20px;
 }
 
 
-.threads-wp-activity-section, 
-.threads-wp-author-section,
+.userwall-wp-activity-section, 
+.userwall-wp-author-section,
 .hreads-wp-thread-content,
 .threads-edit-post-section,
 .ql-container {
     margin-bottom: 20px;
 }
 
-.threads-wp-reddit-thread input[type="submit"],
-.threads-wp-form-wrapper .submit-button,
+.userwall-wp-reddit-thread input[type="submit"],
+.userwall-wp-form-wrapper .submit-button,
 .comment-submit-button,
-.threads-wp-reply-button {
+.userwall-wp-reply-button {
     border: 0px;
     padding: 10px 30px;
     background-color: #0079d3;
@@ -168,18 +168,18 @@
     border-radius: 6px;
 }
 
-.threads-wp-comment-count.threads-wp-activity-block,
-.threads-wp-reaction-count.threads-wp-activity-block {
+.userwall-wp-comment-count.userwall-wp-activity-block,
+.userwall-wp-reaction-count.userwall-wp-activity-block {
     cursor: pointer;
 }
 
-.threads-wp-post-types ul {
+.userwall-wp-post-types ul {
     display: flex;
     list-style: none;
     justify-content: space-around;
 }
 
 
-.threads-wp-post-types ul a {
+.userwall-wp-post-types ul a {
     text-decoration: none;
 }

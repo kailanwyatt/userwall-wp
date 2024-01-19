@@ -1,19 +1,23 @@
 <?php
 /**
- * Plugin Name: Threads WP
- * Description: Your plugin description here.
+ * Plugin Name: UserWall WP
+ * Description: A versatile plugin that combines microblogging and forum functionality within WordPress, enhancing user engagement and interaction.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: UserWall WP
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: userwall-wp
+ * Domain Path: /languages
  */
 
 // Define plugin constants
-define('THREADS_WP_PLUGIN_FILE', __FILE__);
-define('THREADS_WP_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('THREADS_WP_PLUGIN_ADDONS_DIR', plugin_dir_path(__FILE__) . 'includes/addons/');
-define('THREADS_WP_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('USERWALL_WP_PLUGIN_FILE', __FILE__);
+define('USERWALL_WP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('USERWALL_WP_PLUGIN_ADDONS_DIR', plugin_dir_path(__FILE__) . 'includes/addons/');
+define('USERWALL_WP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-require_once( THREADS_WP_PLUGIN_DIR . 'activation.php');
-require_once( THREADS_WP_PLUGIN_DIR . 'deactivation.php');
+require_once( USERWALL_WP_PLUGIN_DIR . 'activation.php');
+require_once( USERWALL_WP_PLUGIN_DIR . 'deactivation.php');
 
 // Register the activation hook
 register_activation_hook(__FILE__, 'threads_wp_activate');
@@ -23,27 +27,27 @@ register_activation_hook(__FILE__, 'threads_wp_activate');
 register_deactivation_hook(__FILE__, 'threads_wp_deactivate');
 
 // Include the addon management class (Threads_WP_Addons)
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-addon.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/library/class-threads-wp-post.php' );
-include_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-template.php' );
-include_once THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-addons.php';
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-admin.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-blocks.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-ajax-manager.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-post-manager.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-template.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-shortcode.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-filemanager.php' );
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/class-threads-wp-table-manager.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php' );
+include_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php' );
+include_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-addons.php';
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-admin.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-blocks.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-ajax-manager.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-post-manager.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-shortcode.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-filemanager.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-table-manager.php' );
 
 // Create an instance of the Threads_WP_Addons class
 $addons_manager = new Threads_WP_Addons();
 $addons_manager->load_addons();
 
-require_once( THREADS_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
 function threads_wp_loaded() {
     if ( class_exists('UM') ) {
-        //require_once( THREADS_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
+        //require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
     }
 }
 add_action( 'wp', 'threads_wp_loaded' );
@@ -133,7 +137,7 @@ if (!class_exists('Threads_WP')) {
 
 function add_type_attribute($tag, $handle, $src) {
     // if not your script, do nothing and return original $tag
-    if ( 'threads-wp-js' !== $handle ) {
+    if ( 'userwall-wp-js' !== $handle ) {
         return $tag;
     }
     // change the script tag by adding type="module" and return it.

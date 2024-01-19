@@ -1,5 +1,5 @@
 <?php
-class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
+class UserWallWP_Addon_Gallery extends Threads_WP_Base_Addon {
     private $table;
 
     public function __construct() {
@@ -13,15 +13,15 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
     }
 
     public function get_name() {
-        return __( 'Gallery', 'thread-wp' );
+        return __( 'Gallery', 'userwall-wp' );
     }
 
     public function get_description() {
-        return __( 'Gallery', 'thread-wp' );
+        return __( 'Gallery', 'userwall-wp' );
     }
 
     public function get_author() {
-        return __( 'ThreadWP', 'thread-wp' );
+        return __( 'ThreadWP', 'userwall-wp' );
     }
 
     public function get_version() {
@@ -109,7 +109,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
     }
 
     public function add_tab( $tabs = array() ) {
-        $tabs['image'] = __( 'Image', 'threads-wp' );
+        $tabs['image'] = __( 'Image', 'userwall-wp' );
         return $tabs;
     }
 
@@ -249,7 +249,7 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
                         console.log('Modal closed.');
                     }
                 })[0];
-                jQuery( document ).on( 'click', '.thread-wp-wall-image', function( e ) {
+                jQuery( document ).on( 'click', '.userwall-wp-wall-image', function( e ) {
                     e.preventDefault();
                     imageModal.openModal();
                 });
@@ -262,24 +262,24 @@ class ThreadsWP_Addon_Gallery extends Threads_WP_Base_Addon {
                 wp.hooks.addAction('threads_wp_post_rendered', 'customAction', function(post){
                     var threadDiv;
                     if ( post.images && post.images.length > 0 ) {
-                        threadDiv = jQuery('.threads-wp-thread[data-postid="' + post.post_id + '"]');
-                        threadDiv.find('.threads-wp-thread-content').after( `<div class="threads-wp-content-images threads-wp-slider threads-wp-image-slider" data-gallery="` + post.post_id + `"></div>` );
+                        threadDiv = jQuery('.userwall-wp-thread[data-postid="' + post.post_id + '"]');
+                        threadDiv.find('.userwall-wp-thread-content').after( `<div class="userwall-wp-content-images userwall-wp-slider userwall-wp-image-slider" data-gallery="` + post.post_id + `"></div>` );
                         jQuery.each(post.images, function(i, image ) {
-                            threadDiv.find('.threads-wp-content-images').prepend(
-                                `<div class="threads-wp-content-image-item thread-wp-slide" data-media_id="${image.media_id}"><img class="thread-wp-wall-image" src="${image.url}" /></div>`
+                            threadDiv.find('.userwall-wp-content-images').prepend(
+                                `<div class="userwall-wp-content-image-item userwall-wp-slide" data-media_id="${image.media_id}"><img class="userwall-wp-wall-image" src="${image.url}" /></div>`
                             );
                         });
 
 
-                        jQuery(".threads-wp-image-slider").ThreadWPSlider({
-                            slideClass: 'thread-wp-slide',
+                        jQuery(".userwall-wp-image-slider").ThreadWPSlider({
+                            slideClass: 'userwall-wp-slide',
                             slideWrapperClass: 'slider-container',
                             showArrows: true,
-                            leftArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-left><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            leftArrowHTML: `<span class="userwall-wp-gallery-arrow" data-slide-left><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
 </svg>
 </span>`,
-                            rightArrowHTML: `<span class="thread-wp-gallery-arrow" data-slide-right><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            rightArrowHTML: `<span class="userwall-wp-gallery-arrow" data-slide-right><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
 </svg>
 </span>`,
