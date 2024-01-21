@@ -2,6 +2,7 @@
 class WP_Custom_Settings_API {
     private $tabs = array();
     private $subtabs = array();
+    private $options = array();
 
     public function __construct() {
         $this->tabs = array(
@@ -16,6 +17,8 @@ class WP_Custom_Settings_API {
             ),
             // Advanced tab doesn't have subtabs for this example.
         );
+
+        $this->options = get_option( 'userwall_wp' );
     }
 
     public function admin_init() {
@@ -33,12 +36,233 @@ class WP_Custom_Settings_API {
             'wp_custom_general_main'
         );
 
+        $this->get_field(
+            array(
+                'type' => 'pages_dropdown',
+                'name' => 'user_page',
+                'label' => __( 'User Page', 'userwall_wp' ),
+            )
+        );
+        
+        $this->get_field(
+            array(
+                'type' => 'pages_dropdown',
+                'name' => 'single_post_page',
+                'label' => __( 'Single Post Page', 'userwall_wp' ),
+            )
+        );
+        
+        $this->get_field(
+            array(
+                'type' => 'pages_dropdown',
+                'name' => 'post_index_page',
+                'label' => __( 'Post Index Page', 'userwall_wp' ),
+            )
+        );
+        
+        $this->get_field(
+            array(
+                'type' => 'select',
+                'name' => 'post_types',
+                'label' => __( 'Post Types', 'userwall_wp' ),
+                'options' => array(
+                    'post' => 'Post',
+                    'page' => 'Page',
+                    'custom_post_type_1' => 'Custom Post Type 1',
+                    'custom_post_type_2' => 'Custom Post Type 2',
+                    // Add more post types as needed
+                ),
+            )
+        );
+
+        // Character Limit Field
+        $this->get_field(
+            array(
+                'type' => 'text',
+                'name' => 'character_limit',
+                'label' => __( 'Character Limit', 'userwall_wp' ),
+            )
+        );
+
+        // Display Settings Fields
+        $this->get_field(
+            array(
+                'type' => 'checkbox',
+                'name' => 'content_truncation',
+                'label' => __( 'Content Truncation', 'userwall_wp' ),
+            )
+        );
+
+        $this->get_field(
+            array(
+                'type' => 'checkbox',
+                'name' => 'read_more_link',
+                'label' => __( 'Read More Link', 'userwall_wp' ),
+            )
+        );
+
+        $this->get_field(
+            array(
+                'type' => 'text',
+                'name' => 'template_customization',
+                'label' => __( 'Template Customization', 'userwall_wp' ),
+            )
+        );
+
+        // Editor Settings Fields
+        $this->get_field(
+            array(
+                'type' => 'checkbox',
+                'name' => 'editor_options',
+                'label' => __( 'Editor Options', 'userwall_wp' ),
+                'options' => array(
+                    'bold'      => __( 'Bold', 'userwall-wp' ),
+                    'italic'    => __( 'Italic', 'userwall-wp' ),
+                    'underline' => __( 'Underline', 'userwall-wp' ),
+                    'strike'    => __( 'Strike', 'userwall-wp' ),
+                    'link'      => __( 'Link', 'userwall-wp' ),
+                    'list'      => __( 'List', 'userwall-wp' ),
+                    'header'    => __( 'Headers', 'userwall-wp' ),
+                    'blockquote' => __( 'Blockquote', 'userwall-wp' ),
+                    'code-block' => __( 'Code Block', 'userwall-wp' ),
+                ),
+            )
+        );
+
+        $this->get_field(
+            array(
+                'type' => 'checkbox',
+                'name' => 'emoji_picker',
+                'label' => __( 'Emoji Picker', 'userwall_wp' ),
+            )
+        );
+
+        // Comment Settings Fields
+        $this->get_field(
+            array(
+                'type' => 'text',
+                'name' => 'comment_character_limit',
+                'label' => __( 'Comment Character Limit', 'userwall_wp' ),
+            )
+        );
+
+        $this->get_field(
+            array(
+                'type' => 'text',
+                'name' => 'comment_reply_options',
+                'label' => __( 'Comment Reply Options', 'userwall_wp' ),
+            )
+        );
+
+        // User Permissions Field
+        /*$this->get_field(
+            array(
+                'type' => 'select',
+                'name' => 'access_control',
+                'label' => __( 'Access Control', 'userwall_wp' ),
+                'options' => array(
+                    'admin' => 'Admin',
+                    'editor' => 'Editor',
+                    'author' => 'Author',
+                    'contributor' => 'Contributor',
+                    'subscriber' => 'Subscriber',
+                    // Add more user roles as needed
+                ),
+            )
+        );*/
+    }
+
+    /**
+     * Generate a settings field based on field type.
+     *
+     * @param array $args {
+     *     An array of field configuration options.
+     *
+     *     @type string   $type         The type of field (e.g., 'text', 'textarea', 'select', 'checkbox', 'radio').
+     *     @type string   $name         The name of the field.
+     *     @type string   $value        The current value of the field (optional).
+     *     @type string   $label        The label for the field.
+     *     @type array    $options      Options for select and radio fields (optional).
+     *     @type string   $description  Description or additional information about the field (optional).
+     *     @type string   $section      The section where the field belongs.
+     * }
+     */
+    private function get_field( $args = array() ) {
+        $defaults = array(
+            'type' => 'text',
+            'name' => '',
+            'value' => $this->options[ $args['name'] ] ?? '',
+            'label' => '',
+            'options' => array(),
+            'description' => '',
+            'section' => 'wp_custom_general_main',
+        );
+
+        $args = wp_parse_args( $args, $defaults );
+        $input = '';
+
+        switch( $args['type'] ) {
+            case 'text':
+                $input = '<input type="text" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" value="' . esc_attr( $args['value'] ?? '' ) . '"/>';
+                break;
+            case 'textarea':
+                $input = '<textarea name="userwall_wp[' . esc_attr( $args['name'] ) . ']">' . esc_textarea( $args['value'] ?? '' ) . '</textarea>';
+                break;
+            case 'select':
+                $input = '<select name="userwall_wp[' . esc_attr( $args['name'] ) . ']">';
+                foreach ( $args['options'] as $option_value => $option_label ) {
+                    $selected = selected( $args['value'], $option_value, false );
+                    $input .= '<option value="' . esc_attr( $option_value ) . '" ' . $selected . '>' . esc_html( $option_label ) . '</option>';
+                }
+                $input .= '</select>';
+                break;
+            case 'checkbox':
+                
+                if ( ! empty( $args['options'] ) ) {
+                    $checked = '';
+                    foreach( $args['options'] as $option_key => $option ) {
+                        if ( ! empty( $args['value'] ) && is_array( $args['value'] ) ) {
+                            $checked = checked( in_array( $option_key, array_keys( $args['value'] ) ), true, false );
+                        }
+                        $input.= '<div><label>';
+                        $input.= '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . '][' . $option_key . ']" ' . $checked . '/>';
+                        $input.= esc_html( $option ) . '</label></div>';
+                    }
+                } else {
+                    $checked = checked( $args['value'], 'on', false );
+                    $input = '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" ' . $checked . '/>';
+                }
+                break;
+            case 'radio':
+                $input = '';
+                foreach ( $args['options'] as $option_value => $option_label ) {
+                    $checked = checked( $args['value'], $option_value, false );
+                    $input .= '<input type="radio" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" value="' . esc_attr( $option_value ) . '" ' . $checked . '/> ' . esc_html( $option_label ) . '<br>';
+                }
+                break;
+            case 'pages_dropdown':
+                $input = '<select name="userwall_wp[' . esc_attr( $args['name'] ) . ']">';
+    
+                // Get the list of pages
+                $pages = get_pages();
+    
+                foreach ( $pages as $page ) {
+                    $selected = selected( $args['value'], $page->ID, false );
+                    $input .= '<option value="' . esc_attr( $page->ID ) . '" ' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+                }
+    
+                $input .= '</select>';
+                break;
+        }
+
         add_settings_field(
-            'example_field',
-            __( 'Example Field', 'wp-custom-admin-settings-panel' ),
-            array( $this, 'example_field_callback' ),
-            'wp_custom_general_main',
-            'wp_custom_general_main'
+            $args['name'],
+            $args['label'],
+            function () use ( $input ) {
+                echo $input;
+            },
+            $args['section'],
+            $args['section']
         );
     }
 

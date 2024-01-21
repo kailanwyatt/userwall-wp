@@ -29,8 +29,12 @@ register_deactivation_hook(__FILE__, 'userwall_wp_deactivate');
 // Include the addon management class (UserWall_WP_Addons)
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php' );
+require_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-profile.php' );
 include_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php' );
-include_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-addons.php';
+include_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-core.php' );
+include_once( USERWALL_WP_PLUGIN_DIR . 'includes/helper-functions.php' );
+include_once( USERWALL_WP_PLUGIN_DIR . 'includes/library/icons.php' );
+include_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-addons.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-admin.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-blocks.php' );
 require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-ajax-manager.php' );
@@ -44,13 +48,6 @@ require_once( USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-table-manager
 $addons_manager = new UserWall_WP_Addons();
 $addons_manager->load_addons();
 
-require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
-function userwall_wp_loaded() {
-    if ( class_exists('UM') ) {
-        //require_once( USERWALL_WP_PLUGIN_DIR . 'includes/integrations/ultimate-member.php' );
-    }
-}
-add_action( 'wp', 'userwall_wp_loaded' );
 // Autoloader for include files (excluding addons)
 //spl_autoload_register('userwall_wp_autoload');
 

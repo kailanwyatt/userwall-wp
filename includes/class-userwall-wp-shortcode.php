@@ -2,6 +2,7 @@
 class UserWall_WP_Shortcode {
     public function __construct() {
         add_shortcode('userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode'), 10, 1 );
+        add_shortcode('userwall_wp_profile', array( $this, 'userwall_wp_profile_shortcode'), 10, 1 );
         add_action( 'wp_footer', array( $this, 'add_tmpls' ) );
     }
 
@@ -37,6 +38,31 @@ class UserWall_WP_Shortcode {
 
         $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );
         include( USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'); // Create a post form template
+        return ob_get_clean();
+    }
+
+    public function userwall_wp_profile_shortcode( $atts = array() ) {
+        // Extract shortcode attributes with defaults
+        $atts = shortcode_atts(
+            array(
+                'type'         => 'posts',
+                'per_page'     => '30',
+                'page'         => 1,
+                'object_id'    => 0,
+                'show_userwall' => true,
+                'show_form' => true
+            ),
+            $atts,
+            'userwall_wp_post_form'
+        );
+        $args['profile_tab'] = get_query_var('profile_tab');
+        $args['profile_id'] = get_query_var('profile_id');
+        if ( ! $args['profile_tab'] ) {
+            $args['profile_tab'] = 'main';
+        }
+        
+        ob_start();
+        uswp_get_template( 'profile.php', $args );
         return ob_get_clean();
     }
 }

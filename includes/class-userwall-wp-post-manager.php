@@ -42,7 +42,7 @@ class UserWall_WP_Post_Manager {
             $author_name = $user->display_name;
 
             // Get the author URL
-            $author_url = get_author_posts_url($user_id);
+            $author_url = user_wall_get_user_profile_url( $user->user_login );
 
             // Get the avatar URL
             $author_avatar_url = get_avatar_url( $user_id, apply_filters( 'userwall_wp_avatar_size', array('size' => 50), $user_id ) );
