@@ -64,7 +64,6 @@ class UserWall_WP_AJAX_Manager {
                    
                     $posts = $post_manager->delete_post( $post_id );
                 } else {
-                    error_log( 'Can not delete ' );
                 }
                 break;
             case 'Block':

@@ -6,16 +6,15 @@ class WP_Custom_Settings_API {
 
     public function __construct() {
         $this->tabs = array(
-            'general' => __( 'General', 'wp-custom-admin-settings-panel' ),
-            'advanced' => __( 'Advanced', 'wp-custom-admin-settings-panel' )
+            'general' => __( 'General', 'userwall-wp' ),
+            'advanced' => __( 'Advanced', 'userwall-wp' )
         );
 
         $this->subtabs = array(
             'general' => array(
-                'main' => __( 'Main', 'wp-custom-admin-settings-panel' ),
-                'secondary' => __( 'Secondary', 'wp-custom-admin-settings-panel' )
+                'main' => __( 'Main', 'userwall-wp' ),
+                'secondary' => __( 'Secondary', 'userwall-wp' )
             ),
-            // Advanced tab doesn't have subtabs for this example.
         );
 
         $this->options = get_option( 'userwall_wp' );
@@ -153,23 +152,6 @@ class WP_Custom_Settings_API {
                 'label' => __( 'Comment Reply Options', 'userwall_wp' ),
             )
         );
-
-        // User Permissions Field
-        /*$this->get_field(
-            array(
-                'type' => 'select',
-                'name' => 'access_control',
-                'label' => __( 'Access Control', 'userwall_wp' ),
-                'options' => array(
-                    'admin' => 'Admin',
-                    'editor' => 'Editor',
-                    'author' => 'Author',
-                    'contributor' => 'Contributor',
-                    'subscriber' => 'Subscriber',
-                    // Add more user roles as needed
-                ),
-            )
-        );*/
     }
 
     /**
@@ -274,7 +256,7 @@ class WP_Custom_Settings_API {
     private function init_general_secondary_settings() {
         add_settings_section(
             'wp_custom_general_secondary',
-            __( 'Secondary Settings', 'wp-custom-admin-settings-panel' ),
+            __( 'Secondary Settings', 'userwall-wp' ),
             function() { echo '<p>Secondary settings section description.</p>'; },
             'wp_custom_general_secondary'
         );

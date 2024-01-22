@@ -29,12 +29,17 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
         // SQL query to create the 'userwall_plugin_groups' table
         $sql_query_groups = "CREATE TABLE IF NOT EXISTS $table_groups (
             group_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            parent_group_id INT UNSIGNED DEFAULT NULL,
             group_name VARCHAR(255) NOT NULL,
+            group_slug VARCHAR(255) NOT NULL,
             group_description TEXT,
+            group_avatar VARCHAR(255),
             creation_date DATETIME NOT NULL,
             creator_user_id BIGINT UNSIGNED NOT NULL,
             INDEX creator_user_id_index (creator_user_id),
-            FOREIGN KEY (creator_user_id) REFERENCES {$wpdb->prefix}users(ID)
+            INDEX parent_group_id_index (parent_group_id),
+            FOREIGN KEY (creator_user_id) REFERENCES {$wpdb->prefix}users(ID),
+            FOREIGN KEY (parent_group_id) REFERENCES $table_groups(group_id) ON DELETE SET NULL
         )";
         
          // Array of SQL queries for the first 5 tables
@@ -55,6 +60,14 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
         global $wpdb;
 
         $table_groups = $wpdb->prefix . 'userwall_groups';
+        
+        // Check if the option for deletion is set to true
+        $delete_on_deactivation = get_option('userwall_wp_delete_deactivation', false);
+
+        // If the option is set to true, delete the tables
+        if ($delete_on_deactivation) {
+            return;
+        }
 
         // SQL queries to drop the tables
         $sql_queries = array(
@@ -65,5 +78,10 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
         foreach ($sql_queries as $sql_query) {
             $wpdb->query($sql_query);
         }
+    }
+
+    public function hooks() {
+        require_once( USERWALL_WP_PLUGIN_DIR . 'includes/addons/includes/class-groups.php' );
+        $groups = new UserWallWP_Addon_Groups_Core();
     }
 }

@@ -393,7 +393,6 @@ class UserWall_WP_Post_Manager {
         );
 
         $posts = $this->wpdb->get_results($sql_query);
-        error_log( $this->wpdb->last_query );
         if ( ! empty( $posts ) ) {
             foreach ( $posts as $index => $post ) {
                 $posts[] = $this->transform_post( $post );

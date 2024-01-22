@@ -51,10 +51,11 @@ class UserWall_WP_Admin {
         $addons_manager = new UserWall_WP_Addons();
 
         // Additional menus
+
         $this->add_submenu('Posts', 'Posts', 'userwall-wp-posts', array($this, 'posts_page'));
         $this->add_submenu('Comments', 'Comments', 'userwall-wp-comments', array($this, 'comments_page'));
         if ( $addons_manager->is_active( 'groups' ) ) {
-            $this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page'));
+            //$this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page'));
         }
         if ( $addons_manager->is_active( 'polls' ) ) {
             $this->add_submenu('Polls', 'Polls', 'userwall-wp-polls', array($this, 'polls_page'));
@@ -62,6 +63,25 @@ class UserWall_WP_Admin {
         if ( $addons_manager->is_active( 'gallery' ) ) {
             $this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page'));
             $this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page'));
+        }
+        
+        // Add a hook to add additional submenus.
+        $submenus = apply_filters( 'userwall_wp_submenus', array() );
+        if ( ! empty( $submenus ) ) {
+            foreach( $submenus as $submenu ) {
+                if (
+                    ! empty( $submenu['page_title'] ) || 
+                    ! empty( $submenu['menu_title'] ) || 
+                    ! empty( $submenu['menu_slug'] ) ||
+                    ! empty( $submenu['callback'] )
+                ) {
+                    $this->add_submenu( 
+                        sanitize_text_field( $submenu['page_title'] ),
+                        sanitize_text_field( $submenu['menu_title'] ), 
+                        sanitize_text_field( $submenu['menu_slug'] ), 
+                        $submenu['callback']);
+                }
+            }
         }
         $this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page'));
         $this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page'));
@@ -86,11 +106,22 @@ class UserWall_WP_Admin {
 
     // Define callback methods for each submenu page
     public function comments_page() {
-        // Comments page content goes here
-    }
+        require_once(  USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/comments.php' );
+        $posts_table = new Userwall_Comments_List_Table();
 
-    public function groups_page() {
-        // Groups page content goes here
+        echo '<div class="wrap"><h1>Manage Posts</h1>';
+        $posts_table->display_notices();
+        ?>
+        <a href="<?php echo admin_url( 'admin.php?page=userwall-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
+        <form method="get" action="<?php echo admin_url('admin.php'); ?>">
+            <input type="hidden" name="page" value="userwall-wp-posts" />
+            <?php
+            $posts_table->prepare_items();
+            $posts_table->search_box('Search Comments', 'post_title');
+            $posts_table->display();
+            ?>
+        </form>
+        <?php
     }
 
     public function polls_page() {
