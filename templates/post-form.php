@@ -2,36 +2,24 @@
 <div class="userwall-wp-form-wrapper">
     <form id="userwall-wp-post-form" enctype='multipart/form-data'>
         <div class="userwall-tab-content-wrapper">
+            <?php if ( count($post_types) > 1 ) : ?>
+                
+            <?php endif; ?>
             <div class="userwall-tab-content" data-tab="post">
                 <!-- Post content input -->
                 <div class="userwall-wp-post-section">
                     <div id="quill-editor-post-form" class="post-quill-editor"></div>
-                    <div id="userwall-wp-post-toolbar">
-                        <!-- Add font size dropdown -->
-                        <select class="ql-size">
-                            <option value="small"></option>
-                            <!-- Note a missing, thus falsy value, is used to reset to default -->
-                            <option selected></option>
-                            <option value="large"></option>
-                            <option value="huge"></option>
-                        </select>
-                        <!-- Add a bold button -->
-                        <button class="ql-bold"></button>
-                        <!-- Add subscript and superscript buttons -->
-                        <button class="ql-script" value="sub"></button>
-                        <button class="ql-script" value="super"></button>
-                    </div>
-                    <div class="userwall-wp-post-types">
-                        <ul>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="image">Image</a></li>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="polls">Polls</a></li>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="event">Event</a></li>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="article">Article</a></li>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="file">File</a></li>
-                            <li><a href="#" class="userwall-wp-post-type" data-type="link">Link</a></li>
-                        </ul>
-                    </div>
                 </div>
+            </div>
+            <div class="userwall-wp-post-types">
+                <ul>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="image">Image</a></li>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="polls">Polls</a></li>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="event">Event</a></li>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="article">Article</a></li>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="file">File</a></li>
+                    <li><a href="#" class="userwall-wp-post-type" data-type="link">Link</a></li>
+                </ul>
             </div>
             <div class="rich-preview-container">
                 <!-- Rich preview will be displayed here -->

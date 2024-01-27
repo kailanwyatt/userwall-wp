@@ -13,6 +13,16 @@ class UserWall_WP_Post_Core {
 
     }
 
+    public function get_post_types() {
+        $post_types = apply_filters( 'user_wall_post_types', array() );
+        $default_post_types = array(
+            'user' => array(
+                'title' => __( 'User', 'userwall-wp' ),
+            )
+        );
+        return array_merge( $default_post_types, $post_types );
+    }
+
     public function userwall_profile_content( $profile_id = 0 ) {
         echo do_shortcode('[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $profile_id . '"]');
     }

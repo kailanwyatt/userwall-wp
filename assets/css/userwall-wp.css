@@ -964,12 +964,22 @@
 
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
     border-top: 1px solid;
-  }
+}
 
-.userwall-wp-reply-editor {
+.userwall-wp-reply-editor,
+.userwall-wp-post-section,
+.userwall-wp-reply-form-section {
     display: flex;
     flex-direction: column-reverse;
     margin-bottom: 20px;
+}
+
+.ql-container.ql-bubble {
+    border: 1px solid #9b9c9d;
+    margin-top: 20px;
+    border-radius: 6px;
+    margin-bottom: 0px;
+    min-height: 100px;
 }
 #suggestion-box {
     border: 1px solid #ccc;
@@ -1142,6 +1152,15 @@
     color: #888;
 }
 
+.userwall-wp-comment button {
+    background-color: #007bff;
+    padding: 10px 30px;
+    background-color: #0079d3;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
 /* Style the reply button */
 .userwall-wp-reply-button {
     background-color: #007bff;
@@ -1152,7 +1171,8 @@
 }
 
 /* Style the reply button on hover */
-.userwall-wp-reply-button:hover {
+.userwall-wp-reply-button:hover,
+.userwall-wp-comment button:hover {
     background-color: #0056b3;
 }
 

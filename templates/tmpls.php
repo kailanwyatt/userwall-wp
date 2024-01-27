@@ -191,10 +191,14 @@
                 <button class="userwall-wp-reply-button" aria-label="<?php esc_html_e('Reply', 'userwall-wp'); ?>">Reply</button>
                 <div class="userwall-wp-reply-form" style="display: none;">
                     <!-- Rich text editor container -->
-                    <div id="quill-editor-{{ comment.post_id }}-{{ comment.comment_id }}" data-comment-reply="quill-editor-{{ comment.post_id }}-{{ comment.comment_id }}"></div>
-                    <!-- Reply and Cancel buttons -->
-                    <button class="userwall-wp-reply-submit" aria-label="<?php esc_html_e('Submit Reply', 'userwall-wp'); ?>">Submit Reply</button>
-                    <button class="userwall-wp-reply-cancel" aria-label="<?php esc_html_e('Cancel Reply', 'userwall-wp'); ?>">Cancel Reply</button>
+                    <div class="userwall-wp-reply-form-section">
+                        <div id="quill-editor-{{ comment.post_id }}-{{ comment.comment_id }}" data-comment-reply="quill-editor-{{ comment.post_id }}-{{ comment.comment_id }}"></div>
+                    </div>
+                    <div class="userwall-reply-actions">
+                        <!-- Reply and Cancel buttons -->
+                        <button class="userwall-wp-reply-submit" aria-label="<?php esc_html_e('Submit Reply', 'userwall-wp'); ?>">Submit Reply</button>
+                        <button class="userwall-wp-reply-cancel" aria-label="<?php esc_html_e('Cancel Reply', 'userwall-wp'); ?>">Cancel Reply</button>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>

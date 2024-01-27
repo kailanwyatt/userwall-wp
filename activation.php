@@ -71,11 +71,6 @@ function userwall_wp_activate() {
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
         FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
     )";
-    
-
-
-
-
 
 // SQL query to create the 'userwall_reports' table
 $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (

@@ -1,4 +1,4 @@
-<!-- File: add-new-form.php -->
+
 <div class="wrap">
     <h2><?php echo esc_html__('Add New Group', 'wp-userwall-groups-admin-table'); ?></h2>
     <form method="post" action="">

@@ -4,8 +4,19 @@ import ToolbarEmoji from 'quill-emoji';
 //import Masonry from 'masonry-layout';
 
 //window.userwallWP.Masonry = Masonry;
+var editor_theme = Boolean( userwallWPObject.enable_rich_editor ) ? 'snow' : 'bubble';
 var editor_theme = 'snow';
-var editor_config = [];
+var editor_config = {
+    theme: editor_theme,
+    modules: {
+    toolbar: [
+        userwallWPObject.toolbar, // Add photos, code block, and quote
+    ],
+    },
+};
+var editorModules = {
+    toolbar: [userwallWPObject.toolbar]
+};
 class UserWallWPHelper {
     constructor() {
       
@@ -213,21 +224,27 @@ function renderPosts(userwall, position = 'top' ) {
         renderedHtml = jQuery('<div class="tempWrap">' + html + '</div>');
         const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
         const quillContainer = renderedHtml.find('#' + quillContainerId)[0];
-
+        let quill;
+        
         // Check if the container exists (only if the thread is loaded via Ajax)
         if (quillContainer) {
-            // Initialize Quill editor
-            const quill = new Quill(quillContainer, {
-                theme: editor_theme, // You can use a different theme if needed
-                placeholder: userwallWPObject.reply_placeholder,
-            });
+            
         }
+       
         if ( ! jQuery('.userwall-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
             if ( position == 'top' ) {
                 jQuery('.userwall-wp-reddit-thread').prepend(renderedHtml.html());
             } else {
                 jQuery('.userwall-wp-reddit-thread').append(renderedHtml.html());
             }
+            const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
+            const quillContainer = jQuery('.userwall-wp-reddit-thread').find('#' + quillContainerId)[0];
+            // Initialize Quill editor
+            quill = new Quill(quillContainer, {
+                theme: editor_theme,
+                placeholder: userwallWPObject.reply_placeholder,
+                modules: editorModules,
+            });
             wp.hooks.doAction('userwall_wp_post_rendered', thread);
         }
     });
@@ -589,23 +606,42 @@ jQuery(document).ready(function($) {
                 $editForm.show();
                 
                 if ( isComment ) {
+                    let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`;
                      // Initialize Quill editor for editing
-                    let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`, {
-                        theme: editor_theme
+                    let quillEditor = new Quill(editorContainer, {
+                        theme: editor_theme,
+                        modules: editorModules,
                     });
+
+                    
                     // Populate Quill editor with existing content
                     const existingContent = $content.html();
                     quillEditor.root.innerHTML = existingContent;
                 } else {
+                    let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}`;
+
                      // Initialize Quill editor for editing
-                    let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}`, {
-                        theme: editor_theme
-                        // ... (Quill editor configurations)
+                    let quillEditor = new Quill(editorContainer, {
+                        theme: editor_theme,
+                        modules: editorModules,
                     });
                     // Populate Quill editor with existing content
                     const existingContent = $content.html();
                     quillEditor.root.innerHTML = existingContent;
                 }
+
+                quill.on('text-change', function() {
+                    var editorContent = quill.getText();
+            
+                    // If there is text in the editor (not just whitespace)
+                    if (editorContent.trim().length > 0) {
+                        // Remove 'ql-blank' class
+                        jQuery(editorContainer).removeClass('ql-blank');
+                    } else {
+                        // Add 'ql-blank' class if the editor is empty
+                        jQuery(editorContainer).addClass('ql-blank');
+                    }
+                });
             });
         
             // Function to cancel editing
@@ -638,6 +674,19 @@ jQuery(document).ready(function($) {
                     const quill = new Quill(`#quill-editor-edit-${postID}`);
                     content = quill.root.innerHTML; // Get Quill editor content
                 }
+
+                quill.on('text-change', function() {
+                    var editorContent = quill.getText();
+            
+                    // If there is text in the editor (not just whitespace)
+                    if (editorContent.trim().length > 0) {
+                        // Remove 'ql-blank' class
+                        jQuery(`#quill-editor-edit-${postID}`).removeClass('ql-blank');
+                    } else {
+                        // Add 'ql-blank' class if the editor is empty
+                        jQuery(`#quill-editor-edit-${postID}`).addClass('ql-blank');
+                    }
+                });
 
                 // Perform an AJAX request to save the changes
                 $.ajax({
@@ -682,6 +731,20 @@ jQuery(document).ready(function($) {
                                 const quill = new Quill(quillContainer, {
                                     theme: editor_theme, // You can use a different theme if needed
                                     placeholder: 'Edit your thread here...',
+                                    modules: editorModules,
+                                });
+
+                                quill.on('text-change', function() {
+                                    var editorContent = quill.getText();
+                            
+                                    // If there is text in the editor (not just whitespace)
+                                    if (editorContent.trim().length > 0) {
+                                        // Remove 'ql-blank' class
+                                        jQuery('#' . quillContainerId).removeClass('ql-blank');
+                                    } else {
+                                        // Add 'ql-blank' class if the editor is empty
+                                        jQuery('#' . quillContainerId).addClass('ql-blank');
+                                    }
                                 });
                             }
                             
@@ -708,9 +771,24 @@ jQuery(document).ready(function($) {
                 // Toggle the reply form visibility
                 commentContainer.find('.userwall-wp-reply-form').toggle();
                 
+                let quillContainer = '#' + quillEditorId;
                 // Initialize Quill editor inside the reply form using the dynamic ID
-                var quill = new Quill('#' + quillEditorId, {
+                var quill = new Quill( quillContainer, {
                     theme: editor_theme, // You can customize the Quill editor's theme
+                    modules: editorModules,
+                });
+
+                quill.on('text-change', function() {
+                    var editorContent = quill.getText();
+            
+                    // If there is text in the editor (not just whitespace)
+                    if (editorContent.trim().length > 0) {
+                        // Remove 'ql-blank' class
+                        jQuery(quillContainer).removeClass('ql-blank');
+                    } else {
+                        // Add 'ql-blank' class if the editor is empty
+                        jQuery(quillContainer).addClass('ql-blank');
+                    }
                 });
                 
                 // Handle submit button click
@@ -967,12 +1045,20 @@ jQuery(document).ready(function($) {
             // Initialize Quill rich text editor
             const quill = new Quill('[data-comment-reply]', {
               theme: editor_theme,
-              modules: {
-                toolbar: [
-                  ['bold', 'italic', 'strike'], // Text formatting options
-                  ['image', 'code-block', 'blockquote'], // Add photos, code block, and quote
-                ],
-              },
+              modules: editorModules,
+            });
+
+            quill.on('text-change', function() {
+                var editorContent = quill.getText();
+        
+                // If there is text in the editor (not just whitespace)
+                if (editorContent.trim().length > 0) {
+                    // Remove 'ql-blank' class
+                    jQuery('[data-comment-reply]').removeClass('ql-blank');
+                } else {
+                    // Add 'ql-blank' class if the editor is empty
+                    jQuery('[data-comment-reply]').addClass('ql-blank');
+                }
             });
       
             // Show/hide reply form when clicking the Reply button
@@ -1016,11 +1102,24 @@ jQuery(document).ready(function($) {
             if ( ! jQuery('.post-quill-editor' ).length ) {
                 return;
             }
-            const quillPostEditor = new Quill('.post-quill-editor', {
-              theme: editor_theme,
-              modules: {
-                toolbar: '#userwall-wp-post-toolbar'
-              }
+    
+            var quill_config = {
+                theme: editor_theme,
+                modules: editorModules
+            }
+            const quillPostEditor = new Quill('.post-quill-editor', quill_config);
+
+            quillPostEditor.on('text-change', function() {
+                var editorContent = quillPostEditor.getText();
+        
+                // If there is text in the editor (not just whitespace)
+                if (editorContent.trim().length > 0) {
+                    // Remove 'ql-blank' class
+                    jQuery('.post-quill-editor').removeClass('ql-blank');
+                } else {
+                    // Add 'ql-blank' class if the editor is empty
+                    jQuery('.post-quill-editor').addClass('ql-blank');
+                }
             });
 
             quillPostEditor.on('text-change', function(delta, oldDelta, source) {

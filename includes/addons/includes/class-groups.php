@@ -3,8 +3,8 @@ class UserWallWP_Addon_Groups_Core {
     private $admin_slug = 'userwall-wp-groups';
     public function __construct() {
         add_filter( 'userwall_wp_submenus', array( $this, 'add_admin_menu'), 10, 1 );
-        add_action('init', array($this, 'add_rewrite_rules'));
-        add_filter('query_vars', array($this, 'register_query_vars'));
+        add_action( 'init', array($this, 'add_rewrite_rules') );
+        add_filter( 'query_vars', array($this, 'register_query_vars') );
     }
 
     public function add_admin_menu( $submenus = array() ) {
@@ -46,6 +46,19 @@ class UserWallWP_Addon_Groups_Core {
         
         $action = isset($_GET['action']) ? sanitize_text_field( $_GET['action'] ) : '';
         if ('add_new' === $action) {
+            // Check user capability
+            if ( !current_user_can( 'manage_options' ) ) {
+                return;
+            }
+
+            // Check if the form is submitted
+            if ( isset( $_POST['userwall_group_nonce'] ) && wp_verify_nonce( $_POST['userwall_group_nonce'], 'userwall_create_group' ) ) {
+                // Process form data here
+                // Use your logic to create a group, e.g., inserting data into the database
+                // ...
+
+                echo '<div class="updated"><p>Group created successfully.</p></div>';
+            }
             include(  USERWALL_WP_PLUGIN_DIR . 'includes/admin/templates/add-group.php' );
         } else {
         ?>

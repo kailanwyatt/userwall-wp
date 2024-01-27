@@ -18,10 +18,20 @@
 
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
     border-top: 1px solid;
-  }
+}
 
-.userwall-wp-reply-editor {
+.userwall-wp-reply-editor,
+.userwall-wp-post-section,
+.userwall-wp-reply-form-section {
     display: flex;
     flex-direction: column-reverse;
     margin-bottom: 20px;
+}
+
+.ql-container.ql-bubble {
+    border: 1px solid #9b9c9d;
+    margin-top: 20px;
+    border-radius: 6px;
+    margin-bottom: 0px;
+    min-height: 100px;
 }

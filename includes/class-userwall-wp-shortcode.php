@@ -30,6 +30,8 @@ class UserWall_WP_Shortcode {
         $object_id = absint( $atts['object_id'] );
         $show_userwall = wp_validate_boolean( $atts['show_userwall'] );
         $show_form    = wp_validate_boolean( $atts['show_form'] );
+        $options = get_option( 'userwall_wp' );
+        $use_editor = ! empty( $options['enable_rich_editor'] ) ? true : false;
         // Output the post form
         ob_start();
         $post_tabs = array(
@@ -37,6 +39,7 @@ class UserWall_WP_Shortcode {
         );
 
         $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );
+       
         include( USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'); // Create a post form template
         return ob_get_clean();
     }

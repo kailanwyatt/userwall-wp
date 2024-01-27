@@ -65,3 +65,8 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
 
     return $url;
 }
+
+function user_wall_get_post_types() {
+    $user_wall_core = new UserWall_WP_Post_Core();
+    return $user_wall_core->get_post_types();
+}

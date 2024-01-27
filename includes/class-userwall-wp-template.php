@@ -20,12 +20,16 @@ class UserWall_Template {
         
         $ajax_nonce = wp_create_nonce('userwall_wp_nonce');
 
+        $options = get_option( 'userwall_wp' );
+        error_log( print_r( $options, true ) );
         // Create an array to pass data to JavaScript
         $userwallWP_data = array(
             'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
             'nonce'    => $ajax_nonce,
             'user_id'  => get_current_user_id(),
             'reply_placeholder' => __( 'What are you\'re thoughs?', 'userwall-wp' ),
+            'enable_rich_editor' => ! empty( $options['enable_rich_editor'] ) ? true : false,
+            'toolbar' => ! empty( $options['editor_options'] ) ? array_keys( $options['editor_options'] ) : array(),
         );
 
         // Localize the script with the data
