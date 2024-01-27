@@ -4,16 +4,7 @@ import ToolbarEmoji from 'quill-emoji';
 //import Masonry from 'masonry-layout';
 
 //window.userwallWP.Masonry = Masonry;
-var editor_theme = Boolean( userwallWPObject.enable_rich_editor ) ? 'snow' : 'bubble';
 var editor_theme = 'snow';
-var editor_config = {
-    theme: editor_theme,
-    modules: {
-    toolbar: [
-        userwallWPObject.toolbar, // Add photos, code block, and quote
-    ],
-    },
-};
 var editorModules = {
     toolbar: [userwallWPObject.toolbar]
 };
@@ -135,7 +126,7 @@ class UserWallWPHelper {
                 break;
             case 'embed':
                 // Example: Embed an iframe for other sources
-                richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
+                //richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
                 break;
             case 'youtube':
                 // Extract the YouTube video ID from the URL
@@ -164,7 +155,9 @@ class UserWallWPHelper {
                 richPreviewHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                 break;
         }
-    
+        if ( ! richPreviewHTML ) {
+            return;
+        }
         return '<div class="userwall-wp-embed">' + richPreviewHTML + '</div>';
     }
 
@@ -202,7 +195,7 @@ function transformPosts( userwall ) {
     .map(function (thread) {
         // Apply the doEmbed method to the post_content
         thread.post_content = window.UserWallWPHelper.doEmbed(thread.post_content);
-        return wp.hooks.applyFilters('thread_wp_content_filter', thread);
+        return wp.hooks.applyFilters('userwall_wp_content_filter', thread);
     });
 }
 
@@ -210,7 +203,7 @@ function transformComments( comments ) {
     return comments.map(function (comment) {
         // Apply the doEmbed method to the comment_content
         comment.comment_content = window.UserWallWPHelper.doEmbed(comment.comment_content);
-        return wp.hooks.applyFilters('thread_wp_content_comment_filter', comment );
+        return wp.hooks.applyFilters('userwall_wp_content_comment_filter', comment );
     });
 }
 function renderPosts(userwall, position = 'top' ) {
@@ -250,7 +243,79 @@ function renderPosts(userwall, position = 'top' ) {
     });
 }
 
+function truncateHtml(html, maxLength) {
+    var charCount = 0;
+    var output = '';
+    var isTruncating = false;
+    
+    // Convert HTML string to jQuery objects and iterate
+    jQuery(html).each(function() {
+        // Add the length of text within the current HTML element to the total character count
+        charCount += jQuery(this).text().length;
+        
+        // If the character count exceeds the maxLength, enable truncation
+        if (charCount >= maxLength) {
+            isTruncating = true;
+        }
+
+        // Add the HTML of the current element to the output
+        output += jQuery('<div>').append(jQuery(this).clone()).html();
+
+        // If truncating, check if the current element is a paragraph
+        if (isTruncating && this.nodeName.toLowerCase() === 'p') {
+            return false; // Stop adding more elements to the output
+        }
+    });
+    
+    // If the total character count is less than the maxLength, return false
+    if (charCount <= maxLength) {
+        return false;
+    }
+    
+    return output;
+}
+
 function setReadMore() {
+    var maxLength = 100; // Maximum number of characters to display before truncating
+    
+    jQuery('.userwall-wp-thread').each(function() {
+        var container = jQuery(this);
+        var fullHtml = container.find('.userwall-wp-thread-content').html();
+        var truncatedHtml = truncateHtml(fullHtml, maxLength);
+        
+       
+        
+        if (truncatedHtml && fullHtml != '<p><br></p>' ) {
+            if ( fullHtml.trim() !== truncatedHtml ) {
+                console.log( fullHtml.trim() );
+                console.log( truncatedHtml );
+                console.log( fullHtml.trim() !== truncatedHtml );
+                container.find('.userwall-wp-thread-content').data('full-html', fullHtml).html(truncatedHtml);
+                container.find('.userwall-wp-thread-content').after('<button class="read-more-btn">Read More</button>'); // Add the Read More button
+                container.find('.read-more-btn').show();
+            }
+        }
+    });
+    
+    jQuery('.userwall-wp-thread').on('click', '.read-more-btn', function() {
+        var container = jQuery(this).closest('.userwall-wp-thread');
+        var textContent = container.find('.userwall-wp-thread-content');
+        var isFullHtmlVisible = textContent.data('is-full-html-visible');
+        
+        if (isFullHtmlVisible) {
+            var fullHtml = textContent.data('full-html');
+            var truncatedHtml = truncateHtml(fullHtml, maxLength);
+            textContent.html(truncatedHtml);
+            jQuery(this).text('Read More');
+            textContent.data('is-full-html-visible', false);
+        } else {
+            var fullHtml = textContent.data('full-html');
+            textContent.html(fullHtml);
+            jQuery(this).text('Read Less');
+            textContent.data('is-full-html-visible', true);
+        }
+    });
+
     return;
     // Maximum number of characters to show initially
     var maxLength = 300;
@@ -411,7 +476,7 @@ jQuery(document).ready(function($) {
                         nonce: userwallWPObject.nonce
                     },
                     success: function(response) {
-                        var template = wp.template('reddit-style-thread-comment-template');
+                        var template = wp.template('userwall-wp-thread-comment-template');
                         var newPosts = transformComments(response.data.comments);
                         var html = template(newPosts);;
                         $thread.find('.userwall-wp-comment-section').prepend(html);
@@ -442,10 +507,10 @@ jQuery(document).ready(function($) {
                         },
                         success: function(response) {
                             if ( response.data.comments.length && response.data.comments.length > 0 ) {
-                                var template = wp.template('reddit-style-thread-comment-template');
+                                var template = wp.template('userwall-wp-thread-comment-template');
                                 var newPosts = transformComments( response.data.comments );
                                 jQuery.each( newPosts, function( index, comment ) {
-                                    var template = wp.template('reddit-style-thread-comment-template');
+                                    var template = wp.template('userwall-wp-thread-comment-template');
 
                                     var commentData = comment;
 
@@ -457,11 +522,11 @@ jQuery(document).ready(function($) {
 
                                     var childComments = commentData[0].child_comments;
                                     if ( childComments.length > 0 ) {
-                                        template = wp.template('reddit-style-thread-comment-template');
+                                        template = wp.template('userwall-wp-thread-comment-template');
                                         var innerComments = transformComments(childComments);
      
                                         jQuery.each( innerComments, function( index2, inner_comment ) {
-                                            var ReplyTemplate = wp.template('reddit-style-thread-comment-template');
+                                            var ReplyTemplate = wp.template('userwall-wp-thread-comment-template');
                                             var child_html = ReplyTemplate({inner_comment});
                                             commentHtml.find('.userwall-wp-comment-reply-section').append(child_html);
                                         });
@@ -595,10 +660,10 @@ jQuery(document).ready(function($) {
                 });
             });
 
-            $(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
         
@@ -645,10 +710,10 @@ jQuery(document).ready(function($) {
             });
         
             // Function to cancel editing
-            $(document).on('click', '.cancel-button', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click', '.cancel-button', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
         
@@ -657,10 +722,10 @@ jQuery(document).ready(function($) {
             });
             
             // Function to save changes via AJAX
-            $(document).on('click','.save-button', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click','.save-button', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 var content = '';
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
@@ -704,7 +769,7 @@ jQuery(document).ready(function($) {
                         if ( isComment ) {
                             // Handle success, e.g., update the post content display
                             const $content = $commentDiv.find('.userwall-wp-comment-content');
-                            var template = wp.template('reddit-style-thread-comment-template');
+                            var template = wp.template('userwall-wp-thread-comment-template');
                             var newPosts = transformComments(response.data.comments);
 
                             var html = template(newPosts);
@@ -756,13 +821,13 @@ jQuery(document).ready(function($) {
                 });
             });
 
-            $(document).on('click', '.userwall-wp-reply-button', function () {
+            jQuery(document).on('click', '.userwall-wp-reply-button', function () {
                 // Find the closest comment container
-                var commentContainer = $(this).closest('.userwall-wp-comment');
+                var commentContainer = jQuery(this).closest('.userwall-wp-comment');
                 
                 var commentId = commentContainer.data('commentid');
 
-                var postContainer = $(this).closest('.userwall-wp-thread');
+                var postContainer = jQuery(this).closest('.userwall-wp-thread');
                 var postId =  postContainer.data('postid');
 
                 // Get the dynamic ID for the Quill editor
@@ -772,24 +837,26 @@ jQuery(document).ready(function($) {
                 commentContainer.find('.userwall-wp-reply-form').toggle();
                 
                 let quillContainer = '#' + quillEditorId;
-                // Initialize Quill editor inside the reply form using the dynamic ID
-                var quill = new Quill( quillContainer, {
-                    theme: editor_theme, // You can customize the Quill editor's theme
-                    modules: editorModules,
-                });
+                if ( jQuery( quillContainer).html() == '' ) {
+                    // Initialize Quill editor inside the reply form using the dynamic ID
+                    var quill = new Quill( quillContainer, {
+                        theme: editor_theme, // You can customize the Quill editor's theme
+                        modules: editorModules,
+                    });
 
-                quill.on('text-change', function() {
-                    var editorContent = quill.getText();
-            
-                    // If there is text in the editor (not just whitespace)
-                    if (editorContent.trim().length > 0) {
-                        // Remove 'ql-blank' class
-                        jQuery(quillContainer).removeClass('ql-blank');
-                    } else {
-                        // Add 'ql-blank' class if the editor is empty
-                        jQuery(quillContainer).addClass('ql-blank');
-                    }
-                });
+                    quill.on('text-change', function() {
+                        var editorContent = quill.getText();
+                
+                        // If there is text in the editor (not just whitespace)
+                        if (editorContent.trim().length > 0) {
+                            // Remove 'ql-blank' class
+                            jQuery(quillContainer).removeClass('ql-blank');
+                        } else {
+                            // Add 'ql-blank' class if the editor is empty
+                            jQuery(quillContainer).addClass('ql-blank');
+                        }
+                    });
+                }
                 
                 // Handle submit button click
                 commentContainer.find('.userwall-wp-reply-submit').on('click', function () {
@@ -800,7 +867,7 @@ jQuery(document).ready(function($) {
                         type: 'POST',
                         url: userwallWPObject.ajax_url,
                         data: {
-                            action: 'thread_wp_comment_reply', // AJAX action hook
+                            action: 'userwall_wp_comment_reply', // AJAX action hook
                             post_id: postId,
                             commentId: commentId,
                             commentContent: replyContent,
@@ -810,13 +877,14 @@ jQuery(document).ready(function($) {
                             // Handle the AJAX response here (update the comment section, etc.)
                             if (response.success) {
                                 // Update your comment section with response.data
-                                var template = wp.template('reddit-style-thread-comment-template');
+                                var template = wp.template('userwall-wp-thread-comment-template');
                                 var newComments = transformComments(response.data.comments);
                                 var html = template(newComments);
                                 var commentHtml = jQuery( '<div class="tempWrap">' + html + '</div>' );
                                 commentHtml.find('.userwall-wp-reply').remove();
                                 commentHtml.find('.userwall-wp-comment-reply-section').remove();
                                 commentContainer.find('.userwall-wp-comment-reply-section').prepend(commentHtml.html());
+                                commentContainer.find('.userwall-wp-reply-form').toggle();
                                 // Clear the comment input field
                                 quill.root.innerHTML = '';
                                 wp.hooks.doAction('userwall_wp_comment_rendered', newComments );
@@ -928,13 +996,8 @@ jQuery(document).ready(function($) {
     
         submitForm(event) {
             event.preventDefault();
-    
-            // Get form data
-            //const formData = jQuery('#userwall-wp-post-form').serialize();
-            
-            // Get the HTML content from the Quill editor
-            const quill = new Quill('.post-quill-editor'); // Initialize Quill (if not already done)
-            const content = quill.root.innerHTML;
+
+            const content = jQuery( '.post-quill-editor').find('.ql-editor').html();
 
             var tab = jQuery('.userwall-tab.active').data('tab');
             var form = jQuery('#userwall-wp-post-form')[0];
@@ -962,8 +1025,7 @@ jQuery(document).ready(function($) {
                 success: function(response) {
                     renderPosts( response.data.userwall );
                     // Reset post form.
-                    quill.root.innerHTML = '';
-
+                    jQuery( '.post-quill-editor').find('.ql-editor').html('')
                     wp.hooks.doAction('userwall_wp_after_post_submitted', response, formData );
                 },
                 error: function(error) {
@@ -996,6 +1058,7 @@ jQuery(document).ready(function($) {
 
         handleActionClick(event) {
             var $thread = jQuery(event.target).closest('.userwall-wp-thread');
+            var $commentDiv = jQuery( event.target ).closest( '.userwall-wp-comment' );
             const actionType = jQuery(event.target).data('action');
             if ( actionType == 'Edit' ) {
                 return;
@@ -1004,6 +1067,7 @@ jQuery(document).ready(function($) {
                 action: 'userwall_wp_posts_action',
                 action_type: actionType, // The action type you want to perform
                 post_id: $thread.data('postid'), // The post ID associated with the action
+                comment_id: $commentDiv.data('commentid'), // The comment ID associated with the action
                 nonce: userwallWPObject.nonce 
             };
     
@@ -1108,6 +1172,29 @@ jQuery(document).ready(function($) {
                 modules: editorModules
             }
             const quillPostEditor = new Quill('.post-quill-editor', quill_config);
+
+            var maxChars = userwallWPObject.char_limit; // Maximum characters allowed
+
+            quillPostEditor.on('text-change', function(delta, oldDelta, source) {
+                if ( maxChars !== 0 ) {
+                    var text = quillPostEditor.getText().trim(); // Get text content of editor
+                    var charCount = text.length; // Get the length of text
+
+                    // Update character count
+                    var charCountDiv = jQuery('#userwall-wp-charcount');
+                    charCountDiv.text('Characters: ' + charCount + '/' + maxChars);
+
+                    // Add 'max-reached' class to character count if limit is reached
+                    if (charCount > maxChars) {
+                        charCountDiv.html('Characters: ' + charCount + '/' + maxChars + ' <span class="max-reached">(Max limit reached)</span>');
+                        
+                        // Optional: Prevent further typing
+                        quillPostEditor.deleteText(maxChars, charCount - maxChars);
+                    } else {
+                        charCountDiv.removeClass('max-reached');
+                    }
+                }
+            });
 
             quillPostEditor.on('text-change', function() {
                 var editorContent = quillPostEditor.getText();
@@ -1225,9 +1312,9 @@ jQuery(document).ready(function($) {
                         if ( response.data.message > 0 ) {
                             // Update your template with the new data
                             if ( ! $div.find('.userwall-wp-new-userwall').length ) {
-                                $div.prepend('<div class="userwall-wp-new-userwall">New ' + message + ' posts</div>');
+                                $div.prepend('<div class="userwall-wp-new-userwall"><span class="userwall-wp-new-userwall-content">New ' + message + ' posts</span></div>');
                             } else {
-                                $div.find('.userwall-wp-new-userwall').html('New ' + message+ ' posts' );
+                                $div.find('.userwall-wp-new-userwall').html( '<span class="userwall-wp-new-userwall-content">New ' + message + ' posts</span>' );
                             }
                             wp.hooks.doAction('userwall_wp_new_posts_available', response );
                         }
@@ -1289,7 +1376,7 @@ jQuery(document).ready(function($) {
                     break;
                 case 'embed':
                     // Example: Embed an iframe for other sources
-                    richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
+                    //richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
                     break;
                 case 'youtube':
                     // Extract the YouTube video ID from the URL
@@ -1318,7 +1405,9 @@ jQuery(document).ready(function($) {
                     richPreviewHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                     break;
             }
-        
+            if ( ! richPreviewHTML ) {
+                return;
+            }
             return richPreviewHTML;
         }
 

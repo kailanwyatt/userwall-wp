@@ -23,6 +23,11 @@ class UserWall_WP_Post_Core {
         return array_merge( $default_post_types, $post_types );
     }
 
+    public function get_post_content_types() {
+        $content_post_types = apply_filters( 'userwall_wp_get_post_content_types', array() );
+        return $content_post_types;
+    }
+
     public function userwall_profile_content( $profile_id = 0 ) {
         echo do_shortcode('[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $profile_id . '"]');
     }
@@ -77,5 +82,5 @@ class UserWall_WP_Post_Core {
     }
 }
 
-$thread_wp_core = new UserWall_WP_Post_Core();
-$thread_wp_core->hooks();
+$userwall_wp_core = new UserWall_WP_Post_Core();
+$userwall_wp_core->hooks();

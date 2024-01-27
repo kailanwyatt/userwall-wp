@@ -88,7 +88,7 @@ class UserWall_WP_Post_Manager {
 
         if ($result) {
             $post_id = $this->wpdb->insert_id;
-            do_action( 'thread_wp_create_post', $post_id, $insert_data);
+            do_action( 'userwall_wp_create_post', $post_id, $insert_data);
             return $post_id;
         } else {
             return false;
@@ -119,7 +119,7 @@ class UserWall_WP_Post_Manager {
         );
 
         $result = $this->wpdb->update($this->table_posts, $update_data, array('post_id' => $post_id));
-        do_action( 'thread_wp_update_post', $post_id, $update_data);
+        do_action( 'userwall_wp_update_post', $post_id, $update_data);
         return $result !== false;
     }
 
@@ -152,7 +152,7 @@ class UserWall_WP_Post_Manager {
      * @return bool Whether the deletion was successful or not.
      */
     public function delete_post($post_id) {
-        do_action( 'thread_wp_before_delete_post', $post_id );
+        do_action( 'userwall_wp_before_delete_post', $post_id );
         $tables = UserWall_WP_Table_Manager::get_table_names();
 
         // Delete comments
@@ -162,7 +162,7 @@ class UserWall_WP_Post_Manager {
 
         
         
-        do_action( 'thread_wp_after_delete_post', $post_id );
+        do_action( 'userwall_wp_after_delete_post', $post_id );
         return $result !== false;
     }
 
@@ -186,7 +186,7 @@ class UserWall_WP_Post_Manager {
         );
         $post = $this->transform_post( $post );
         
-        return apply_filters('thread_wp_get_post_by_id', $post, $post_id);
+        return apply_filters('userwall_wp_get_post_by_id', $post, $post_id);
     }
 
     /**
@@ -209,7 +209,7 @@ class UserWall_WP_Post_Manager {
                 $posts[] = $this->transform_post( $post );
             }
         }
-        return apply_filters('thread_wp_get_posts_by_user_id', $posts, $user_id, $limit);
+        return apply_filters('userwall_wp_get_posts_by_user_id', $posts, $user_id, $limit);
     }
 
     /**
@@ -227,7 +227,7 @@ class UserWall_WP_Post_Manager {
                 $posts[] = $this->transform_post( $post );
             }
         }
-        return apply_filters('thread_wp_get_posts_by_group', $posts, $group_id, $limit);
+        return apply_filters('userwall_wp_get_posts_by_group', $posts, $group_id, $limit);
     }
 
     /**
@@ -258,7 +258,7 @@ class UserWall_WP_Post_Manager {
                 $posts[] = $this->transform_post( $post );
             }
         }
-        return apply_filters('thread_wp_get_posts_latest', $posts, $last_post_id, $limit);
+        return apply_filters('userwall_wp_get_posts_latest', $posts, $last_post_id, $limit);
     }
 
     private function transform_post( $post = array() ) {
@@ -299,7 +299,7 @@ class UserWall_WP_Post_Manager {
         );
 
         $posts = $this->wpdb->get_var($query);
-        return apply_filters('thread_wp_get_posts_latest_count', $posts, $last_post_id, $limit);
+        return apply_filters('userwall_wp_get_posts_latest_count', $posts, $last_post_id, $limit);
     }
 
 
@@ -367,8 +367,8 @@ class UserWall_WP_Post_Manager {
                 $where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $date_end);
             } else {
                 // If date_end is empty, set it to today
-                $today = date('Y-m-d');
-                $where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $today);
+                //$today = date('Y-m-d');
+                //$where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $today);
             }
         }
         
@@ -399,7 +399,9 @@ class UserWall_WP_Post_Manager {
             }
         }
 
-        return apply_filters('thread_wp_get_posts', $posts, $args );
+        error_log( $this->wpdb->last_query );
+
+        return apply_filters('userwall_wp_get_posts', $posts, $args );
     }
 
     /**
@@ -423,7 +425,7 @@ class UserWall_WP_Post_Manager {
         $result = $this->wpdb->insert($table_reports, $insert_data);
 
         if ($result !== false) {
-            do_action('thread_wp_report_post', $reporter_user_id, $post_id, $report_reason);
+            do_action('userwall_wp_report_post', $reporter_user_id, $post_id, $report_reason);
         }
         return $result !== false;
     }
@@ -452,7 +454,7 @@ class UserWall_WP_Post_Manager {
         $result = $this->wpdb->insert($table_blocklist, $insert_data);
 
         if ($result !== false) {
-            do_action('thread_wp_user_blocked_for_post', $user_id, $blocked_user_id, $post_id);
+            do_action('userwall_wp_user_blocked_for_post', $user_id, $blocked_user_id, $post_id);
         }
 
         return $result !== false;
@@ -483,7 +485,7 @@ class UserWall_WP_Post_Manager {
         $result = $this->wpdb->insert($table_followers, $insert_data);
 
         if ($result !== false) {
-            do_action('thread_wp_user_followed_author', $user_id, $author_id, $post_id);
+            do_action('userwall_wp_user_followed_author', $user_id, $author_id, $post_id);
         }
 
         return $result !== false;
@@ -509,7 +511,7 @@ class UserWall_WP_Post_Manager {
         $result = $this->wpdb->insert($table_bookmarks, $insert_data);
 
         if ($result !== false) {
-            do_action('thread_wp_post_saved_to_bookmarks', $user_id, $post_id);
+            do_action('userwall_wp_post_saved_to_bookmarks', $user_id, $post_id);
         }
 
         return $result !== false;
@@ -579,9 +581,9 @@ class UserWall_WP_Post_Manager {
     public function delete_comment($comment_id) {
         $table_comments = $wpdb->prefix . 'userwall_comments';
 
-        do_action('thread_wp_before_delete_comment', $comment_id);
+        do_action('userwall_wp_before_delete_comment', $comment_id);
         $result = $this->wpdb->delete($table_comments, array('comment_id' => $comment_id));
-        do_action('thread_wp_after_delete_comment', $comment_id);
+        do_action('userwall_wp_after_delete_comment', $comment_id);
 
         return $result !== false;
     }
@@ -627,7 +629,7 @@ class UserWall_WP_Post_Manager {
         );
         $comment = $this->transform_post( $comment );
 
-        return apply_filters('thread_wp_get_comment_by_id', $comment, $comment_id);
+        return apply_filters('userwall_wp_get_comment_by_id', $comment, $comment_id);
     }
 
     /**
@@ -647,7 +649,7 @@ class UserWall_WP_Post_Manager {
             )
         );
 
-        return apply_filters('thread_wp_get_comment_by_id', $comment, $comment_id);
+        return apply_filters('userwall_wp_get_comment_by_id', $comment, $comment_id);
     }
 
     /**
@@ -661,7 +663,7 @@ class UserWall_WP_Post_Manager {
         $tables = UserWall_WP_Table_Manager::get_table_names();
         $comments = $this->get_comments_recursive($post_id, 0, $limit, $tables['comments']);
     
-        return apply_filters('thread_wp_get_comments_by_post_id', $comments, $post_id, $limit);
+        return apply_filters('userwall_wp_get_comments_by_post_id', $comments, $post_id, $limit);
     }
     
     private function get_comments_recursive($post_id, $parent_id, $limit, $comments_table) {
@@ -704,7 +706,7 @@ class UserWall_WP_Post_Manager {
         );
 
         $result = $this->wpdb->update($tables['comments'], $update_data, array('comment_id' => $comment_id));
-        do_action('thread_wp_update_comment', $comment_id, $update_data);
+        do_action('userwall_wp_update_comment', $comment_id, $update_data);
 
         return $result !== false;
     }

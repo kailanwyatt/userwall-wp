@@ -124,7 +124,7 @@
     <?php do_action('userwall_wp_footer' ); ?>
 </script>
 
-<script type="text/html" id="tmpl-reddit-style-thread-comment-template">
+<script type="text/html" id="tmpl-userwall-wp-thread-comment-template">
     <!-- Comment Section -->
     
     <# _.each(data, function(comment) { #>
@@ -163,10 +163,10 @@
             <div class="userwall-wp-thread-actions" style="display: none;">
                 <# if ( comment.user_id == userwallWPObject.user_id ) { #>
                 <!-- Edit action -->
-                <span class="userwall-wp-action" data-action="<?php esc_html_e('Edit', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'userwall-wp'); ?>"><?php esc_html_e('Edit', 'userwall-wp'); ?></span>
+                <span class="userwall-wp-action" data-action="<?php esc_html_e('Edit Comment', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Edit', 'userwall-wp'); ?>"><?php esc_html_e('Edit', 'userwall-wp'); ?></span>
 
                 <!-- Delete action -->
-                <span class="userwall-wp-action" data-action="<?php esc_html_e('Delete', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Delete', 'userwall-wp'); ?>"><?php esc_html_e('Delete', 'userwall-wp'); ?></span>
+                <span class="userwall-wp-action" data-action="<?php esc_html_e('Delete Comment', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Delete Comment', 'userwall-wp'); ?>"><?php esc_html_e('Delete', 'userwall-wp'); ?></span>
                 <# } else { #>
                 <!-- Block action -->
                 <span class="userwall-wp-action" data-action="<?php esc_html_e('Block', 'userwall-wp'); ?>" aria-label="<?php esc_html_e('Block', 'userwall-wp'); ?>"><?php esc_html_e('Block', 'userwall-wp'); ?></span>

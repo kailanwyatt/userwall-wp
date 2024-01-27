@@ -38,8 +38,10 @@ class UserWall_WP_Shortcode {
             'post' => __( 'Post', 'userwall-wp' ),
         );
 
-        $post_tabs = apply_filters( 'thread_wp_post_tabs', $post_tabs );
-       
+        $post_tabs = apply_filters( 'userwall_wp_post_tabs', $post_tabs );
+        $post_types = user_wall_get_post_types();
+        $content_types = user_wall_get_content_types();
+        $max_characters = ! empty( $options['character_limit'] ) ? absint($options['character_limit'] ) : 0;
         include( USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'); // Create a post form template
         return ob_get_clean();
     }

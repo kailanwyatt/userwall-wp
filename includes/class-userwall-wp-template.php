@@ -21,7 +21,7 @@ class UserWall_Template {
         $ajax_nonce = wp_create_nonce('userwall_wp_nonce');
 
         $options = get_option( 'userwall_wp' );
-        error_log( print_r( $options, true ) );
+
         // Create an array to pass data to JavaScript
         $userwallWP_data = array(
             'ajax_url' => admin_url('admin-ajax.php'), // WordPress AJAX URL
@@ -30,10 +30,11 @@ class UserWall_Template {
             'reply_placeholder' => __( 'What are you\'re thoughs?', 'userwall-wp' ),
             'enable_rich_editor' => ! empty( $options['enable_rich_editor'] ) ? true : false,
             'toolbar' => ! empty( $options['editor_options'] ) ? array_keys( $options['editor_options'] ) : array(),
+            'char_limit' => ! empty( $options['character_limit'] ) ? absint($options['character_limit'] ) : 0,
         );
 
         // Localize the script with the data
-        wp_localize_script('userwall-wp-js', 'userwallWPObject', apply_filters( 'thread_wp_localize_script', $userwallWP_data ) );
+        wp_localize_script('userwall-wp-js', 'userwallWPObject', apply_filters( 'userwall_wp_localize_script', $userwallWP_data ) );
 
 
         // Enqueue CSS

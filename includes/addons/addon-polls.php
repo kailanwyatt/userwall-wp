@@ -99,7 +99,7 @@ class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
     }
 
     public function hooks() {
-        add_filter( 'thread_wp_post_tabs', array( $this, 'add_poll_tab' ) );
+        add_filter( 'userwall_wp_post_tabs', array( $this, 'add_poll_tab' ) );
     }
 
     public function add_poll_tab( $tabs = array() ) {

@@ -27,6 +27,7 @@ function userwall_wp_activate() {
         post_title VARCHAR(255) NOT NULL,
         post_content TEXT,
         post_type VARCHAR(20) NOT NULL,
+        content_type VARCHAR(20) NOT NULL,
         post_status VARCHAR(20) NOT NULL,
         post_action VARCHAR(20) NOT NULL,
         creation_date DATETIME NOT NULL,

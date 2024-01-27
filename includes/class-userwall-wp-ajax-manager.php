@@ -26,7 +26,7 @@ class UserWall_WP_AJAX_Manager {
 
         add_action( 'wp_ajax_userwall_wp_post_comment', array( $this, 'post_comment' ) );
 
-        add_action('wp_ajax_thread_wp_comment_reply', array($this, 'comment_reply_callback'));
+        add_action('wp_ajax_userwall_wp_comment_reply', array($this, 'comment_reply_callback'));
     }
 
     /**

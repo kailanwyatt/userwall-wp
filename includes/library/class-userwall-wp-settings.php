@@ -100,22 +100,6 @@ class WP_Custom_Settings_API {
             )
         );
 
-        $this->get_field(
-            array(
-                'type' => 'text',
-                'name' => 'template_customization',
-                'label' => __( 'Template Customization', 'userwall_wp' ),
-            )
-        );
-
-        $this->get_field(
-            array(
-                'type' => 'checkbox',
-                'name' => 'enable_rich_editor',
-                'label' => __( 'Enable Rich Editor', 'userwall_wp' ),
-            )
-        );
-
         // Editor Settings Fields
         $this->get_field(
             array(

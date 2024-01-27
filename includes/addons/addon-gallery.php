@@ -76,15 +76,27 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
     }
 
     public function hooks() {
-        add_filter( 'thread_wp_post_tabs', array( $this, 'add_tab' ) );
+        add_filter( 'userwall_wp_post_tabs', array( $this, 'add_tab' ) );
         add_action( 'userwall_wp_after_post_form', array( $this, 'post_form_addition' ) );
-        add_action( 'thread_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
-        add_filter( 'thread_wp_get_post_by_id', array( $this, 'thread_wp_get_post_by_id' ), 10, 2 );
-        add_filter( 'thread_wp_get_posts', array( $this, 'add_image_to_posts_userwall' ), 10, 2 );
-        add_action( 'thread_wp_before_delete_post', array( $this, 'thread_wp_before_delete_post' ), 10, 1 );
+        add_action( 'userwall_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
+        add_filter( 'userwall_wp_get_post_by_id', array( $this, 'userwall_wp_get_post_by_id' ), 10, 2 );
+        add_filter( 'userwall_wp_get_posts', array( $this, 'add_image_to_posts_userwall' ), 10, 2 );
+        add_action( 'userwall_wp_before_delete_post', array( $this, 'userwall_wp_before_delete_post' ), 10, 1 );
+        add_filter( 'userwall_wp_get_post_content_types', array( $this, 'add_content_type' ), 10, 1 );
     }
 
-    public function thread_wp_before_delete_post( $post_id ) {
+    /**
+     * Adds content types icons to post form.
+     */
+    public function add_content_type( $content_post_types = array() ) {
+        $content_post_types['image'] = array(
+                'title' => __( 'Image', 'userwall-wp' ),
+                'icon'  => 'photo',
+        );
+
+        return $content_post_types;
+    }
+    public function userwall_wp_before_delete_post( $post_id ) {
         global $wpdb;
 
         $table_media = $wpdb->prefix . 'userwall_media';
@@ -178,7 +190,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
         return $obj;
     }
 
-    public function thread_wp_get_post_by_id( $post = array(), $post_id = 0 ) {
+    public function userwall_wp_get_post_by_id( $post = array(), $post_id = 0 ) {
         global $wpdb;
         $media = $wpdb->get_results(
             $wpdb->prepare(
@@ -231,7 +243,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
         <div id="imageModal">Test</div>
         <script>
             jQuery(document).ready(function($) {
-                wp.hooks.addFilter('thread_wp_content_filter', 'custom_thread_wp_filter', function(post) {
+                wp.hooks.addFilter('userwall_wp_content_filter', 'custom_userwall_wp_filter', function(post) {
                     // Modify the content here using your custom logic.                    
                     return post;
                 });

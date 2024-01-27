@@ -10,17 +10,22 @@
                 <div class="userwall-wp-post-section">
                     <div id="quill-editor-post-form" class="post-quill-editor"></div>
                 </div>
+                <div class="userwall-wp-after-post-section">
+                <?php if ( ! empty( $content_types ) ) : ?>
+                    <div class="userwall-wp-post-types">
+                        <ul>
+                            <?php foreach ( $content_types as $id => $type ) : ?>
+                            <li><a href="#" class="userwall-wp-post-type" data-type="<?php echo esc_attr( $id ); ?>" title="<?php echo esc_attr( $type['title'] ); ?>"><?php echo userwall_get_icon( $type['icon'] ); ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ( $max_characters ) : ?>
+                    <div id="userwall-wp-charcount" class="userwall-wp-charcount-wrapper"><div class="userwall-wp-charcount-lng">Characters: 0/<?php echo esc_html( absint( $max_characters ) ); ?></div></div>
+                    <?php endif; ?>
+                </div>
             </div>
-            <div class="userwall-wp-post-types">
-                <ul>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="image">Image</a></li>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="polls">Polls</a></li>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="event">Event</a></li>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="article">Article</a></li>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="file">File</a></li>
-                    <li><a href="#" class="userwall-wp-post-type" data-type="link">Link</a></li>
-                </ul>
-            </div>
+            
             <div class="rich-preview-container">
                 <!-- Rich preview will be displayed here -->
             </div>
