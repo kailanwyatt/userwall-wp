@@ -30,7 +30,7 @@ class UserWall_WP_Shortcode {
         $object_id = absint( $atts['object_id'] );
         $show_userwall = wp_validate_boolean( $atts['show_userwall'] );
         $show_form    = wp_validate_boolean( $atts['show_form'] );
-        $options = get_option( 'userwall_wp' );
+        $options = user_wall_get_options();
         $use_editor = ! empty( $options['enable_rich_editor'] ) ? true : false;
         // Output the post form
         ob_start();

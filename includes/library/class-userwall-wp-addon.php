@@ -79,4 +79,8 @@ class UserWall_WP_Base_Addon {
             $this->add_js();
         }
     }
+
+    public function is_ready() {
+        return true;
+    }
 }

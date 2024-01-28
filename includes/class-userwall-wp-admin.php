@@ -61,8 +61,8 @@ class UserWall_WP_Admin {
             $this->add_submenu('Polls', 'Polls', 'userwall-wp-polls', array($this, 'polls_page'));
         }
         if ( $addons_manager->is_active( 'gallery' ) ) {
-            $this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page'));
-            $this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page'));
+            //$this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page'));
+            //$this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page'));
         }
         
         // Add a hook to add additional submenus.
@@ -83,8 +83,8 @@ class UserWall_WP_Admin {
                 }
             }
         }
-        $this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page'));
-        $this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page'));
+        //$this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page'));
+        //$this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page'));
         $this->add_submenu('Addons', 'Addons', 'userwall-wp-addons', array($this, 'addons_page'));
         $this->add_submenu('Settings', 'Settings', 'userwall-wp-settings', array($this, 'settings_page'));
     }

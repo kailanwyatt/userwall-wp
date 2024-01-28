@@ -1242,7 +1242,7 @@
 .userwall-wp-form-wrapper .submit-button,
 .comment-submit-button,
 .userwall-wp-reply-button,
-.userwall-wp-reddit-thread input[type="submit"] {
+.userwall-wp-inner-thread input[type="submit"] {
     background-color: #0079d3;
     border: 0px;
     border-radius: 6px;
@@ -1252,21 +1252,21 @@
 }
 
 .userwall-wp-new-userwall {
-    cursor: pointer;
     margin: 0 auto 18px;
     position: sticky;
     top: 60px;
     width: 100%;
     z-index: 999999;
+    text-align: center;
 }
 
 .userwall-wp-new-userwall-content {
     background-color: #0079d3;
-    border-radius: 4px;
+    border-radius: 22px;
     color: #fff;
     display: inline-block;
     padding: 4px 20px;
-    text-align: center;
+    cursor: pointer;
 }
 
 .userwall-wp-post-types ul {
@@ -1338,6 +1338,7 @@
     border-radius: 8px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 /* Style the text area for post content */
@@ -1415,7 +1416,7 @@ input[type="text"] {
     display: block;
 }
 
-.userwall-wp-reddit-thread {
+.userwall-wp-inner-thread {
     background-color: #f7f7f7;
 }
 

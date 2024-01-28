@@ -17,7 +17,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
     }
 
     public function get_description() {
-        return __( 'Gallery', 'userwall-wp' );
+        return __( 'An easy way to add Photo uploads to user wall', 'userwall-wp' );
     }
 
     public function get_author() {

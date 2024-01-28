@@ -9,7 +9,7 @@ class UserWallWP_Addon_Reactions extends UserWall_WP_Base_Addon {
     }
 
     public function get_description() {
-        return __( 'Reactions', 'userwall-wp' );
+        return __( 'Adds User Reactions to posts and comments', 'userwall-wp' );
     }
 
     public function get_author() {
@@ -27,19 +27,8 @@ class UserWallWP_Addon_Reactions extends UserWall_WP_Base_Addon {
     public function deactivate_addon() {
         // Add deactivation logic specific to this addon (e.g., cleanup)
     }
+
+    public function is_ready() {
+        return false;
+    }
 }
-
-function register_userwall_wp_addons($addons) {
-    // Instantiate your addon class and add it to the addons list
-    $userwall_wp_poll_addon = new UserWallWP_Poll_Addon();
-    $addons['polls'] = $userwall_wp_poll_addon;
-
-    // You can add more addons in a similar manner if needed
-    // $another_addon = new Another_Addon_Class();
-    // $addons[] = $another_addon;
-
-    return $addons;
-}
-
-// Hook the function to the filter 'userwall_wp_register_addons'
-//add_filter('userwall_wp_register_addons', 'register_userwall_wp_addons');

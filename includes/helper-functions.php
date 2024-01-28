@@ -51,15 +51,25 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
     // Check if permalinks are enabled ('plain' indicates they are not).
     if ( get_option('permalink_structure') == '' ) {
         // Build a plain URL.
+        $url = home_url();
+        $options = user_wall_get_options();
+        if ( ! empty( $options['user_page'] ) ) {
+            $url = get_permalink( $options['user_page'] );
+        }
+        $url = add_query_arg( array( 'username' => urlencode( $username ), 'user_profile' => 1 ), $url );
         $url = home_url( '/' ) . '?pagename=u&username=' . urlencode( $username ) . '&user_profile=1';
         if ( $profile_tab ) {
-            $url .= '&profile_tab=' . urlencode( $profile_tab );
+            $url = add_query_arg( array( 'profile_tab' => urlencode( $profile_tab )  ), $url );
         }
     } else {
         // Build a pretty URL.
-        $url = home_url( '/u/' . $username . '/' );
+        $options = user_wall_get_options();
+        if ( ! empty( $options['user_page'] ) ) {
+            $url = get_permalink( $options['user_page'] );
+        }
+        $url = rtrim( $url, '/' ) . '/' . $username . '/';
         if ( $profile_tab ) {
-            $url .= $profile_tab . '/';
+            $url = rtrim( $url, '/' ) . '/' . $profile_tab . '/';
         }
     }
 
@@ -74,4 +84,22 @@ function user_wall_get_post_types() {
 function user_wall_get_content_types() {
     $user_wall_core = new UserWall_WP_Post_Core();
     return $user_wall_core->get_post_content_types();
+}
+
+function user_wall_get_options( $key = '', $default = '' ) {
+    $options = get_option( 'userwall_wp' );
+    if ( empty( $options ) ) {
+        $defaults = array();
+        $options = apply_filters( 'user_wall_get_options_defaults', $defaults );
+    }
+    $options = apply_filters( 'user_wall_get_options', $options );
+
+    if ( $key && empty( $options[ $key ] ) ) {
+        return $default;
+    }
+
+    if ( $key && ! empty( $options[ $key ] ) ) {
+        return apply_filters( 'user_wall_get_options_' . $key, $options[ $key ] );
+    }
+    return $options;
 }

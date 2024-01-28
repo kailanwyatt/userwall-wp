@@ -5,10 +5,12 @@ function userwall_wp_activate() {
     global $wpdb;
 
     // Define the table names with the "userwall_" prefix
+    // Core tables
     $table_posts = $wpdb->prefix . 'userwall_posts';
     $table_comments = $wpdb->prefix . 'userwall_comments';
     $table_likes = $wpdb->prefix . 'userwall_likes';
-    $table_bookmarks = $wpdb->prefix . 'userwall_bookmarks';
+    
+
     $table_reports = $wpdb->prefix . 'userwall_reports';
     $table_user_reputation = $wpdb->prefix . 'userwall_user_reputation';
     $table_badges = $wpdb->prefix . 'userwall_badges';
@@ -16,8 +18,6 @@ function userwall_wp_activate() {
     $table_user_settings = $wpdb->prefix . 'userwall_user_settings';
     $table_notifications = $wpdb->prefix . 'userwall_notifications';
     $table_search_history = $wpdb->prefix . 'userwall_search_history';
-    $table_user_followers = $wpdb->prefix . 'userwall_user_followers';
-    $table_user_following =  $wpdb->prefix . 'userwall_user_following';
     $table_user_notifications = $wpdb->prefix . 'userwall_user_notifications';
     $table_blocklist = $wpdb->prefix . 'userwall_blocklist';
 
@@ -61,39 +61,15 @@ function userwall_wp_activate() {
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
         FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
     )";
-    
-    // SQL query to create the 'userwall_plugin_bookmarks' table
-    $sql_query_bookmarks = "CREATE TABLE IF NOT EXISTS $table_bookmarks (
-        bookmark_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    // SQL query to create the 'userwall_user_reputation' table
+    $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation (
+        reputation_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
-        post_id INT UNSIGNED NOT NULL,
+        reputation_score INT NOT NULL,
         INDEX user_id_index (user_id),
-        INDEX post_id_index (post_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
+        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
-
-// SQL query to create the 'userwall_reports' table
-$sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
-    report_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    reporter_user_id BIGINT UNSIGNED NOT NULL,
-    reported_content_id INT UNSIGNED NOT NULL,
-    report_reason TEXT NOT NULL,
-    report_date DATETIME NOT NULL,
-    INDEX reporter_user_id_index (reporter_user_id),
-    INDEX reported_content_id_index (reported_content_id),
-    FOREIGN KEY (reporter_user_id) REFERENCES {$wpdb->prefix}users(ID),
-    FOREIGN KEY (reported_content_id) REFERENCES $table_posts(post_id)
-)";
-
-// SQL query to create the 'userwall_user_reputation' table
-$sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation (
-    reputation_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    reputation_score INT NOT NULL,
-    INDEX user_id_index (user_id),
-    FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-)";
 
     // SQL query to create the 'wp_userwall_hashtags' table
     $sql_query_hashtags = "CREATE TABLE IF NOT EXISTS $table_hashtags (
@@ -126,37 +102,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (sender_user_id) REFERENCES {$wpdb->prefix}users(ID),
         FOREIGN KEY (receiver_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
-
-    // SQL query to create the 'wp_userwall_search_history' table
-    $sql_query_search_history = "CREATE TABLE IF NOT EXISTS $table_search_history (
-        search_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        search_query VARCHAR(255) NOT NULL,
-        timestamp DATETIME NOT NULL,
-        INDEX user_id_index (user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    $sql_query_user_followers = "CREATE TABLE IF NOT EXISTS $table_user_followers (
-        follower_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        follower_user_id BIGINT UNSIGNED NOT NULL,
-        INDEX user_id_index (user_id),
-        INDEX follower_user_id_index (follower_user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (follower_user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    // SQL query to create the 'wp_userwall_user_notifications' table
-    $sql_query_user_notifications = "CREATE TABLE IF NOT EXISTS $table_user_notifications (
-        notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        notification_content TEXT NOT NULL,
-        timestamp DATETIME NOT NULL,
-        INDEX user_id_index (user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
 
     // SQL query to create the 'userwall_reports' table
     $sql_query_reports = "CREATE TABLE IF NOT EXISTS $table_reports (
@@ -171,38 +116,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         FOREIGN KEY (reported_content_id) REFERENCES $table_posts(post_id)
     )";
 
-    // SQL query to create the 'wp_userwall_hashtags' table
-    $sql_query_hashtags = "CREATE TABLE IF NOT EXISTS $table_hashtags (
-        hashtag_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        hashtag_text VARCHAR(255) NOT NULL,
-        INDEX hashtag_text_index (hashtag_text)
-    )";
-
-    // SQL query to create the 'wp_userwall_user_settings' table
-    $sql_query_user_settings = "CREATE TABLE IF NOT EXISTS $table_user_settings (
-        setting_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        notification_preferences TEXT,
-        privacy_settings TEXT,
-        display_options TEXT,
-        INDEX user_id_index (user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    // SQL query to create the 'wp_userwall_notifications' table
-    $sql_query_notifications = "CREATE TABLE IF NOT EXISTS $table_notifications (
-        notification_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        notification_type VARCHAR(255) NOT NULL,
-        sender_user_id BIGINT UNSIGNED NOT NULL,
-        receiver_user_id BIGINT UNSIGNED NOT NULL,
-        notification_content TEXT,
-        timestamp DATETIME NOT NULL,
-        INDEX sender_user_id_index (sender_user_id),
-        INDEX receiver_user_id_index (receiver_user_id),
-        FOREIGN KEY (sender_user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (receiver_user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
     // SQL query to create the 'wp_userwall_search_history' table
     $sql_query_search_history = "CREATE TABLE IF NOT EXISTS $table_search_history (
         search_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -211,27 +124,6 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         timestamp DATETIME NOT NULL,
         INDEX user_id_index (user_id),
         FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    $sql_query_user_followers = "CREATE TABLE IF NOT EXISTS $table_user_followers (
-        follower_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        follower_user_id BIGINT UNSIGNED NOT NULL,
-        INDEX user_id_index (user_id),
-        INDEX follower_user_id_index (follower_user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (follower_user_id) REFERENCES {$wpdb->prefix}users(ID)
-    )";
-
-    // SQL query to create the 'wp_userwall_user_following' table
-    $sql_query_user_following = "CREATE TABLE IF NOT EXISTS $table_user_following (
-        following_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id BIGINT UNSIGNED NOT NULL,
-        following_user_id BIGINT UNSIGNED NOT NULL,
-        INDEX user_id_index (user_id),
-        INDEX following_user_id_index (following_user_id),
-        FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),
-        FOREIGN KEY (following_user_id) REFERENCES {$wpdb->prefix}users(ID)
     )";
 
     // SQL query to create the 'wp_userwall_user_notifications' table
@@ -268,15 +160,12 @@ $sql_query_user_reputation = "CREATE TABLE IF NOT EXISTS $table_user_reputation 
         $sql_query_posts,
         $sql_query_comments,
         $sql_query_likes,
-        $sql_query_bookmarks,
         $sql_query_user_reputation,
         $sql_query_badges,
         $sql_query_hashtags,
         $sql_query_user_settings,
         $sql_query_notifications,
         $sql_query_search_history,
-        $sql_query_user_followers,
-        $sql_query_user_following,
         $sql_query_reports,
         $sql_query_user_notifications,
         $sql_query_blocklist,

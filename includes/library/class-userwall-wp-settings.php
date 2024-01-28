@@ -29,10 +29,10 @@ class WP_Custom_Settings_API {
 
     private function init_general_main_settings() {
         add_settings_section(
-            'wp_custom_general_main',
+            'userwall_settings_general',
             null,
             false,
-            'wp_custom_general_main'
+            'userwall_settings_general'
         );
 
         $this->get_field(
@@ -83,23 +83,6 @@ class WP_Custom_Settings_API {
             )
         );
 
-        // Display Settings Fields
-        $this->get_field(
-            array(
-                'type' => 'checkbox',
-                'name' => 'content_truncation',
-                'label' => __( 'Content Truncation', 'userwall_wp' ),
-            )
-        );
-
-        $this->get_field(
-            array(
-                'type' => 'checkbox',
-                'name' => 'read_more_link',
-                'label' => __( 'Read More Link', 'userwall_wp' ),
-            )
-        );
-
         // Editor Settings Fields
         $this->get_field(
             array(
@@ -111,37 +94,11 @@ class WP_Custom_Settings_API {
                     'italic'    => __( 'Italic', 'userwall-wp' ),
                     'underline' => __( 'Underline', 'userwall-wp' ),
                     'strike'    => __( 'Strike', 'userwall-wp' ),
-                    'link'      => __( 'Link', 'userwall-wp' ),
                     'list'      => __( 'List', 'userwall-wp' ),
                     'header'    => __( 'Headers', 'userwall-wp' ),
                     'blockquote' => __( 'Blockquote', 'userwall-wp' ),
                     'code-block' => __( 'Code Block', 'userwall-wp' ),
                 ),
-            )
-        );
-
-        $this->get_field(
-            array(
-                'type' => 'checkbox',
-                'name' => 'emoji_picker',
-                'label' => __( 'Emoji Picker', 'userwall_wp' ),
-            )
-        );
-
-        // Comment Settings Fields
-        $this->get_field(
-            array(
-                'type' => 'text',
-                'name' => 'comment_character_limit',
-                'label' => __( 'Comment Character Limit', 'userwall_wp' ),
-            )
-        );
-
-        $this->get_field(
-            array(
-                'type' => 'text',
-                'name' => 'comment_reply_options',
-                'label' => __( 'Comment Reply Options', 'userwall_wp' ),
             )
         );
     }
@@ -169,7 +126,7 @@ class WP_Custom_Settings_API {
             'label' => '',
             'options' => array(),
             'description' => '',
-            'section' => 'wp_custom_general_main',
+            'section' => 'userwall_settings_general',
         );
 
         $args = wp_parse_args( $args, $defaults );
@@ -219,12 +176,14 @@ class WP_Custom_Settings_API {
     
                 // Get the list of pages
                 $pages = get_pages();
-    
-                foreach ( $pages as $page ) {
-                    $selected = selected( $args['value'], $page->ID, false );
-                    $input .= '<option value="' . esc_attr( $page->ID ) . '" ' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+                $selected = selected( $args['value'], '', false );
+                $input .= '<option value="" ' . $selected . '>' . esc_html__( '-Page-', 'userwall-wp' ) . '</option>';
+                if ( ! empty( $pages ) ) {
+                    foreach ( $pages as $page ) {
+                        $selected = selected( $args['value'], $page->ID, false );
+                        $input .= '<option value="' . esc_attr( $page->ID ) . '" ' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+                    }
                 }
-    
                 $input .= '</select>';
                 break;
         }
@@ -315,7 +274,7 @@ class WP_Custom_Settings_API {
         $current_subtab = $this->get_current_subtab();
         switch ( $current_subtab ) {
             case 'main':
-                do_settings_sections( 'wp_custom_general_main' );
+                do_settings_sections( 'userwall_settings_general' );
                 break;
             case 'secondary':
                 do_settings_sections( 'wp_custom_general_secondary' );

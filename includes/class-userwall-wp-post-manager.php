@@ -399,8 +399,6 @@ class UserWall_WP_Post_Manager {
             }
         }
 
-        error_log( $this->wpdb->last_query );
-
         return apply_filters('userwall_wp_get_posts', $posts, $args );
     }
 

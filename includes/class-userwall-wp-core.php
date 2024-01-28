@@ -34,13 +34,15 @@ class UserWall_WP_Post_Core {
 
     // Method to add rewrite rules
     public function add_rewrite_rules() {
-        //add_rewrite_rule('^u/([^/]*)/thread/([0-9]+)?', 'index.php?pagename=u&username=$matches[1]&thread_id=$matches[2]', 'top');
+        $options = user_wall_get_options();
+        if ( ! empty( $options['user_page'] ) ) {
+            $user_page_slug = get_post_field('post_name', $options['user_page'] );
+            if ( $user_page_slug ) {
+                add_rewrite_rule('^' . $user_page_slug . '/([^/]*)/([^/]*)/?$', 'index.php?pagename=' . $user_page_slug . '&username=$matches[1]&user_profile=1&profile_tab=[2]', 'top');
 
-        //add_rewrite_rule('^u/([^/]*)/userwall/?$', 'index.php?pagename=u&username=$matches[1]&all_userwall=1', 'top');
-
-        add_rewrite_rule('^u/([^/]*)/([^/]*)/?$', 'index.php?pagename=u&username=$matches[1]&user_profile=1&profile_tab=[2]', 'top');
-
-        add_rewrite_rule('^u/([^/]*)/?$', 'index.php?pagename=u&username=$matches[1]&user_profile=1', 'top');
+                add_rewrite_rule('^' . $user_page_slug . '/([^/]*)/?$', 'index.php?pagename=' . $user_page_slug . '&username=$matches[1]&user_profile=1', 'top');    
+            }
+        }
     }
 
     public function register_query_vars($vars) {

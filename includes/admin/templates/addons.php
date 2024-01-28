@@ -26,15 +26,15 @@ $addons = $addons_manager->get_addons();
                 <?php if ( ! empty( $addons ) ) : ?>
                 <?php foreach ($addons as $addon) : ?>
                     <tr>
-                        <td><?php echo esc_html($addon->get_name()); ?></td>
+                        <td><strong><?php echo esc_html($addon->get_name()); ?></strong></td>
                         <td><?php echo esc_html($addon->get_description()); ?></td>
                         <td><?php echo esc_html($addon->get_version()); ?></td>
                         <td>
                             <?php
                             $addon_id = $addon->get_id();
                             $is_active = $addons_manager->is_active( $addon->get_id() );
-                            
-                            // Output a form for each addon
+                            $addon_ready = $addon->is_ready();
+                            if ( $addon_ready ) :
                             ?>
                             <form method="post">
                                 <input type="hidden" name="addon_id" value="<?php echo esc_attr($addon_id); ?>">
@@ -46,6 +46,9 @@ $addons = $addons_manager->get_addons();
                                     <button type="submit" class="button">Activate</button>
                                 <?php endif; ?>
                             </form>
+                            <?php else: ?>
+                                <?php _e( 'Coming Soon', 'userwall-wp' ); ?>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

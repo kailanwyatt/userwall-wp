@@ -32,6 +32,8 @@
                 <label for="posts"><?php esc_html_e('Posts', 'userwall-wp' ); ?></label>
             </th>
             <td>
+            <?php 
+            /*
             <div class="filter-container">
                     <label class="filter-label" for="date-from">Date From:</label>
                     <input type="text" id="date-from" class="date-picker small-text">
@@ -56,7 +58,8 @@
                     </select>
                     
                     <button id="apply-filter">Apply Filter</button>
-                </div>
+                </div>*/
+                ?>
                 <div class="userwall-wp-admin-posts-wrapper">
                     <?php echo do_shortcode( '[userwall_wp_post_form show_form="false"]'); ?>
                 </div>

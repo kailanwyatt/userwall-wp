@@ -20,6 +20,10 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
         return '1.0';
     }
 
+    public function is_ready() {
+        return false;
+    }
+
     public function activate_addon() {
         global $wpdb;
         

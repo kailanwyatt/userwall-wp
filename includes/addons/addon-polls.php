@@ -9,7 +9,7 @@ class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
     }
 
     public function get_description() {
-        return __( 'Polls', 'userwall-wp' );
+        return __( 'A way to add Polls to posts with expiration', 'userwall-wp' );
     }
 
     public function get_author() {
@@ -18,6 +18,10 @@ class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
 
     public function get_version() {
         return '1.0';
+    }
+
+    public function is_ready() {
+        return false;
     }
 
     public function activate_addon() {

@@ -156,7 +156,7 @@ class UserWallWPHelper {
                 break;
         }
         if ( ! richPreviewHTML ) {
-            return;
+            return '';
         }
         return '<div class="userwall-wp-embed">' + richPreviewHTML + '</div>';
     }
@@ -226,12 +226,12 @@ function renderPosts(userwall, position = 'top' ) {
        
         if ( ! jQuery('.userwall-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
             if ( position == 'top' ) {
-                jQuery('.userwall-wp-reddit-thread').prepend(renderedHtml.html());
+                jQuery('.userwall-wp-inner-thread').prepend(renderedHtml.html());
             } else {
-                jQuery('.userwall-wp-reddit-thread').append(renderedHtml.html());
+                jQuery('.userwall-wp-inner-thread').append(renderedHtml.html());
             }
             const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
-            const quillContainer = jQuery('.userwall-wp-reddit-thread').find('#' + quillContainerId)[0];
+            const quillContainer = jQuery('.userwall-wp-inner-thread').find('#' + quillContainerId)[0];
             // Initialize Quill editor
             quill = new Quill(quillContainer, {
                 theme: editor_theme,
@@ -250,19 +250,28 @@ function truncateHtml(html, maxLength) {
     
     // Convert HTML string to jQuery objects and iterate
     jQuery(html).each(function() {
-        // Add the length of text within the current HTML element to the total character count
-        charCount += jQuery(this).text().length;
+        var textContent = jQuery(this).text();
         
-        // If the character count exceeds the maxLength, enable truncation
-        if (charCount >= maxLength) {
+        if (charCount + textContent.length > maxLength && !isTruncating) {
+            // Calculate the number of characters to take from the current element
+            var remainingChars = maxLength - charCount;
+            var truncatedText = textContent.substr(0, remainingChars);
+            
+            // Create a clone of the current element and set its text content to the truncated text
+            var clonedElement = jQuery(this).clone();
+            clonedElement.text(truncatedText);
+            output += jQuery('<div>').append(clonedElement).html();
+            
             isTruncating = true;
+        } else if (!isTruncating) {
+            // Add the whole element if we are not yet truncating
+            output += jQuery('<div>').append(jQuery(this).clone()).html();
         }
-
-        // Add the HTML of the current element to the output
-        output += jQuery('<div>').append(jQuery(this).clone()).html();
-
-        // If truncating, check if the current element is a paragraph
-        if (isTruncating && this.nodeName.toLowerCase() === 'p') {
+        
+        charCount += textContent.length;
+        
+        // If we started truncating, no need to process further elements
+        if (isTruncating) {
             return false; // Stop adding more elements to the output
         }
     });
@@ -275,9 +284,10 @@ function truncateHtml(html, maxLength) {
     return output;
 }
 
+
 function setReadMore() {
     var maxLength = 100; // Maximum number of characters to display before truncating
-    
+    return;
     jQuery('.userwall-wp-thread').each(function() {
         var container = jQuery(this);
         var fullHtml = container.find('.userwall-wp-thread-content').html();
@@ -954,7 +964,7 @@ jQuery(document).ready(function($) {
                             
                             var html = template( newPosts );
                             jQuery('.userwall-wp-new-userwall').remove();
-                            $container.find('.userwall-wp-reddit-thread').append( html );
+                            $container.find('.userwall-wp-inner-thread').append( html );
                             page++;
                         } else {
                             // No more posts to load
@@ -1406,7 +1416,7 @@ jQuery(document).ready(function($) {
                     break;
             }
             if ( ! richPreviewHTML ) {
-                return;
+                return '';
             }
             return richPreviewHTML;
         }

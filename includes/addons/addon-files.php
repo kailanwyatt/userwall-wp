@@ -10,11 +10,11 @@ class UserWallWP_Addon_Files extends UserWall_WP_Base_Addon {
     }
 
     public function get_name() {
-        return 'Files [Coming Soon]';
+        return __( 'Files', 'userwall-wp' );
     }
 
     public function get_description() {
-        return 'This addon adds ability to add and download files on the wall.';
+        return __( 'This addon adds ability to add and download files on the wall.', 'userwall-wp' );
     }
 
     public function get_author() {
@@ -23,6 +23,10 @@ class UserWallWP_Addon_Files extends UserWall_WP_Base_Addon {
 
     public function get_version() {
         return '1.0';
+    }
+
+    public function is_ready() {
+        return false;
     }
 
     // Implement addon-specific activation logic
