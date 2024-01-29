@@ -37,10 +37,10 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 		// SQL query to create the 'userwall_media' table
 		$sql_query_media = "CREATE TABLE IF NOT EXISTS $table_media (
-            media_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            media_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             file_path VARCHAR(255) NOT NULL,
             description TEXT,
-            post_id INT UNSIGNED NOT NULL,
+            post_id BIGINT UNSIGNED NOT NULL,
             INDEX post_id_index (post_id),
             FOREIGN KEY (post_id) REFERENCES $table_posts(post_id)
         )";

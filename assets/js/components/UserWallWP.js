@@ -203,6 +203,7 @@ function transformComments( comments ) {
     return comments.map(function (comment) {
         // Apply the doEmbed method to the comment_content
         comment.comment_content = window.UserWallWPHelper.doEmbed(comment.comment_content);
+        comment.comment_content = comment.comment_content.replace(/^<p>\s*<\/p>/, '');
         return wp.hooks.applyFilters('userwall_wp_content_comment_filter', comment );
     });
 }
@@ -440,7 +441,44 @@ jQuery(document).ready(function($) {
     
             // Attach click event to the ellipsis icon
             jQuery(document).on('click', '.userwall-wp-ellipsis', this.handleEllipsisClick );
-    
+            
+            jQuery(document).on('click', '.userwall-wp-reaction-count', function() {
+                var button = jQuery(this);
+                var countSpan = button.find('.span-count');
+                var like_reaction = button.data('like-reaction');
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $threadDiv = jQuery(this).closest('.userwall-wp-thread');
+                var postID = $threadDiv.data('postid');
+                var commentID = isComment ? $commentDiv.data('commentid') : 0;
+
+                $.ajax({
+                    url: userwallWPObject.ajax_url,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'userwall_wp_post_like', // Create this AJAX action in your main plugin file
+                        post_id: postID,
+                        comment_id: commentID,
+                        like_reaction: like_reaction,
+                        nonce: userwallWPObject.nonce
+                    },
+                    success: function(response) {
+                        countSpan.text( parseInt( response.data.total) );
+                
+                        // Animate the button on click
+                        if ( like_reaction == 'like' ) {
+                            button.addClass('userwall-wp-liked');
+                            button.data('like-reaction', 'like' );
+                        } else {
+                            button.removeClass('userwall-wp-liked');
+                            button.data('like-reaction', 'remove' );
+                        }
+                        console.log( button );
+                    }
+                });
+            });
+
             // Add a click event to the document body to close actions when clicking outside
             jQuery('body').click(this.closeActions);
     
@@ -490,6 +528,8 @@ jQuery(document).ready(function($) {
                         var newPosts = transformComments(response.data.comments);
                         var html = template(newPosts);;
                         $thread.find('.userwall-wp-comment-section').prepend(html);
+
+                        $thread.find('.userwall-wp-comment-count .span-count').text( parseInt( response.data.total ) );
                         // Clear the comment input field
                         quill.root.innerHTML = '';
                     },
@@ -501,61 +541,68 @@ jQuery(document).ready(function($) {
             });
 
             jQuery(document).on('click', '.userwall-wp-comment-count', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
                 const thread = jQuery(this).closest('.userwall-wp-thread');
                 // Get the current post ID from data attribute
                 const postID = parseInt( thread.data('postid') );
-                
-                if ( thread.find('.userwall-wp-comment-section').is(':empty')) {
-                   // Perform AJAX request to load comments userwall
-                    $.ajax({
-                        url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                        type: 'GET',
-                        data: {
-                            action: 'userwall_wp_load_comments', // Create this AJAX action in your PHP code
-                            post_id: postID, // Send the post ID to the server
-                            nonce: userwallWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
-                        },
-                        success: function(response) {
-                            if ( response.data.comments.length && response.data.comments.length > 0 ) {
-                                var template = wp.template('userwall-wp-thread-comment-template');
-                                var newPosts = transformComments( response.data.comments );
-                                jQuery.each( newPosts, function( index, comment ) {
-                                    var template = wp.template('userwall-wp-thread-comment-template');
-
-                                    var commentData = comment;
-
-                                    // Render the template with the data
-                                    var renderedHtml = template(commentData);
-                                    
-                                    // Convert the HTML string to a jQuery object
-                                    var commentHtml = jQuery('<div class="tempWrapper">' + renderedHtml + '</div>' );
-
-                                    var childComments = commentData[0].child_comments;
-                                    if ( childComments.length > 0 ) {
-                                        template = wp.template('userwall-wp-thread-comment-template');
-                                        var innerComments = transformComments(childComments);
-     
-                                        jQuery.each( innerComments, function( index2, inner_comment ) {
-                                            var ReplyTemplate = wp.template('userwall-wp-thread-comment-template');
-                                            var child_html = ReplyTemplate({inner_comment});
-                                            commentHtml.find('.userwall-wp-comment-reply-section').append(child_html);
-                                        });
-                                    }
-
-                                    thread.find('.userwall-wp-comment-section').prepend(commentHtml.html());
-                                    wp.hooks.doAction('userwall_wp_comment_rendered', comment);
-                                });
-                                wp.hooks.doAction('userwall_wp_comment_all_rendered', response.data.comments );
-                            }
-                        },
-                        error: function(error) {
-                            // Handle errors here (e.g., display an error message)
-                            console.error('Error loading comments userwall:', error);
-                        },
-                    });
+                if ( isComment ) {
+                    $commentDiv.find('.userwall-wp-reply-button').trigger('click');
                 } else {
-                    thread.find('.userwall-wp-comment-section').toggle();
+                    if ( thread.find('.userwall-wp-comment-section').is(':empty')) {
+                        // Perform AJAX request to load comments userwall
+                         $.ajax({
+                             url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                             type: 'GET',
+                             data: {
+                                 action: 'userwall_wp_load_comments', // Create this AJAX action in your PHP code
+                                 post_id: postID, // Send the post ID to the server
+                                 nonce: userwallWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
+                             },
+                             success: function(response) {
+                                 if ( response.data.comments.length && response.data.comments.length > 0 ) {
+                                     var template = wp.template('userwall-wp-thread-comment-template');
+                                     var newPosts = transformComments( response.data.comments );
+                                     jQuery.each( newPosts, function( index, comment ) {
+                                         var template = wp.template('userwall-wp-thread-comment-template');
+     
+                                         var commentData = comment;
+     
+                                         // Render the template with the data
+                                         var renderedHtml = template(commentData);
+                                         
+                                         // Convert the HTML string to a jQuery object
+                                         var commentHtml = jQuery('<div class="tempWrapper">' + renderedHtml + '</div>' );
+                                         
+                                         jQuery.each( comment, function( index, reply ) {
+                                             if ( reply.child_comments.length > 0 ) {
+                                                 template = wp.template('userwall-wp-thread-comment-template');
+                                                 var innerComments = transformComments(reply.child_comments);
+              
+                                                 jQuery.each( innerComments, function( index2, inner_comment ) {
+                                                     var ReplyTemplate = wp.template('userwall-wp-thread-comment-template');
+                                                     var child_html = ReplyTemplate({inner_comment});
+                                                     commentHtml.find('[data-commentid="' + inner_comment.parent_id + '"] .userwall-wp-comment-reply-section').append(child_html);
+                                                 });
+                                             }
+                                         });
+     
+                                         thread.find('.userwall-wp-comment-section').prepend(commentHtml.html());
+                                         wp.hooks.doAction('userwall_wp_comment_rendered', comment);
+                                     });
+                                     wp.hooks.doAction('userwall_wp_comment_all_rendered', response.data.comments );
+                                 }
+                             },
+                             error: function(error) {
+                                 // Handle errors here (e.g., display an error message)
+                                 console.error('Error loading comments userwall:', error);
+                             },
+                         });
+                     } else {
+                         thread.find('.userwall-wp-comment-section').toggle();
+                     }
                 }
+                
             });
 
             jQuery( document ).on('click', '.userwall-wp-new-userwall', function( e ) {
@@ -682,41 +729,32 @@ jQuery(document).ready(function($) {
                 
                 if ( isComment ) {
                     let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`;
-                     // Initialize Quill editor for editing
-                    let quillEditor = new Quill(editorContainer, {
-                        theme: editor_theme,
-                        modules: editorModules,
-                    });
+                    if ( ! jQuery( editorContainer ).find('.ql-editor').length ) {
+                        // Initialize Quill editor for editing
+                        let quillEditor = new Quill(editorContainer, {
+                            theme: editor_theme,
+                            modules: editorModules,
+                        });
 
-                    
-                    // Populate Quill editor with existing content
-                    const existingContent = $content.html();
-                    quillEditor.root.innerHTML = existingContent;
+                        // Populate Quill editor with existing content
+                        const existingContent = $content.html();
+                        quillEditor.root.innerHTML = existingContent.replace(/^<p>\s*<\/p>/, '');
+                    }
                 } else {
                     let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}`;
+                    if ( ! jQuery( editorContainer ).find('.ql-editor').length ) {
+                        // Initialize Quill editor for editing
+                        let quillEditor = new Quill(editorContainer, {
+                            theme: editor_theme,
+                            modules: editorModules,
+                        });
 
-                     // Initialize Quill editor for editing
-                    let quillEditor = new Quill(editorContainer, {
-                        theme: editor_theme,
-                        modules: editorModules,
-                    });
-                    // Populate Quill editor with existing content
-                    const existingContent = $content.html();
-                    quillEditor.root.innerHTML = existingContent;
-                }
-
-                quill.on('text-change', function() {
-                    var editorContent = quill.getText();
-            
-                    // If there is text in the editor (not just whitespace)
-                    if (editorContent.trim().length > 0) {
-                        // Remove 'ql-blank' class
-                        jQuery(editorContainer).removeClass('ql-blank');
-                    } else {
-                        // Add 'ql-blank' class if the editor is empty
-                        jQuery(editorContainer).addClass('ql-blank');
+                        // Populate Quill editor with existing content
+                        const existingContent = $content.html();
+                        quillEditor.root.innerHTML = existingContent.replace(/^<p>\s*<\/p>/, '');
                     }
-                });
+                    
+                }
             });
         
             // Function to cancel editing
@@ -749,19 +787,6 @@ jQuery(document).ready(function($) {
                     const quill = new Quill(`#quill-editor-edit-${postID}`);
                     content = quill.root.innerHTML; // Get Quill editor content
                 }
-
-                quill.on('text-change', function() {
-                    var editorContent = quill.getText();
-            
-                    // If there is text in the editor (not just whitespace)
-                    if (editorContent.trim().length > 0) {
-                        // Remove 'ql-blank' class
-                        jQuery(`#quill-editor-edit-${postID}`).removeClass('ql-blank');
-                    } else {
-                        // Add 'ql-blank' class if the editor is empty
-                        jQuery(`#quill-editor-edit-${postID}`).addClass('ql-blank');
-                    }
-                });
 
                 // Perform an AJAX request to save the changes
                 $.ajax({
@@ -1045,20 +1070,13 @@ jQuery(document).ready(function($) {
         }
     
         handleEllipsisClick() {
-            // Find the parent .userwall-wp-thread
-            
-            var thread = jQuery(this).closest('.userwall-wp-comment');
-            if ( thread.length == 0 ) {
-                thread = jQuery(this).closest('.userwall-wp-thread');
-            }
+            var obj = jQuery( this );
+
             // Find .userwall-wp-thread-actions within the thread
-            const actionsArea = thread.find('.userwall-wp-thread-actions');
+            const actionsArea = obj.siblings('.userwall-wp-thread-actions');
 
             // Toggle the visibility of the actions area
             actionsArea.toggle();
-    
-            // Prevent the click event from propagating to the document body
-            event.stopPropagation();
         }
     
         closeActions() {

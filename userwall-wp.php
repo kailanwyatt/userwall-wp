@@ -106,10 +106,6 @@ if ( ! class_exists( 'UserWall_WP' ) ) {
 		private function init( $addons_folder ) {
 			// Autoload classes for addons
 			$this->autoload_addon_classes( $addons_folder );
-
-			// Add any other initialization code here
-
-			// Add hooks and filters here
 		}
 
 		/**
@@ -142,34 +138,3 @@ function add_type_attribute( $tag, $handle, $src ) {
 	return $tag;
 }
 add_filter( 'script_loader_tag', 'add_type_attribute', 10, 3 );
-
-function fetch_usernames_callback() {
-	// Check for the 'term' in the AJAX request
-	if ( isset( $_GET['term'] ) ) {
-		$search_term = sanitize_text_field( trim( str_replace( '@', '', $_GET['term'] ) ) );
-
-		// Query for users
-		$user_query = new WP_User_Query(
-			array(
-				'search'         => '*' . esc_attr( $search_term ) . '*',
-				'search_columns' => array( 'user_login', 'user_nicename' ),
-				'number'         => 10, // Limit the number of results
-			)
-		);
-
-		$users = $user_query->get_results();
-
-		$usernames = array();
-		if ( ! empty( $users ) ) {
-			foreach ( $users as $user ) {
-				$usernames[] = $user->user_login; // or user_nicename, depending on your preference
-			}
-		}
-
-		wp_send_json_success( $usernames );
-	}
-
-	wp_send_json_error( 'No term found' );
-}
-add_action( 'wp_ajax_fetch_usernames', 'fetch_usernames_callback' ); // For logged-in users
-add_action( 'wp_ajax_nopriv_fetch_usernames', 'fetch_usernames_callback' ); // For logged-out users

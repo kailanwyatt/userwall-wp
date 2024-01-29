@@ -1,217 +1,227 @@
 /* Style the actions */
 .userwall-wp-action {
-    color: #007bff;
-    cursor: pointer; /* Add a pointer cursor on hover */
-    display: block; /* Make each action appear on a new line */
-    font-size: 14px;
-    margin-right: 10px;
+	color: #007bff;
+	cursor: pointer; /* Add a pointer cursor on hover */
+	display: block; /* Make each action appear on a new line */
+	font-size: 14px;
+	margin-right: 10px;
 }
 
 /* Style the actions on hover */
 .userwall-wp-action:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 /* Style the actions area */
 .userwall-wp-thread-actions {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for visual effect */
-    display: block;
-    margin-top: 10px; /* Optional: Add some spacing between actions */
-    padding: 5px;
-    position: absolute;
-    right: 10px;
-    top: 40px; /* Adjust the position as needed */
-    z-index: 999;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for visual effect */
+	display: block;
+	margin-top: 10px; /* Optional: Add some spacing between actions */
+	padding: 5px;
+	position: absolute;
+	right: 10px;
+	top: 40px; /* Adjust the position as needed */
+	z-index: 999;
 }
 
 .userwall-wp-activity-block {
-    align-items: center;
-    display: flex;
+	align-items: center;
+	display: flex;
 }
 
-.userwall-wp-activity-section  .userwall-wp-comment-img {
-    font-size: 14px; /* Adjust as needed */
-    height: 20px; /* Set height equal to the SVG height */
-    line-height: 20px; /* To center the text vertically */
-    margin-right: 4px;
-    text-align: center; /* To center the text horizontally */
-    width: 20px;  /* Set width equal to the SVG width */
+.userwall-wp-activity-section .userwall-wp-comment-img {
+	font-size: 14px; /* Adjust as needed */
+	height: 20px; /* Set height equal to the SVG height */
+	line-height: 20px; /* To center the text vertically */
+	margin-right: 4px;
+	text-align: center; /* To center the text horizontally */
+	width: 20px; /* Set width equal to the SVG width */
+	border-radius: 50%;
+	border: 1px solid #333;
+	padding: 6px;
 }
 
-.userwall-wp-activity-section, 
+.userwall-wp-activity-section,
 .userwall-wp-author-section,
 .hreads-wp-thread-content,
 .userwall-edit-post-section,
 .ql-container {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
+.userwall-edit-post-section-editor,
+.comment-thread-edit-form-editor {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+
 .userwall-wp-activity-section svg {
-    height: 20px;
-    width: 20px;
+	height: 20px;
+	width: 20px;
 }
 
 .userwall-wp-activity-section {
-    display: flex;
-    justify-content: space-around;
-    padding-top: 20px;
+	display: flex;
+	justify-content: space-around;
+	padding-top: 20px;
 }
 
 .userwall-wp-author h3 {
-    font-size: 1.2rem;
-    margin: 0px;
+	font-size: 1.2rem;
+	margin: 0px;
 }
 
 .userwall-wp-author-image-wrapper img {
-    border-radius: 50%;
-    height: 50px;
-    vertical-align: middle;
-    width: 50px;
+	border-radius: 50%;
+	height: 50px;
+	vertical-align: middle;
+	width: 50px;
 }
 
 .userwall-wp-author-image-wrapper {
-    margin-right: 10px;
+	margin-right: 10px;
 }
 
 .userwall-wp-author-section {
-    display: flex;
+	display: flex;
 }
 
 .userwall-wp-comment {
-    margin-bottom: 10px;
-    padding: 10px;
-    position: relative;
+	margin-bottom: 10px;
+	padding: 10px;
+	position: relative;
 }
 
 .userwall-wp-comment-author {
-    color: #888;
-    font-size: 12px;
+	color: #888;
+	font-size: 12px;
 }
 
 .userwall-wp-comment button {
-    background-color: #0079d3;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    padding: 10px 30px;
+	background-color: #0079d3;
+	border: none;
+	border-radius: 6px;
+	color: #fff;
+	cursor: pointer;
+	padding: 10px 30px;
 }
 
 .userwall-wp-comment-content {
-    font-size: 14px;
+	font-size: 14px;
 }
 
 .userwall-wp-comment-count.userwall-wp-activity-block,
 .userwall-wp-reaction-count.userwall-wp-activity-block {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .userwall-wp-comment-reply-section {
-    padding-left: 40px;
+	padding-left: 40px;
 }
 
 .userwall-wp-comment-section {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
 .userwall-wp-ellipsis {
-    cursor: pointer;
-    font-size: 24px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
+	cursor: pointer;
+	font-size: 24px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 
 .userwall-wp-form-wrapper .submit-button,
 .comment-submit-button,
 .userwall-wp-reply-button,
 .userwall-wp-inner-thread input[type="submit"] {
-    background-color: #0079d3;
-    border: 0px;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    padding: 10px 30px;
+	background-color: #0079d3;
+	border: 0px;
+	border-radius: 6px;
+	color: #fff;
+	cursor: pointer;
+	padding: 10px 30px;
 }
 
 .userwall-wp-new-userwall {
-    margin: 0 auto 18px;
-    position: sticky;
-    top: 60px;
-    width: 100%;
-    z-index: 999999;
-    text-align: center;
+	margin: 0 auto 18px;
+	position: sticky;
+	top: 60px;
+	width: 100%;
+	z-index: 999999;
+	text-align: center;
 }
 
 .userwall-wp-new-userwall-content {
-    background-color: #0079d3;
-    border-radius: 22px;
-    color: #fff;
-    display: inline-block;
-    padding: 4px 20px;
-    cursor: pointer;
+	background-color: #0079d3;
+	border-radius: 22px;
+	color: #fff;
+	display: inline-block;
+	padding: 4px 20px;
+	cursor: pointer;
 }
 
 .userwall-wp-post-types ul {
-    display: flex;
-    list-style: none;
-    margin: 0px;
-    padding: 0px;
+	display: flex;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
 }
 
 .userwall-wp-post-types ul li {
-    padding-right: 12px;
+	padding-right: 12px;
 }
 
 .userwall-wp-post-types ul a {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 .userwall-wp-reply-button {
-    background-color: #007bff;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    padding: 5px 10px;
+	background-color: #007bff;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	padding: 5px 10px;
 }
 
 .userwall-wp-reply-button:hover,
 .userwall-wp-comment button:hover {
-    background-color: #0056b3;
+	background-color: #0056b3;
 }
 
 .userwall-wp-thread {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    padding: 10px;
-    position: relative;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	margin-bottom: 10px;
+	padding: 10px;
+	position: relative;
 }
 
 .userwall-wp-thread-author {
-    color: #666;
-    font-size: 12px;
+	color: #666;
+	font-size: 12px;
 }
 
 .userwall-wp-thread-content {
-    font-size: 16px;
+	font-size: 16px;
 }
 
 .userwall-wp-wall-image {
-    height: auto;
-    width: 100%;
+	height: auto;
+	width: 100%;
 }
 
 .userwall-wp-wall-time {
-    font-size: 0.8rem;
+	font-size: 0.8rem;
 }
 
 .userwall-wp-charcount-wrapper {
-    text-align: right;
+	text-align: right;
 }
 
 .userwall-wp-charcount-wrapper .max-reached {
-    color: red;
+	color: red;
 }

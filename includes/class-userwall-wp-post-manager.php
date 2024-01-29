@@ -78,7 +78,7 @@ class UserWall_WP_Post_Manager {
 		// Insert data into the posts table
 		$insert_data = array(
 			'post_title'    => $data['title'],
-			'post_content'  => $data['content'],
+			'post_content'  => $this->trim_p_tags( $data['content'] ),
 			'user_id'       => $data['user_id'],
 			'post_type'     => $data['post_type'],
 			'creation_date' => $data['creation_date'],
@@ -115,12 +115,12 @@ class UserWall_WP_Post_Manager {
 		// Sanitize and validate data as needed
 
 		$update_data = array(
-			'post_content' => $data['content'],
+			'post_content' => $this->trim_p_tags( $data['content'] ),
 		);
 
 		$result = $this->wpdb->update( $this->table_posts, $update_data, array( 'post_id' => $post_id ) );
 		do_action( 'userwall_wp_update_post', $post_id, $update_data );
-		return $result !== false;
+		return false !== $result;
 	}
 
 	public function can_moderate( $post_id = 0, $current_user_id = 0 ) {
@@ -161,7 +161,7 @@ class UserWall_WP_Post_Manager {
 		$result = $this->wpdb->delete( $tables['posts'], array( 'post_id' => $post_id ) );
 
 		do_action( 'userwall_wp_after_delete_post', $post_id );
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -175,7 +175,7 @@ class UserWall_WP_Post_Manager {
 		$post   = $this->wpdb->get_row(
 			$this->wpdb->prepare(
 				"SELECT p.*, 
-                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
                 (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
                 FROM {$this->table_posts} p
                 WHERE p.post_id = %d",
@@ -240,7 +240,7 @@ class UserWall_WP_Post_Manager {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 		$query  = $this->wpdb->prepare(
 			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
             (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
             FROM {$this->table_posts} p
             WHERE p.post_id > %d
@@ -274,6 +274,15 @@ class UserWall_WP_Post_Manager {
 		if ( isset( $modified_post->comment_date ) ) {
 			$modified_post->comment_timestamp = strtotime( $post->comment_date );
 		}
+
+		if ( isset( $modified_post->post_content ) ) {
+			$modified_post->post_content = $this->trim_p_tags( $post->post_content );
+		}
+
+		if ( isset( $modified_post->comment_content ) ) {
+			$modified_post->comment_content = $this->trim_p_tags( $post->comment_content );
+		}
+
 		return apply_filters( 'userwall_wp_post_return_object', $modified_post );
 	}
 	/**
@@ -378,7 +387,7 @@ class UserWall_WP_Post_Manager {
 		$limit     = intval( $per_page ); // Sanitize the limit
 		$sql_query = $this->wpdb->prepare(
 			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id) AS comments_count,
+            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,
             (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
             FROM {$this->table_posts} p
             WHERE {$where_clause}
@@ -420,10 +429,10 @@ class UserWall_WP_Post_Manager {
 
 		$result = $this->wpdb->insert( $table_reports, $insert_data );
 
-		if ( $result !== false ) {
+		if ( false !== $result ) {
 			do_action( 'userwall_wp_report_post', $reporter_user_id, $post_id, $report_reason );
 		}
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -449,11 +458,11 @@ class UserWall_WP_Post_Manager {
 
 		$result = $this->wpdb->insert( $table_blocklist, $insert_data );
 
-		if ( $result !== false ) {
+		if ( false !== $result ) {
 			do_action( 'userwall_wp_user_blocked_for_post', $user_id, $blocked_user_id, $post_id );
 		}
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 
@@ -480,11 +489,11 @@ class UserWall_WP_Post_Manager {
 
 		$result = $this->wpdb->insert( $table_followers, $insert_data );
 
-		if ( $result !== false ) {
+		if ( false !== $result ) {
 			do_action( 'userwall_wp_user_followed_author', $user_id, $author_id, $post_id );
 		}
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 
@@ -506,11 +515,11 @@ class UserWall_WP_Post_Manager {
 
 		$result = $this->wpdb->insert( $table_bookmarks, $insert_data );
 
-		if ( $result !== false ) {
+		if ( false !== $result ) {
 			do_action( 'userwall_wp_post_saved_to_bookmarks', $user_id, $post_id );
 		}
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 
@@ -528,7 +537,7 @@ class UserWall_WP_Post_Manager {
 		$insert_data = array(
 			'user_id'         => $user_id,
 			'post_id'         => $post_id,
-			'comment_content' => $comment_content,
+			'comment_content' => $this->trim_p_tags( $comment_content ),
 			'comment_date'    => current_time( 'mysql' ),
 		);
 
@@ -553,18 +562,20 @@ class UserWall_WP_Post_Manager {
 	 * @param string $reaction_type The type of reaction (e.g., 'like', 'love', 'haha').
 	 * @return bool Whether the like/reaction was successfully added or not.
 	 */
-	public function add_like_or_reaction( $user_id, $post_id, $reaction_type ) {
+	public function add_like_or_reaction( $user_id, $post_id, $comment_id = 0, $reaction_type = 'like' ) {
+		global $wpdb;
 		$table_likes = $wpdb->prefix . 'userwall_likes';
 
 		$insert_data = array(
 			'user_id'       => $user_id,
 			'post_id'       => $post_id,
+			'comment_id'    => $comment_id,
 			'reaction_type' => $reaction_type,
 		);
 
 		$result = $this->wpdb->insert( $table_likes, $insert_data );
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 
@@ -581,7 +592,7 @@ class UserWall_WP_Post_Manager {
 		$result = $this->wpdb->delete( $table_comments, array( 'comment_id' => $comment_id ) );
 		do_action( 'userwall_wp_after_delete_comment', $comment_id );
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -600,7 +611,7 @@ class UserWall_WP_Post_Manager {
 
 		$user_id = $this->wpdb->get_var( $query );
 
-		if ( $user_id !== null ) {
+		if ( null !== $user_id ) {
 			return (int) $user_id;
 		}
 
@@ -656,16 +667,20 @@ class UserWall_WP_Post_Manager {
 	 * @return array List of comment objects for the post.
 	 */
 	public function get_comments_by_post_id( $post_id, $limit = 5 ) {
-		$tables   = UserWall_WP_Table_Manager::get_table_names();
-		$comments = $this->get_comments_recursive( $post_id, 0, $limit, $tables['comments'] );
+		$comments = $this->get_comments_recursive( $post_id, 0, $limit );
 
 		return apply_filters( 'userwall_wp_get_comments_by_post_id', $comments, $post_id, $limit );
 	}
 
-	private function get_comments_recursive( $post_id, $parent_id, $limit, $comments_table ) {
+	private function get_comments_recursive( $post_id, $parent_id, $limit ) {
+		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT * FROM $comments_table WHERE post_id = %d AND parent_id = %d ORDER BY comment_date DESC LIMIT %d",
+				"SELECT 
+					c.*,
+					(SELECT COUNT(comment_id) FROM {$tables['comments']} WHERE parent_id = c.comment_id) AS replies_count,
+            		(SELECT COUNT(like_id) FROM {$tables['likes']} WHERE comment_id = c.comment_id) AS reactions_count 
+					FROM {$tables['comments']} AS c WHERE c.post_id = %d AND c.parent_id = %d ORDER BY c.comment_date DESC LIMIT %d",
 				$post_id,
 				$parent_id,
 				$limit
@@ -676,7 +691,7 @@ class UserWall_WP_Post_Manager {
 
 		foreach ( $results as $comment ) {
 			$comment->child_comments = array();
-			$child_comments          = $this->get_comments_recursive( $post_id, $comment->comment_id, $limit, $comments_table );
+			$child_comments          = $this->get_comments_recursive( $post_id, $comment->comment_id, $limit );
 			if ( ! empty( $child_comments ) ) {
 				$comment->child_comments = $child_comments;
 			}
@@ -704,6 +719,34 @@ class UserWall_WP_Post_Manager {
 		$result = $this->wpdb->update( $tables['comments'], $update_data, array( 'comment_id' => $comment_id ) );
 		do_action( 'userwall_wp_update_comment', $comment_id, $update_data );
 
-		return $result !== false;
+		return false !== $result;
+	}
+
+	public function get_total_comment_by_post_id( $post_id = 0 ) {
+		if ( ! $post_id ) {
+			return 0;
+		}
+
+		$tables   = UserWall_WP_Table_Manager::get_table_names();
+		$comments = $this->wpdb->get_var(
+			$this->wpdb->prepare(
+				"SELECT COUNT(c.comment_id)
+                FROM {$tables['comments']} c
+                WHERE c.post_id = %d",
+				absint( $post_id )
+			)
+		);
+
+		return $comments;
+	}
+
+	private function trim_p_tags( $html_content = '' ) {
+		// Remove empty paragraphs
+		$cleaned_content = preg_replace( '/<p><br><\/p>/', '', $html_content );
+
+		// You might want to remove paragraphs that contain only whitespace as well
+		$cleaned_content = preg_replace( '/<p>\s*<\/p>/', '', $cleaned_content );
+
+		return $cleaned_content;
 	}
 }

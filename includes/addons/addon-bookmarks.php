@@ -37,9 +37,9 @@ class UserWallWP_Addon_Bookmarks extends UserWall_WP_Base_Addon {
 
 		// SQL query to create the 'userwall_plugin_bookmarks' table
 		$sql_query_bookmarks = "CREATE TABLE IF NOT EXISTS $table_bookmarks (
-            bookmark_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            bookmark_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user_id BIGINT UNSIGNED NOT NULL,
-            post_id INT UNSIGNED NOT NULL,
+            post_id BIGINT UNSIGNED NOT NULL,
             INDEX user_id_index (user_id),
             INDEX post_id_index (post_id),
             FOREIGN KEY (user_id) REFERENCES {$wpdb->prefix}users(ID),

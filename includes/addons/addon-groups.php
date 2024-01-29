@@ -32,8 +32,8 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
 
 		// SQL query to create the 'userwall_plugin_groups' table
 		$sql_query_groups = "CREATE TABLE IF NOT EXISTS $table_groups (
-            group_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            parent_group_id INT UNSIGNED DEFAULT NULL,
+            group_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            parent_group_id BIGINT UNSIGNED DEFAULT NULL,
             group_name VARCHAR(255) NOT NULL,
             group_slug VARCHAR(255) NOT NULL,
             group_description TEXT,

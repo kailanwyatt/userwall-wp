@@ -37,7 +37,7 @@ class UserWallWP_Addon_Followers extends UserWall_WP_Base_Addon {
 
 		// SQL query to create the 'userwall_plugin_bookmarks' table
 		$sql_query_user_followers = "CREATE TABLE IF NOT EXISTS $table_user_followers (
-            follower_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            follower_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user_id BIGINT UNSIGNED NOT NULL,
             follower_user_id BIGINT UNSIGNED NOT NULL,
             INDEX user_id_index (user_id),
