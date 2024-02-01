@@ -28,7 +28,7 @@ class UserWall_WP_Addons {
 		$addon_dir = USERWALL_WP_PLUGIN_ADDONS_DIR;
 
 		// Use glob to find PHP files with class names starting with 'UserWallWP_Addon_'
-		$addon_files = glob( $addon_dir . 'addon-*.php' );
+		$addon_files = glob( $addon_dir . 'class-userwallwp-addon-*.php' );
 
 		// Loop through the found files
 		foreach ( $addon_files as $addon_file ) {
@@ -102,7 +102,7 @@ class UserWall_WP_Addons {
 	}
 
 	public function is_active( $addon_id ) {
-		return in_array( $addon_id, array_keys( $this->active_addons ) );
+		return in_array( $addon_id, array_keys( $this->active_addons ), true );
 	}
 
 	public function activate_addon( $addon_id ) {

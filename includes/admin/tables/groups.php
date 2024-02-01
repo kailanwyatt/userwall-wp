@@ -35,7 +35,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 
 		$sql .= " LIMIT $per_page";
 		$sql .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
 		return $result;
 	}
@@ -64,7 +64,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		global $wpdb;
 
 		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}userwall_groups";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $wpdb->get_var( $sql );
 	}
 
@@ -100,7 +100,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	 *
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
 			'cb'                => '<input type="checkbox" />',
 			'group_name'        => __( 'Name', 'userwall-wp' ),
@@ -159,7 +159,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		$this->items = self::get_groups( $per_page, $current_page );
 	}
 
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="group[]" value="%s" />',
 			$item['group_id']

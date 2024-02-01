@@ -169,7 +169,7 @@ function userwall_wp_activate() {
 		$sql_query_reports,
 		$sql_query_user_notifications,
 		$sql_query_blocklist,
-        $sql_query_likes,
+		$sql_query_likes,
 	);
 
 	// Include the WordPress database upgrade file

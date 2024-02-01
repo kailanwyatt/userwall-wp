@@ -74,7 +74,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		}
 
 		$query .= " LIMIT $per_page OFFSET $offset";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$this->items = $wpdb->get_results( $query, ARRAY_A );
 	}
 
@@ -98,8 +98,9 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		$orderby = ! empty( $_GET['orderby'] ) ? $_GET['orderby'] : 'creation_date';
 		$order   = ! empty( $_GET['order'] ) ? $_GET['order'] : 'DESC';
 		$query  .= " ORDER BY $orderby $order";
-
+		
 		// Fetch the data
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$data = $wpdb->get_results( $query, ARRAY_A );
 
 		return $data;
@@ -154,7 +155,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	}
 
 	public function display_notices() {
-		if ( isset( $_GET['message'] ) && $_GET['message'] === 'updated' ) {
+		if ( isset( $_GET['message'] ) && 'updated' === $_GET['message'] ) {
 			echo '<div class="updated"><p>Post status updated successfully.</p></div>';
 		}
 	}

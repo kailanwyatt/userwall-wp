@@ -17,7 +17,6 @@
 
         return this.each(function() {
             var $slider = $(this);
-            console.log( $slider );
             var $slides = $slider.find('.' + settings.slideClass);
             var currentIndex = settings.currentIndex;
             var slideWidth = 100;
@@ -40,7 +39,6 @@
                 
                 if (index >= 0 && index < $slides.length) {
                     currentIndex = index;
-                    console.log( currentIndex );
                     $slides.hide();
                     $slides.each( function( index, el ) {
                         if ( currentIndex == parseInt( jQuery(this).attr('data-index') ) ) {

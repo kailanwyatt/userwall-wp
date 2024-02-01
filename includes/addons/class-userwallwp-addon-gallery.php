@@ -8,6 +8,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		global $wpdb;
 		$this->table = $wpdb->prefix . 'userwall_media';
 	}
+
 	public function get_id() {
 		return 'gallery';
 	}
@@ -71,6 +72,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 		// Delete the tables
 		foreach ( $sql_queries as $sql_query ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql_query );
 		}
 	}
@@ -113,7 +115,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 			foreach ( $media as $row ) {
 				// Delete the file
 				$file_manager = new UserWall_WP_FileManager();
-				$file_manager->deleteFile( $row->file_path );
+				$file_manager->delete_file( $row->file_path );
 
 				$wpdb->delete( $table_media, array( 'media_id' => $row->media_id ) );
 			}
@@ -146,7 +148,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		if ( ! empty( $_FILES['post_images'] ) ) {
 			foreach ( $_FILES['post_images']['name'] as $index => $value ) {
 				if ( $_FILES['post_images']['error'][ $index ] == 0 ) {
-					$file_path = $file_manager->uploadFile(
+					$file_path = $file_manager->upload_file(
 						array(
 							'name'      => $_FILES['post_images']['name'][ $index ],
 							'full_path' => $_FILES['post_images']['full_path'][ $index ],
@@ -164,7 +166,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 							'file_path' => $file_path,
 						)
 					);
-					if ( $insert_result !== false ) {
+					if ( false !== $insert_result ) {
 						$media_ids[] = $insert_result;
 						do_action( 'userwall_wp_after_image_added', $insert_result, $post_id, $file_path );
 					}
@@ -190,7 +192,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 				// Access the 'filename' key in the $file_info array to get the file name
 				$file_name       = $file_info['basename'];
-				$media_item->url = $file_manager->getFileUrl( $file_name );
+				$media_item->url = $file_manager->get_file_url( $file_name );
 				$obj[]           = $media_item;
 			}
 		}

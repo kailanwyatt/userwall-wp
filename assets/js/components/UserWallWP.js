@@ -1,6 +1,114 @@
 // Import Quill
 import Quill from 'quill';
 import ToolbarEmoji from 'quill-emoji';
+//import InfiniteScroll from './modules/infiniteScroll';
+
+function InfiniteScroll(contentId) {
+    let page = 1;
+    const content = document.querySelector(contentId);
+    const loadingIndicator = document.getElementById('loading');
+    const itemsPerPage = 10;
+    let isLoading = false;
+    let sentinel; // Sentinel element to detect scroll to the bottom
+    let hasMoreResults = true; // Track if more results are available
+
+    function createSentinel() {
+        sentinel = document.createElement('div');
+        sentinel.classList.add('sentinel');
+        content.appendChild(sentinel);
+    }
+
+    createSentinel(); // Initialize the sentinel element
+
+    function loadMoreItems() {
+        if (isLoading || !hasMoreResults) {
+            return;
+        }
+        isLoading = true;
+        loadingIndicator.style.display = 'block';
+
+        // Check if the sentinel element is in the viewport
+        const sentinelRect = sentinel.getBoundingClientRect();
+        if (sentinelRect.top <= window.innerHeight) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', userwallWPObject.ajax_url);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        if (response.data.posts.length > 0) {
+                            renderPosts(response.data.posts, 'bottom');
+                            page++;
+                        } else {
+                            // No more posts to load
+                            hasMoreResults = false; // Disable further loading
+                        }
+                    } else {
+                        // Handle AJAX error
+                        console.error('Error loading more posts:', response.data.message);
+                    }
+                } else {
+                    // Handle AJAX error
+                    console.error('Error loading more posts:', xhr.statusText);
+                }
+
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+            };
+
+            xhr.onerror = function () {
+                // Handle AJAX error
+                console.error('Error loading more posts:', xhr.statusText);
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+            };
+
+            const data = new URLSearchParams();
+            data.append('action', 'userwall_wp_load_more_posts');
+            data.append('per_page', itemsPerPage);
+            
+            // Get all elements with the data-postid attribute
+            const postIdElements = content.querySelectorAll('[data-postid]');
+            
+            // Initialize a variable to store the lowest postid
+            let lowestPostId = Number.MAX_SAFE_INTEGER;
+
+            // Loop through all elements with data-postid attribute
+            postIdElements.forEach(function (element) {
+                const postid = parseInt(element.getAttribute('data-postid'));
+                if (!isNaN(postid) && postid < lowestPostId) {
+                    lowestPostId = postid;
+                }
+            });
+
+            data.append('last_post', lowestPostId);
+
+            xhr.send(data);
+        }
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!isLoading) {
+            const contentRect = content.getBoundingClientRect();
+            if (contentRect.bottom <= window.innerHeight) {
+                loadMoreItems();
+            }
+        }
+    });
+
+    loadMoreItems();
+}
+
+document.querySelectorAll('[data-thread]').forEach(function(element) {
+    const loadingElement = element.querySelector('#loading');
+    
+    if (loadingElement) {
+        InfiniteScroll('.userwall-wp-inner-thread');
+    }
+});
+
 //import Masonry from 'masonry-layout';
 
 //window.userwallWP.Masonry = Masonry;
@@ -187,6 +295,7 @@ class UserWallWPHelper {
 // Create an instance of the class
 window.UserWallWPHelper = new UserWallWPHelper();
 
+const userLoggedIn = (parseInt( userwallWPObject.user_id ) > 0);
 function transformPosts( userwall ) {
     return userwall
     .filter(function (thread) {
@@ -207,10 +316,10 @@ function transformComments( comments ) {
         return wp.hooks.applyFilters('userwall_wp_content_comment_filter', comment );
     });
 }
-function renderPosts(userwall, position = 'top' ) {
+function renderPosts(posts, position = 'top' ) {
     var template_id = 'userwall-wp-feed-template';
     var template = wp.template(template_id);
-    var newPosts = transformPosts( userwall );
+    var newPosts = transformPosts( posts );
 
     var html, renderedHtml;
     jQuery.each(newPosts, function (i, thread) {
@@ -219,11 +328,6 @@ function renderPosts(userwall, position = 'top' ) {
         const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
         const quillContainer = renderedHtml.find('#' + quillContainerId)[0];
         let quill;
-        
-        // Check if the container exists (only if the thread is loaded via Ajax)
-        if (quillContainer) {
-            
-        }
        
         if ( ! jQuery('.userwall-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
             if ( position == 'top' ) {
@@ -231,14 +335,16 @@ function renderPosts(userwall, position = 'top' ) {
             } else {
                 jQuery('.userwall-wp-inner-thread').append(renderedHtml.html());
             }
-            const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
-            const quillContainer = jQuery('.userwall-wp-inner-thread').find('#' + quillContainerId)[0];
-            // Initialize Quill editor
-            quill = new Quill(quillContainer, {
-                theme: editor_theme,
-                placeholder: userwallWPObject.reply_placeholder,
-                modules: editorModules,
-            });
+            if ( userLoggedIn ) {
+                const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
+                const quillContainer = jQuery('.userwall-wp-inner-thread').find('#' + quillContainerId)[0];
+                // Initialize Quill editor
+                quill = new Quill(quillContainer, {
+                    theme: editor_theme,
+                    placeholder: userwallWPObject.reply_placeholder,
+                    modules: editorModules,
+                });
+            }
             wp.hooks.doAction('userwall_wp_post_rendered', thread);
         }
     });
@@ -443,6 +549,9 @@ jQuery(document).ready(function($) {
             jQuery(document).on('click', '.userwall-wp-ellipsis', this.handleEllipsisClick );
             
             jQuery(document).on('click', '.userwall-wp-reaction-count', function() {
+                if ( ! userLoggedIn ) {
+                    return;
+                }
                 var button = jQuery(this);
                 var countSpan = button.find('.span-count');
                 var like_reaction = button.data('like-reaction');
@@ -474,7 +583,6 @@ jQuery(document).ready(function($) {
                             button.removeClass('userwall-wp-liked');
                             button.data('like-reaction', 'remove' );
                         }
-                        console.log( button );
                     }
                 });
             });
@@ -504,7 +612,7 @@ jQuery(document).ready(function($) {
                 const $div = jQuery(this);
 
                 // Fetch and render posts
-                classObj.fetchAndRenderPosts($div);
+                //classObj.fetchAndRenderPosts($div);
             });
 
             jQuery(document).on('click', '.comment-submit-button', function() {
@@ -639,7 +747,7 @@ jQuery(document).ready(function($) {
                     },
                     success: function (response) {
                         jQuery('.userwall-wp-new-userwall').remove();
-                        renderPosts( response.data.userwall );
+                        renderPosts( response.data.posts );
                     },
                     error: function (error) {
                         console.error('Error fetching data:', error);
@@ -708,14 +816,6 @@ jQuery(document).ready(function($) {
                 });
             });
             var that = this;
-            jQuery('[data-thread]').each(function () {
-                var $threadContainer = jQuery(this);
-                jQuery(window).scroll(function() {
-                    if (jQuery(window).scrollTop() + jQuery(window).height() >= $threadContainer.height() - 100) {
-                        //that.loadMorePosts( $threadContainer );
-                    }
-                });
-            });
 
             jQuery(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
                 const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
@@ -813,7 +913,7 @@ jQuery(document).ready(function($) {
                             // Handle success, e.g., update the post content display
                             const $content = $postDiv;
                             var template = wp.template('userwall-wp-feed-template');
-                            var newPosts = transformPosts(response.data.userwall);
+                            var newPosts = transformPosts(response.data.posts);
 
                             var html = template(newPosts);
                             $content.replaceWith(html);
@@ -934,85 +1034,6 @@ jQuery(document).ready(function($) {
                 });
             });
         }
-
-        fetchAndRenderPosts($div) {
-            const postType = $div.data('post_type');
-            const perPage = $div.data('per_page');
-            const page = $div.data('page');
-            const objectId = $div.data('object_id');
-            // Perform an AJAX request to fetch data based on the attributes
-            jQuery.ajax({
-                url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                type: 'GET',
-                dataType: 'json', // Adjust the data type based on your server response
-                data: {
-                    action: 'fetch_data_by_thread', // Create this AJAX action in your main plugin file
-                    post_type: postType,
-                    per_page: perPage,
-                    page: page,
-                    object_id: objectId,
-                    nonce: userwallWPObject.nonce,
-                },
-                success: function (response) {
-                    // Handle the response here (e.g., render the fetched data)
-                    renderPosts( response.userwall, 'bottom' );
-                },
-                error: function (error) {
-                    console.error('Error fetching data:', error);
-                },
-            });
-        }
-
-        loadMorePosts( $container ) {
-            if (this.loading) {
-                return;
-            }
-            this.loading = true;
-            var $loader = $container.find('.loading-indicator');
-            $loader.show();
-            
-            const postType = $container.data('post_type');
-            const perPage = $container.data('per_page');
-
-            $.ajax({
-                url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                type: 'POST',
-                data: {
-                    action: 'userwall_wp_load_more_posts', // Create this AJAX action in your main plugin file
-                    per_page: perPage,
-                },
-                success: function(response) {
-                    if (response.success) {
-                        if (response.data.posts.length > 0) {
-                            var template = wp.template( 'userwall-wp-feed-template' );
-                            var newPosts = response.data.userwall( response.data.userwall );
-                            
-                            var html = template( newPosts );
-                            jQuery('.userwall-wp-new-userwall').remove();
-                            $container.find('.userwall-wp-inner-thread').append( html );
-                            page++;
-                        } else {
-                            // No more posts to load
-                            $loader.text('No more posts to load').show();
-                        }
-                    } else {
-                        // Handle AJAX error
-                        console.error('Error loading more posts:', response.data.message);
-                    }
-    
-                    this.loading = false;
-                    $loader.hide();
-                },
-                error: function(error) {
-                    // Handle AJAX error
-                    console.error('Error loading more posts:', error);
-                    loading = false;
-                    $loader.hide();
-                },
-            });
-
-            
-        }
         
         initializeTabs() {
             // Initialize the first tab as active
@@ -1058,7 +1079,7 @@ jQuery(document).ready(function($) {
                 cache: false,
                 data: formData,
                 success: function(response) {
-                    renderPosts( response.data.userwall );
+                    renderPosts( response.data.posts );
                     // Reset post form.
                     jQuery( '.post-quill-editor').find('.ql-editor').html('')
                     wp.hooks.doAction('userwall_wp_after_post_submitted', response, formData );

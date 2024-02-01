@@ -7,20 +7,20 @@ class UserWall_WP_FileManager {
 	public function __construct( $id = '', $post_type = 'user' ) {
 		$this->post_type  = $post_type;
 		$this->user_id    = $id;
-		$this->upload_dir = $this->generateUploadDirectoryPath();
+		$this->upload_dir = $this->generate_upload_directory_path();
 	}
 
 	// Method to generate the upload directory path based on post type and ID
-	private function generateUploadDirectoryPath() {
+	private function generate_upload_directory_path() {
 		$upload_dir = wp_upload_dir();
 
 		// The uploads directory path is stored in the 'path' element of the returned array
 		$uploads_path = $upload_dir['basedir'];
 
 		$directory = $uploads_path . '/userwall-wp/';
-		if ( $this->post_type === 'user' ) {
+		if ( 'user' === $this->post_type ) {
 			$directory .= 'users-uploads/';
-		} elseif ( $this->post_type === 'post' ) {
+		} elseif ( 'post' === $this->post_type ) {
 			$directory .= 'group-uploads/';
 		}
 		$directory .= $this->user_id . '/';
@@ -28,7 +28,7 @@ class UserWall_WP_FileManager {
 		return $directory;
 	}
 
-	public function uploadFile( $file = array() ) {
+	public function upload_file( $file = array() ) {
 		// Ensure the upload directory exists
 		if ( ! is_dir( $this->upload_dir ) ) {
 			wp_mkdir_p( $this->upload_dir );
@@ -55,12 +55,12 @@ class UserWall_WP_FileManager {
 	}
 
 	// Method to delete a specific file by its path
-	public function deleteFile( $file_path ) {
+	public function delete_file( $file_path ) {
 		if ( file_exists( $file_path ) ) {
 			unlink( $file_path ); // Delete the file
 
 			$parent_directory = dirname( $file_path );
-			if ( $this->isDirectoryEmpty( $parent_directory ) ) {
+			if ( $this->is_directory_empty( $parent_directory ) ) {
 				// If the parent directory is empty, delete it
 				rmdir( $parent_directory );
 			}
@@ -69,7 +69,7 @@ class UserWall_WP_FileManager {
 		return false;
 	}
 
-	private function isDirectoryEmpty( $dir ) {
+	private function is_directory_empty( $dir ) {
 		if ( ! is_readable( $dir ) ) {
 			return null;
 		}
@@ -85,37 +85,37 @@ class UserWall_WP_FileManager {
 	}
 
 	// Method to delete all user files by user ID
-	public function deleteAllUserFiles() {
+	public function delete_all_user_files() {
 		$user_files_dir = $this->upload_dir . 'users-uploads/' . $this->user_id . '/';
 		if ( file_exists( $user_files_dir ) ) {
-			$this->deleteDirectory( $user_files_dir );
+			$this->delete_directory( $user_files_dir );
 		}
 	}
 
 	// Method to delete all group files by group ID
-	public function deleteAllGroupFiles( $group_id ) {
+	public function delete_all_group_files( $group_id ) {
 		$group_files_dir = $this->upload_dir . 'group-uploads/' . $group_id . '/';
 		if ( file_exists( $group_files_dir ) ) {
-			$this->deleteDirectory( $group_files_dir );
+			$this->delete_directory( $group_files_dir );
 		}
 	}
 
 	// Method to delete all post files by post ID
-	public function deleteAllPostFiles( $post_id ) {
+	public function delete_all_post_files( $post_id ) {
 		$post_files_dir = $this->upload_dir . 'post-uploads/' . $post_id . '/';
 		if ( file_exists( $post_files_dir ) ) {
-			$this->deleteDirectory( $post_files_dir );
+			$this->delete_directory( $post_files_dir );
 		}
 	}
 
 	// Recursive method to delete a directory and its contents
-	private function deleteDirectory( $dir ) {
+	private function delete_directory( $dir ) {
 		if ( is_dir( $dir ) ) {
 			$objects = scandir( $dir );
 			foreach ( $objects as $object ) {
 				if ( $object != '.' && $object != '..' ) {
 					if ( is_dir( $dir . $object ) ) {
-						$this->deleteDirectory( $dir . $object . '/' );
+						$this->delete_directory( $dir . $object . '/' );
 					} else {
 						unlink( $dir . $object );
 					}
@@ -125,7 +125,7 @@ class UserWall_WP_FileManager {
 		}
 	}
 
-	public function getFileUrl( $file_name, $post_id = '', $group_id = '' ) {
+	public function get_file_url( $file_name, $post_id = '', $group_id = '' ) {
 		if ( $this->post_type === 'user' && ! empty( $this->user_id ) ) {
 			$directory = 'users-uploads/' . $this->user_id . '/';
 		} elseif ( $this->post_type === 'post' && ! empty( $post_id ) ) {

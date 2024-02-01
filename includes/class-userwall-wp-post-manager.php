@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class for Managing Posts and Comments.
+ *
+ * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+ */
 class UserWall_WP_Post_Manager {
 	private $table_posts;
 	private $wpdb;
@@ -29,7 +34,7 @@ class UserWall_WP_Post_Manager {
 			$user = get_userdata( $user_id );
 
 			// Check if user exists
-			if ( $user === false ) {
+			if ( false === $user ) {
 				// Return empty array.
 				return array(
 					'author_name'       => '',
@@ -138,7 +143,7 @@ class UserWall_WP_Post_Manager {
 
 		$user_id = $this->wpdb->get_var( $query );
 
-		if ( $user_id == $current_user_id ) {
+		if ( $user_id === $current_user_id ) {
 			return true;
 		}
 
@@ -172,7 +177,8 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function get_post_by_id( $post_id ) {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		$post   = $this->wpdb->get_row(
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$post = $this->wpdb->get_row(
 			$this->wpdb->prepare(
 				"SELECT p.*, 
                 (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
@@ -182,7 +188,7 @@ class UserWall_WP_Post_Manager {
 				$post_id
 			)
 		);
-		$post   = $this->transform_post( $post );
+		$post = $this->transform_post( $post );
 
 		return apply_filters( 'userwall_wp_get_post_by_id', $post, $post_id );
 	}
@@ -316,6 +322,10 @@ class UserWall_WP_Post_Manager {
 			'per_page'  => '30',
 			'page'      => 1,
 			'object_id' => 0,
+			'oldest_id' => 0,
+			'latest_id' => 0,
+			'order_by'  => 'p.post_id',
+			'order'     => 'DESC',
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -334,14 +344,14 @@ class UserWall_WP_Post_Manager {
 		// Create a WHERE clause based on the conditions in $args
 		$where_clause = '1 = 1'; // Default condition
 
-		if ( $args['type'] === 'posts' ) {
+		if ( 'posts' === $args['type'] ) {
 			// Add a condition based on the type
 			//$where_clause = "post_type = %s";
 			$post_type = sanitize_text_field( $args['type'] ); // Sanitize the post_type
 			//$where_values[] = $post_type;
 		}
 
-		if ( $args['object_id'] !== 0 && $args['type'] === 'user-posts' ) {
+		if ( 0 !== $args['object_id'] && 'user-posts' === $args['type'] ) {
 			// Add a condition based on the object_id
 			$where_clause  .= ' AND user_id = %d';
 			$object_id      = intval( $args['object_id'] ); // Sanitize the object_id
@@ -352,24 +362,25 @@ class UserWall_WP_Post_Manager {
 		if ( current_user_can( 'manage_options' ) ) {
 
 			// Searching content by query.
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 			if ( isset( $_REQUESTS['sq'] ) ) {
 				$search_query     = sanitize_text_field( $_REQUEST['sq'] ); // The wildcard character
 				$escaped_wildcard = $this->wpdb->esc_like( $search_query ); // Escaping the wildcard
 				$where_clause    .= $this->wpdb->prepare( ' AND post_content LIKE %s', $escaped_wildcard );
 			}
-
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 			if ( isset( $_REQUESTS['user_id'] ) ) {
 				$user_id       = absint( $_REQUEST['user_id'] );
 				$where_clause .= $this->wpdb->prepare( ' AND user_id = %d', $user_id );
 			}
 
 			// Filter for date range.
-			if ( isset( $_REQUEST['date_from'] ) && $_REQUEST['date_from'] !== '' ) {
+			if ( isset( $_REQUEST['date_from'] ) && '' !== $_REQUEST['date_from'] ) {
 				$date_from     = sanitize_text_field( $_REQUEST['date_from'] );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date >= %s', $date_from );
 			}
 
-			if ( isset( $_REQUEST['date_end'] ) && $_REQUEST['date_end'] !== '' ) {
+			if ( isset( $_REQUEST['date_end'] ) && '' !== $_REQUEST['date_end'] ) {
 				$date_end      = sanitize_text_field( $_REQUEST['date_end'] );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date <= %s', $date_end );
 			} else {
@@ -377,6 +388,14 @@ class UserWall_WP_Post_Manager {
 				//$today = date('Y-m-d');
 				//$where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $today);
 			}
+		}
+
+		if ( $args['oldest_id'] ) {
+			$where_clause .= $this->wpdb->prepare( ' AND p.post_id < %d', absint( $args['oldest_id'] ) );
+		}
+
+		if ( $args['latest_id'] ) {
+			$where_clause .= $this->wpdb->prepare( ' AND p.post_id > %d', absint( $args['latest_id'] ) );
 		}
 
 		// Add additional conditions based on other $args as needed
@@ -391,7 +410,7 @@ class UserWall_WP_Post_Manager {
             (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
             FROM {$this->table_posts} p
             WHERE {$where_clause}
-            ORDER BY post_id DESC
+            ORDER BY {$args['order_by']} {$args['order']}
             LIMIT %d
             OFFSET %d", // Add the LIMIT and OFFSET clauses
 			$limit, // Pass the limit value
@@ -400,6 +419,7 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$posts = $this->wpdb->get_results( $sql_query );
+		error_log( $this->wpdb->last_query );
 		if ( ! empty( $posts ) ) {
 			foreach ( $posts as $index => $post ) {
 				$posts[] = $this->transform_post( $post );

@@ -208,6 +208,7 @@ class UserWall_WP_Admin {
 			$addons         = $addons_manager->register_addons();
 			$addon          = $addons_manager->get_addon_by_id( $addon_id );
 			echo '<div class="notice notice-success is-dismissible">';
+			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 			echo '<p>' . sprintf( __( 'Addon "%s" has been deactivated.', 'userwall-wp' ), $addon->get_name() ) . '</p>';
 			echo '</div>';
 		}
@@ -224,15 +225,15 @@ class UserWall_WP_Admin {
 			$addons_manager = new UserWall_WP_Addons();
 			$addons_manager->register_addons();
 			$addons = $addons_manager->get_addons();
-			if ( $_POST['addon_action'] === 'activate' ) {
+			if ( 'addon' === $_POST['addon_action'] ) {
 				// Activate the addon
-				if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids ) ) {
+				if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids, true ) ) {
 					$addon = ! empty( $addons[ $addon_id ] ) ? $addons[ $addon_id ] : array();
 					if ( $addon ) {
 						//$active_addons[][ $addon_id ] = $addon;
-						$class_name      = get_class( $addon );
-						$reflectionClass = new ReflectionClass( $class_name );
-						$filePath        = $reflectionClass->getFileName();
+						$class_name       = get_class( $addon );
+						$reflection_class = new ReflectionClass( $class_name );
+						$file_path        = $reflection_class->getFileName();
 
 						$addon_array                = array();
 						$addon_array['id']          = $addon_id;
@@ -240,7 +241,7 @@ class UserWall_WP_Admin {
 						$addon_array['description'] = $addon->get_description();
 						$addon_array['version']     = $addon->get_version();
 						$addon_array['active']      = $addon->is_active();
-						$addon_array['file']        = $filePath;
+						$addon_array['file']        = $file_path;
 						$addon_array['class']       = get_class( $addon );
 						$active_addons[ $addon_id ] = $addon_array;
 						update_option( $this->option_active_addons, $active_addons );
@@ -255,9 +256,9 @@ class UserWall_WP_Admin {
 						);
 					}
 				}
-			} elseif ( $_POST['addon_action'] === 'deactivate' ) {
+			} elseif ( 'deactivate' === $_POST['addon_action'] ) {
 				// Deactivate the addon
-				if ( in_array( $addon_id, $active_addons_ids ) ) {
+				if ( in_array( $addon_id, $active_addons_ids, true ) ) {
 					unset( $active_addons[ $addon_id ] );
 					update_option( $this->option_active_addons, $active_addons );
 					// Deactivate addon by ID

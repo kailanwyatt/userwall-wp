@@ -73,7 +73,7 @@ class UserWall_WP_Base_Addon {
 
 	public function add_admin_footer_js() {
 		$current_screen = get_current_screen();
-		if ( $current_screen->id === 'userwall-wp_page_userwall-wp-posts' ) {
+		if ( 'userwall-wp_page_userwall-wp-posts' === $current_screen->id ) {
 			$this->add_js();
 		}
 	}

@@ -1,4 +1,9 @@
 <?php
+/**
+ * UserWall_WP_AJAX_Manager class
+ *
+ *  * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+ */
 class UserWall_WP_AJAX_Manager {
 	public function __construct() {
 		// Add action hooks for handling AJAX requests
@@ -120,7 +125,7 @@ class UserWall_WP_AJAX_Manager {
 		$post_manager  = new UserWall_WP_Post_Manager();
 		$insert_result = $post_manager->update_comment( $comment_id, $post_content );
 
-		if ( $insert_result === false ) {
+		if ( false === $insert_result ) {
 			wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
 		} else {
 			$comments    = $post_manager->get_comment_by_id( $comment_id );
@@ -156,13 +161,13 @@ class UserWall_WP_AJAX_Manager {
 		$post_manager  = new UserWall_WP_Post_Manager();
 		$insert_result = $post_manager->update_post( $post_id, $post_data );
 
-		if ( $insert_result === false ) {
+		if ( false === $insert_result ) {
 			wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
 		} else {
 			$post        = $post_manager->get_post_by_id( $post_id );
 			$return_data = array(
 				'post_type' => $post->post_type,
-				'userwall'  => array(
+				'posts'     => array(
 					$post,
 				),
 			);
@@ -199,13 +204,13 @@ class UserWall_WP_AJAX_Manager {
 
 		$post_manager  = new UserWall_WP_Post_Manager();
 		$insert_result = $post_manager->create_post( $post_data );
-		if ( $insert_result === false ) {
+		if ( false === $insert_result ) {
 			wp_send_json_error( array( 'message' => __( 'Post creation failed. Please try again.', 'userwall-wp' ) ) );
 		} else {
 			$post        = $post_manager->get_post_by_id( $insert_result );
 			$return_data = array(
 				'post_type' => $post->post_type,
-				'userwall'  => array(
+				'posts'     => array(
 					$post,
 				),
 			);
@@ -248,8 +253,8 @@ class UserWall_WP_AJAX_Manager {
 		$posts        = $post_manager->get_posts( $args );
 		wp_send_json(
 			array(
-				'userwall' => $posts,
-				'params'   => $args,
+				'posts'  => $posts,
+				'params' => $args,
 			)
 		);
 	}
@@ -275,12 +280,22 @@ class UserWall_WP_AJAX_Manager {
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts_latest( $post_id );
-		wp_send_json_success( array( 'userwall' => $posts ) );
+		wp_send_json_success( array( 'posts' => $posts ) );
 	}
 
 	public function load_more_posts() {
-		$posts = array();
-		wp_send_json_success( array( 'userwall' => $posts ) );
+		$post_id  = ! empty( $_REQUEST['last_post'] ) ? absint( $_REQUEST['last_post'] ) : 0;
+		$per_page = ! empty( $_REQUEST['per_page'] ) ? absint( $_REQUEST['per_page'] ) : 5;
+
+		$post_manager = new UserWall_WP_Post_Manager();
+		$posts        = $post_manager->get_posts(
+			array(
+				'oldest_id' => $post_id,
+				'per_page'  => $per_page,
+				'order'     => 'DESC',
+			)
+		);
+		wp_send_json_success( array( 'posts' => $posts ) );
 	}
 
 	public function load_comments() {
@@ -353,7 +368,7 @@ class UserWall_WP_AJAX_Manager {
 		$post_manager  = new UserWall_WP_Post_Manager();
 		$insert_result = $post_manager->add_comment( $current_user_id, $post_id, $comment_content, $parent_comment );
 
-		if ( $insert_result === false ) {
+		if ( false === $insert_result ) {
 			wp_send_json_error( array( 'message' => __( 'Could not add comment. Please try again.', 'userwall-wp' ) ) );
 		} else {
 			$comments    = $post_manager->get_comment_by_id( $insert_result );

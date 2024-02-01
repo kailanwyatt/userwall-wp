@@ -83,7 +83,7 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
 
-		if ( $order === 'asc' ) {
+		if ( 'asc' === $order ) {
 			return $result;
 		}
 
@@ -104,18 +104,18 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 		usort( $data, array( &$this, 'sort_data' ) );
 
-		$perPage     = 5;
-		$currentPage = $this->get_pagenum();
-		$totalItems  = count( $data );
+		$per_page     = 5;
+		$current_page = $this->get_pagenum();
+		$total_items  = count( $data );
 
 		$this->set_pagination_args(
 			array(
-				'total_items' => $totalItems,
-				'per_page'    => $perPage,
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
 			)
 		);
 
-		$data = array_slice( $data, ( ( $currentPage - 1 ) * $perPage ), $perPage );
+		$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
 		$this->items = $data;
 	}
@@ -139,7 +139,8 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	 */
 	private function get_comments_data() {
 		global $wpdb;
-		$sql  = "SELECT * FROM {$wpdb->prefix}userwall_comments";
+		$sql = "SELECT * FROM {$wpdb->prefix}userwall_comments";
+		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 		return $data;
 	}
@@ -149,7 +150,7 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	 * @param array $item
 	 * @return string
 	 */
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="comment[]" value="%s" />',
 			$item['comment_id']

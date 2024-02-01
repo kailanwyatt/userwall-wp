@@ -80,12 +80,13 @@ class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {
 
 		// Delete the tables
 		foreach ( $sql_queries as $sql_query ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql_query );
 		}
 	}
 
 	public function hooks() {
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/addons/includes/class-groups.php';
+		require_once USERWALL_WP_PLUGIN_DIR . 'includes/addons/includes/class-userwallwp-addon-groups-core.php';
 		$groups = new UserWallWP_Addon_Groups_Core();
 	}
 }

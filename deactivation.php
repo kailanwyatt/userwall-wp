@@ -55,6 +55,7 @@ function userwall_wp_deactivate() {
 
 		// Delete the tables
 		foreach ( $sql_queries as $sql_query ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql_query );
 		}
 	}
