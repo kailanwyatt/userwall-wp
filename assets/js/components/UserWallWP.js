@@ -48,10 +48,12 @@ function InfiniteScroll(contentId) {
                     } else {
                         // Handle AJAX error
                         console.error('Error loading more posts:', response.data.message);
+                        hasMoreResults = false;
                     }
                 } else {
                     // Handle AJAX error
                     console.error('Error loading more posts:', xhr.statusText);
+                    hasMoreResults = false;
                 }
 
                 isLoading = false;
@@ -63,12 +65,16 @@ function InfiniteScroll(contentId) {
                 console.error('Error loading more posts:', xhr.statusText);
                 isLoading = false;
                 loadingIndicator.style.display = 'none';
+                hasMoreResults = false;
             };
 
             const data = new URLSearchParams();
             data.append('action', 'userwall_wp_load_more_posts');
             data.append('per_page', itemsPerPage);
             
+            if ( userwallWPObject.user_wall ) {
+                data.append('user_wall', userwallWPObject.user_wall );
+            }
             // Get all elements with the data-postid attribute
             const postIdElements = content.querySelectorAll('[data-postid]');
             
@@ -1343,6 +1349,7 @@ jQuery(document).ready(function($) {
                         $elementWithHighestId = jQuery(this);
                     }
                 });
+
                 // Use jQuery's AJAX method to make a GET request to your server
                 jQuery.ajax({
                     url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
@@ -1354,6 +1361,7 @@ jQuery(document).ready(function($) {
                         per_page: perPage,
                         nonce: userwallWPObject.nonce,
                         post_id: highestPostId,
+                        user_wall: userwallWPObject.user_wall
                     },
                     success: (response) => {
                         var message = response.data.message;

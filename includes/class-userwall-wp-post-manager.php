@@ -322,6 +322,7 @@ class UserWall_WP_Post_Manager {
 			'per_page'  => '30',
 			'page'      => 1,
 			'object_id' => 0,
+			'object'    => 'user',
 			'oldest_id' => 0,
 			'latest_id' => 0,
 			'order_by'  => 'p.post_id',
@@ -396,6 +397,28 @@ class UserWall_WP_Post_Manager {
 
 		if ( $args['latest_id'] ) {
 			$where_clause .= $this->wpdb->prepare( ' AND p.post_id > %d', absint( $args['latest_id'] ) );
+		}
+
+		if ( $args['object_id'] ) {
+			$object_ids = array();
+			if ( is_array( $args['object_id'] ) ) {
+				$object_ids = $args['object_id'];
+			} else {
+				$integers = explode( ',', str_replace( ' ', '', $args['object_id'] ) );
+
+				// Convert each element to an integer
+				$object_ids = array_map( 'intval', $integers );
+			}
+			error_log( print_r( $object_ids, true ) );
+			if ( ! empty( $object_ids ) ) {
+				if ( 'user' === $args['object'] ) {
+					if ( count( $object_ids ) > 1 ) {
+						$where_clause .= $this->wpdb->prepare( ' AND p.user_id IN (%s) ', implode( ',', $object_ids ) );
+					} else {
+						$where_clause .= $this->wpdb->prepare( ' AND p.user_id = %d ', $object_ids[0] );
+					}
+				}
+			}
 		}
 
 		// Add additional conditions based on other $args as needed

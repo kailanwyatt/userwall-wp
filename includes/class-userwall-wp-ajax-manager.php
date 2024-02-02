@@ -284,8 +284,9 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function load_more_posts() {
-		$post_id  = ! empty( $_REQUEST['last_post'] ) ? absint( $_REQUEST['last_post'] ) : 0;
-		$per_page = ! empty( $_REQUEST['per_page'] ) ? absint( $_REQUEST['per_page'] ) : 5;
+		$post_id  = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
+		$per_page = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
+		$user_id  = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
 
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts(
@@ -293,6 +294,7 @@ class UserWall_WP_AJAX_Manager {
 				'oldest_id' => $post_id,
 				'per_page'  => $per_page,
 				'order'     => 'DESC',
+				'object_id' => $user_id,
 			)
 		);
 		wp_send_json_success( array( 'posts' => $posts ) );

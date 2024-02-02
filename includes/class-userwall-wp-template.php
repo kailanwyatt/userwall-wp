@@ -31,6 +31,7 @@ class UserWall_Template {
 			'enable_rich_editor' => ! empty( $options['enable_rich_editor'] ) ? true : false,
 			'toolbar'            => ! empty( $options['editor_options'] ) ? array_keys( $options['editor_options'] ) : array(),
 			'char_limit'         => ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0,
+			'user_wall'          => get_query_var( 'profile_id' ),
 		);
 
 		// Localize the script with the data
