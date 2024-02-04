@@ -26,6 +26,7 @@
     "grunt-contrib-uglify": "^5.1.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-webpack": "^6.0.0",
+    "grunt-wp-deploy": "^2.1.2",
     "quill-emoji": "^0.2.0",
     "webpack": "^5.89.0"
   },

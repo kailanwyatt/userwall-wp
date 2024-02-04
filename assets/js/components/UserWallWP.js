@@ -219,7 +219,7 @@ class UserWallWPHelper {
             return '';
         }
     
-        const userUrl = "https://example.com/u/";
+        const userUrl = "";
     
         const urlRegex = /https?:\/\/[^\s<>]+/g;
         const hashtagRegex = /#(\w+)/g;

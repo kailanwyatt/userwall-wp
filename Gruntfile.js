@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     grunt.initConfig({
+      pkg: grunt.file.readJSON('package.json'),
       concat: {
         js: {
           src: ['node_modules/quill/dist/quill.js', 'assets/js/components/*.js'],
@@ -36,6 +37,16 @@ module.exports = function(grunt) {
         options: require('./webpack.config.js'),
         build: {},
       },
+      wp_deploy: {
+          deploy: { 
+              options: {
+                  plugin_slug: '<%= pkg.name %>',
+                  svn_user: 'kailanwyatt',	
+                  build_dir: 'build', //relative path to your build directory
+                  assets_dir: 'wp-assets' //relative path to your assets directory (optional).
+              },
+          }
+      },
     });
   
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -47,5 +58,7 @@ module.exports = function(grunt) {
     grunt.registerTask('styles', ['concat:css']);
   
     grunt.registerTask('default', ['webpack', 'styles', 'watch']);
+    grunt.registerTask('release', ['wp_deploy']);
+
   };
   
