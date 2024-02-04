@@ -42,6 +42,13 @@ class UserWall_WP_Post_Core {
 				add_rewrite_rule( '^' . $user_page_slug . '/([^/]*)/?$', 'index.php?pagename=' . $user_page_slug . '&username=$matches[1]&user_profile=1', 'top' );
 			}
 		}
+
+		if ( ! empty( $options['single_post_page'] ) ) {
+			$single_post_page_slug = get_post_field( 'post_name', $options['single_post_page'] );
+			if ( $single_post_page_slug ) {
+				add_rewrite_rule( '^' . $single_post_page_slug . '/([^/]*)/?$', 'index.php?pagename=' . $single_post_page_slug . '&thread_id=$matches[1]', 'top' );
+			}
+		}
 	}
 
 	public function register_query_vars( $vars ) {

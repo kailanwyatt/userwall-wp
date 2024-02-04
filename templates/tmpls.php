@@ -17,22 +17,36 @@
 			<?php if ( is_user_logged_in() ) : ?> 
 			<div class="userwall-wp-ellipsis" aria-hidden="true">&#8942;</div>
 			<?php endif; ?>
-			<?php do_action( 'userwall_wp_before_post_content' ); ?>
-			<div class="userwall-wp-thread-content">
-				{{{ thread.post_content }}}
+			<div class="userwall-wp-post-body">
+				<?php do_action( 'userwall_wp_before_post_title' ); ?>
+				<# if ( thread.post_title ) { #>
+				<div class="userwall-wp-thread-title-wrapper">
+					<h2 class="userwall-wp-thread-title">{{ thread.post_title }}</h2>
+				</div>
+				<# } #>
+				<?php do_action( 'userwall_wp_after_post_title' ); ?>
+				<?php do_action( 'userwall_wp_before_post_content' ); ?>
+				<div class="userwall-wp-thread-content">
+					{{{ thread.post_content }}}
+				</div>
+				<?php do_action( 'userwall_wp_after_post_content' ); ?>
+				<div class="userwall-wp-thread-media"></div>
 			</div>
-			<?php do_action( 'userwall_wp_after_post_content' ); ?>
-			<div class="userwall-wp-thread-media"></div>
 			<# if ( thread.user_id == userwallWPObject.user_id ) { #>
 			<!-- Edit Form (hidden by default) -->
 			<div class="edit-form userwall-edit-post-section" style="display: none;">
+				<# if (  userwallWPObject.settings.allow_titles ) { #>
+				<div class="userwall-wp-post-title-section">
+					<input type="text" class="userwall-wp-post-title-edit-input" value="{{ thread.post_title }}" />
+				</div>
+				<# } #>
 				<div class="userwall-edit-post-section-editor">
-                    <div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
-                </div>
-                <div class="userwall-edit-post-section-actions">
-                    <button class="save-button"><?php esc_html_e( 'Save Changes', 'userwall-wp' ); ?></button>
-                    <button class="cancel-button"><?php esc_html_e( 'Cancel Changes', 'userwall-wp' ); ?></button>
-                </div>
+					<div id="quill-editor-edit-{{ thread.post_id }}" class="post-quill-editor-edit"></div>
+				</div>
+				<div class="userwall-edit-post-section-actions">
+					<button class="save-button"><?php esc_html_e( 'Save Changes', 'userwall-wp' ); ?></button>
+					<button class="cancel-button"><?php esc_html_e( 'Cancel Changes', 'userwall-wp' ); ?></button>
+				</div>
 			</div>
 			<# } #>
 			<?php if ( is_user_logged_in() ) : ?>
@@ -125,13 +139,13 @@
 			<# if ( comment.user_id == userwallWPObject.user_id ) { #>
 			<!-- Edit Form (hidden by default) -->
 			<div class="comment-thread-edit-form" style="display: none;">
-                <div class="comment-thread-edit-form-editor">
-                    <div id="quill-editor-edit-{{ comment.post_id }}-{{ comment.comment_id }}" class="post-quill-editor-edit"></div>
-                </div>
-                <div class="comment-thread-edit-form-actions">
-                    <button class="save-button">Save Changes</button>
-                    <button class="cancel-button">Cancel Changes</button>
-                </div>
+				<div class="comment-thread-edit-form-editor">
+					<div id="quill-editor-edit-{{ comment.post_id }}-{{ comment.comment_id }}" class="post-quill-editor-edit"></div>
+				</div>
+				<div class="comment-thread-edit-form-actions">
+					<button class="save-button">Save Changes</button>
+					<button class="cancel-button">Cancel Changes</button>
+				</div>
 			</div>
 			<# } #>
 			<div class="userwall-wp-comment-author">

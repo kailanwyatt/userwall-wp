@@ -2,12 +2,13 @@
 class UserWall_WP_Shortcode {
 	public function __construct() {
 		add_shortcode( 'userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode' ), 10, 1 );
+		add_shortcode( 'userwall_wp_post_single', array( $this, 'userwall_wp_post_single_shortcode' ), 10, 1 );
 		add_shortcode( 'userwall_wp_profile', array( $this, 'userwall_wp_profile_shortcode' ), 10, 1 );
 		add_action( 'wp_footer', array( $this, 'add_tmpls' ) );
 	}
 
 	public function add_tmpls() {
-		include USERWALL_WP_PLUGIN_DIR . 'templates/tmpls.php';
+		include_once USERWALL_WP_PLUGIN_DIR . 'templates/tmpls.php';
 	}
 
 	public function userwall_wp_post_form_shortcode( $atts = array() ) {
@@ -43,6 +44,7 @@ class UserWall_WP_Shortcode {
 		$content_types  = user_wall_get_content_types();
 		$max_characters = ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0;
 		include USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'; // Create a post form template
+		$this->add_tmpls();
 		return ob_get_clean();
 	}
 
@@ -68,6 +70,17 @@ class UserWall_WP_Shortcode {
 
 		ob_start();
 		uswp_get_template( 'profile.php', $args );
+		$this->add_tmpls();
+		return ob_get_clean();
+	}
+
+	public function userwall_wp_post_single_shortcode( $atts = array() ) {
+		ob_start();
+		$args = array(
+			'post_id' => get_query_var( 'thread_id' ),
+		);
+		uswp_get_template( 'post-single.php', $args );
+		$this->add_tmpls();
 		return ob_get_clean();
 	}
 }

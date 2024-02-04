@@ -1357,6 +1357,17 @@
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
   }
+
+  input.userwall-wp-post-title-input {
+    min-height: 30px;
+    border-radius: 6px;
+    border: 1px solid;
+    width: inherit;
+}
+
+.userwall-wp-post-title-section {
+    width: 100%;
+}
   
 /* Style the form container */
 #userwall-wp-post-form {

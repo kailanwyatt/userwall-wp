@@ -265,12 +265,20 @@ class UserWall_WP_Post_Manager {
 		return apply_filters( 'userwall_wp_get_posts_latest', $posts, $last_post_id, $limit );
 	}
 
+	private function get_permalink( $post = array() ) {
+		$permalink = '';
+		return $permalink;
+	}
+
 	private function transform_post( $post = array() ) {
 		$author_info                      = $this->get_author_info( $post->user_id );
 		$modified_post                    = $post;
 		$modified_post->author_url        = $author_info['author_url'];
 		$modified_post->author_avatar_url = $author_info['author_avatar_url'];
 		$modified_post->author_name       = $author_info['author_name'];
+
+		$is_post = isset( $modified_post->creation_date ) ? true : false;
+
 		// Get timestamp for post.
 		if ( isset( $modified_post->creation_date ) ) {
 			$modified_post->post_timestamp = strtotime( $post->creation_date );
@@ -287,6 +295,12 @@ class UserWall_WP_Post_Manager {
 
 		if ( isset( $modified_post->comment_content ) ) {
 			$modified_post->comment_content = $this->trim_p_tags( $post->comment_content );
+		}
+
+		if ( $is_post ) {
+			$modified_post->permalink = user_wall_get_permalink( $post->post_id );
+		} else {
+			$modified_post->permalink = '';
 		}
 
 		return apply_filters( 'userwall_wp_post_return_object', $modified_post );
@@ -391,11 +405,11 @@ class UserWall_WP_Post_Manager {
 			}
 		}
 
-		if ( $args['oldest_id'] ) {
+		if ( $args['oldest_id'] && 0 === $args['post_id'] ) {
 			$where_clause .= $this->wpdb->prepare( ' AND p.post_id < %d', absint( $args['oldest_id'] ) );
 		}
 
-		if ( $args['latest_id'] ) {
+		if ( $args['latest_id'] && 0 === $args['post_id'] ) {
 			$where_clause .= $this->wpdb->prepare( ' AND p.post_id > %d', absint( $args['latest_id'] ) );
 		}
 
@@ -409,7 +423,7 @@ class UserWall_WP_Post_Manager {
 				// Convert each element to an integer
 				$object_ids = array_map( 'intval', $integers );
 			}
-			error_log( print_r( $object_ids, true ) );
+
 			if ( ! empty( $object_ids ) ) {
 				if ( 'user' === $args['object'] ) {
 					if ( count( $object_ids ) > 1 ) {
@@ -417,6 +431,26 @@ class UserWall_WP_Post_Manager {
 					} else {
 						$where_clause .= $this->wpdb->prepare( ' AND p.user_id = %d ', $object_ids[0] );
 					}
+				}
+			}
+		}
+
+		if ( $args['post_id'] ) {
+			$post_ids = array();
+			if ( is_array( $args['post_id'] ) ) {
+				$object_ids = $args['post_id'];
+			} else {
+				$integers = explode( ',', str_replace( ' ', '', $args['post_id'] ) );
+
+				// Convert each element to an integer
+				$post_ids = array_map( 'intval', $integers );
+			}
+
+			if ( ! empty( $post_ids ) ) {
+				if ( count( $post_ids ) > 1 ) {
+					$where_clause .= $this->wpdb->prepare( ' AND p.post_id IN (%s) ', implode( ',', $post_ids ) );
+				} else {
+					$where_clause .= $this->wpdb->prepare( ' AND p.post_id = %d ', $post_ids[0] );
 				}
 			}
 		}
@@ -442,7 +476,6 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$posts = $this->wpdb->get_results( $sql_query );
-		error_log( $this->wpdb->last_query );
 		if ( ! empty( $posts ) ) {
 			foreach ( $posts as $index => $post ) {
 				$posts[] = $this->transform_post( $post );

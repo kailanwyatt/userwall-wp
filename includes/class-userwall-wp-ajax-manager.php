@@ -192,10 +192,14 @@ class UserWall_WP_AJAX_Manager {
 		// Get post content from the form
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
-		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST ) : 'post';
+		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST['post_tab'] ) : 'post';
+
+		// Title
+		$post_title = ! empty( $_POST['post_title'] ) ? sanitize_text_field( $_POST['post_title'] ) : '';
 
 		// Prepare data to insert into the userwall_posts table
 		$post_data = array(
+			'title'         => $post_title,
 			'content'       => $post_content,
 			'post_type'     => 'posts', // Change to your desired post type
 			'creation_date' => current_time( 'mysql' ),
@@ -287,11 +291,13 @@ class UserWall_WP_AJAX_Manager {
 		$post_id  = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
 		$per_page = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
 		$user_id  = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
+		$post_id  = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts(
 			array(
 				'oldest_id' => $post_id,
+				'post_id'   => $post_id,
 				'per_page'  => $per_page,
 				'order'     => 'DESC',
 				'object_id' => $user_id,

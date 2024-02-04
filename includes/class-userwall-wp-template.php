@@ -32,6 +32,11 @@ class UserWall_Template {
 			'toolbar'            => ! empty( $options['editor_options'] ) ? array_keys( $options['editor_options'] ) : array(),
 			'char_limit'         => ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0,
 			'user_wall'          => get_query_var( 'profile_id' ),
+			'settings'           => array(
+				'allow_titles' => ! empty( $options['allow_titles'] ) ? true : false,
+				'open_posts'   => ! empty( $options['open_posts'] ) ? true : false,
+			),
+			'isSinglePost'       => get_query_var( 'thread_id' ),
 		);
 
 		// Localize the script with the data

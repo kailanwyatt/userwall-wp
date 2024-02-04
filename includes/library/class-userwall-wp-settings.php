@@ -83,6 +83,22 @@ class WP_Custom_Settings_API {
 			)
 		);
 
+		$this->get_field(
+			array(
+				'type'  => 'checkbox',
+				'name'  => 'allow_titles',
+				'label' => __( 'Allow Titles on Posts', 'userwall_wp' ),
+			)
+		);
+
+		$this->get_field(
+			array(
+				'type'  => 'checkbox',
+				'name'  => 'open_posts',
+				'label' => __( 'Open Posts Page', 'userwall_wp' ),
+			)
+		);
+
 		// Editor Settings Fields
 		$this->get_field(
 			array(

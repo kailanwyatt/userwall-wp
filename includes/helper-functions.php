@@ -82,6 +82,32 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
 	return $url;
 }
 
+function user_wall_get_permalink( $post_id = 0 ) {
+	// Check if permalinks are enabled ('plain' indicates they are not).
+	if ( '' === get_option( 'permalink_structure' ) ) {
+		// Build a plain URL.
+		$url     = home_url();
+		$options = user_wall_get_options();
+		if ( ! empty( $options['single_post_page'] ) ) {
+			$url = get_permalink( $options['single_post_page'] );
+		}
+		$url = add_query_arg(
+			array(
+				'post' => absint( $post_id ),
+			),
+			$url
+		);
+	} else {
+		// Build a pretty URL.
+		$options = user_wall_get_options();
+		if ( ! empty( $options['single_post_page'] ) ) {
+			$url = get_permalink( $options['single_post_page'] );
+		}
+		$url = rtrim( $url, '/' ) . '/' . $post_id . '/';
+	}
+
+	return $url;
+}
 function user_wall_get_post_types() {
 	$user_wall_core = new UserWall_WP_Post_Core();
 	return $user_wall_core->get_post_types();
@@ -92,16 +118,21 @@ function user_wall_get_content_types() {
 	return $user_wall_core->get_post_content_types();
 }
 
-function user_wall_get_options( $key = '', $default = '' ) {
+function user_wall_get_options( $key = '', $default_var = '' ) {
 	$options = get_option( 'userwall_wp' );
 	if ( empty( $options ) ) {
 		$defaults = array();
 		$options  = apply_filters( 'user_wall_get_options_defaults', $defaults );
 	}
+
+	$defaults = array();
+
+	$options = wp_parse_args( $options, $defaults );
+
 	$options = apply_filters( 'user_wall_get_options', $options );
 
 	if ( $key && empty( $options[ $key ] ) ) {
-		return $default;
+		return $default_var;
 	}
 
 	if ( $key && ! empty( $options[ $key ] ) ) {

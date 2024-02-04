@@ -6,6 +6,9 @@
 				
 			<?php endif; ?>
 			<div class="userwall-tab-content" data-tab="post">
+				<div class="userwall-wp-post-title-section">
+					<input type="text" class="userwall-wp-post-title-input" />
+				</div>
 				<!-- Post content input -->
 				<div class="userwall-wp-post-section">
 					<div id="quill-editor-post-form" class="post-quill-editor"></div>
@@ -38,7 +41,7 @@
 </div>
 <?php endif; ?>
 <?php if ( $show_userwall ) : ?>
-<div id="userwall-wp-container" data-thread="<?php echo absint( $type ); ?>" data-object-id="<?php absint( $object_id ); ?>" data-thread-wrapper data-post_type="<?php echo absint( $type ); ?>" data-per_page="<?php echo absint( $per_page ); ?>" data-page="1">
+<div id="userwall-wp-container" data-thread="<?php echo absint( $type ); ?>" data-objectid="<?php absint( $object_id ); ?>" data-thread-wrapper data-post_type="<?php echo absint( $type ); ?>" data-per_page="<?php echo absint( $per_page ); ?>" data-page="1">
 	<div class="userwall-wp-inner-thread"></div>
 	<div class="loading-indicator" style="display: none;">Loading...</div>
 	<div class="loading" id="loading"><div class="loading-spinner"></div></div>
