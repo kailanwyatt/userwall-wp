@@ -1,6 +1,6 @@
 === UserWall WP ===
 Contributors:      userwallswp, kailanwyatt
-Donate link:       https://userwallswp.com
+Donate link:       https://userwallwp.com
 Tags:              user wall, user activity, user activity wall, profiles, groups, activity, notifications, community, social networking
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html

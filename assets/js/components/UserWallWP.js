@@ -84,7 +84,10 @@ function InfiniteScroll(contentId) {
             const data = new URLSearchParams();
             data.append('action', 'userwall_wp_load_more_posts');
             data.append('per_page', itemsPerPage);
-            data.append( 'post_id', threadWrapper.dataset.post_id );
+            if ( threadWrapper.dataset.post_id && !isNaN(threadWrapper.dataset.post_id) ) {
+                data.append( 'post_id', threadWrapper.dataset.post_id );
+            }
+            
             if ( userwallWPObject.user_wall ) {
                 data.append('user_wall', userwallWPObject.user_wall );
             }
@@ -162,7 +165,7 @@ function loadComments( postID, thread ) {
                             jQuery.each( innerComments, function( index2, inner_comment ) {
                                 var ReplyTemplate = wp.template('userwall-wp-thread-comment-template');
                                 var child_html = ReplyTemplate({inner_comment});
-                                commentHtml.find('[data-commentid="' + inner_comment.parent_id + '"] .userwall-wp-comment-reply-section').append(child_html);
+                                commentHtml.find('[data-commentid="' + inner_comment.parent_id + '"] > .userwall-wp-comment-reply-section').append(child_html);
                             });
                         }
                     });

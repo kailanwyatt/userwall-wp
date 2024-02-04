@@ -344,7 +344,7 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-
+		error_log( print_r( $args, true ) );
 		$page     = intval( $args['page'] ); // Sanitize the page value
 		$per_page = intval( $args['per_page'] ); // Sanitize the per_page value
 		$offset   = ( $page - 1 ) * $per_page;
@@ -476,6 +476,8 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$posts = $this->wpdb->get_results( $sql_query );
+
+		error_log( $this->wpdb->last_query );
 		if ( ! empty( $posts ) ) {
 			foreach ( $posts as $index => $post ) {
 				$posts[] = $this->transform_post( $post );

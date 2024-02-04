@@ -288,15 +288,15 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function load_more_posts() {
-		$post_id  = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
-		$per_page = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
-		$user_id  = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
-		$post_id  = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$latest_id = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
+		$per_page  = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
+		$user_id   = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
+		$post_id   = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts(
 			array(
-				'oldest_id' => $post_id,
+				'oldest_id' => $latest_id,
 				'post_id'   => $post_id,
 				'per_page'  => $per_page,
 				'order'     => 'DESC',
@@ -389,6 +389,11 @@ class UserWall_WP_AJAX_Manager {
 		}
 	}
 
+	/**
+	 * Fetch usernames for tagging.
+	 *
+	 * @return void
+	 */
 	public function fetch_usernames_callback() {
 		// Check for the 'term' in the AJAX request
 		if ( isset( $_GET['term'] ) ) {
@@ -417,7 +422,12 @@ class UserWall_WP_AJAX_Manager {
 
 		wp_send_json_error( 'No term found' );
 	}
-
+	
+	/**
+	 * Post like for post.
+	 *
+	 * @return void
+	 */
 	public function userwall_wp_post_like() {
 		global $wpdb;
 		if ( ! $this->is_valid_nonce() ) {
