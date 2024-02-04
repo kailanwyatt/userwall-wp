@@ -49,29 +49,6 @@ class WP_Custom_Settings_API {
 			)
 		);
 
-		$this->get_field(
-			array(
-				'type'  => 'pages_dropdown',
-				'name'  => 'post_index_page',
-				'label' => __( 'Post Index Page', 'userwall_wp' ),
-			)
-		);
-
-		$this->get_field(
-			array(
-				'type'    => 'select',
-				'name'    => 'post_types',
-				'label'   => __( 'Post Types', 'userwall_wp' ),
-				'options' => array(
-					'post'               => 'Post',
-					'page'               => 'Page',
-					'custom_post_type_1' => 'Custom Post Type 1',
-					'custom_post_type_2' => 'Custom Post Type 2',
-					// Add more post types as needed
-				),
-			)
-		);
-
 		// Character Limit Field
 		$this->get_field(
 			array(

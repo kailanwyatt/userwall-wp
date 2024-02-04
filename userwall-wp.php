@@ -8,6 +8,8 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: userwall-wp
  * Domain Path: /languages
+ * Requires at least: 5.6
+ * Requires PHP: 7.0
  */
 
 // Define plugin constants
@@ -21,7 +23,6 @@ require_once USERWALL_WP_PLUGIN_DIR . 'deactivation.php';
 
 // Register the activation hook
 register_activation_hook( __FILE__, 'userwall_wp_activate' );
-
 
 // Hook into plugin deactivation
 register_deactivation_hook( __FILE__, 'userwall_wp_deactivate' );
@@ -51,25 +52,7 @@ require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp.php';
 $addons_manager = new UserWall_WP_Addons();
 $addons_manager->load_addons();
 
-// Autoloader for include files (excluding addons)
-//spl_autoload_register('userwall_wp_autoload');
-
-function userwall_wp_autoload( $class_name ) {
-
-	// If our class doesn't have our prefix, don't load it.
-	if ( 0 !== strpos( $class_name, 'UserWall_WP_' ) ) {
-		return;
-	}
-	$class_file = 'class-' . str_replace( '_', '-', strtolower( $class_name ) ) . '.php';
-
-	$class_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/' . $class_file;
-
-	if ( file_exists( $class_path ) ) {
-		require_once $class_path;
-	}
-}
-
-function add_type_attribute( $tag, $handle, $src ) {
+function user_wall_wp_add_type_attribute( $tag, $handle, $src ) {
 	// if not your script, do nothing and return original $tag
 	if ( 'userwall-wp-js' !== $handle ) {
 		return $tag;
@@ -78,4 +61,4 @@ function add_type_attribute( $tag, $handle, $src ) {
 	$tag = '<script type="module" src="' . esc_url( $src ) . '"></script>';
 	return $tag;
 }
-add_filter( 'script_loader_tag', 'add_type_attribute', 10, 3 );
+add_filter( 'script_loader_tag', 'user_wall_wp_add_type_attribute', 10, 3 );
