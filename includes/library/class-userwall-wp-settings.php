@@ -6,14 +6,12 @@ class WP_Custom_Settings_API {
 
 	public function __construct() {
 		$this->tabs = array(
-			'general'  => __( 'General', 'userwall-wp' ),
-			'advanced' => __( 'Advanced', 'userwall-wp' ),
+			'general' => __( 'General', 'userwall-wp' ),
 		);
 
 		$this->subtabs = array(
 			'general' => array(
-				'main'      => __( 'Main', 'userwall-wp' ),
-				'secondary' => __( 'Secondary', 'userwall-wp' ),
+				'main' => __( 'Main', 'userwall-wp' ),
 			),
 		);
 

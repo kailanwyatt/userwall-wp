@@ -29,7 +29,7 @@ class UserWall_WP_Addons {
 
 		// Use glob to find PHP files with class names starting with 'UserWallWP_Addon_'
 		$addon_files = glob( $addon_dir . 'class-userwallwp-addon-*.php' );
-
+		
 		// Loop through the found files
 		foreach ( $addon_files as $addon_file ) {
 			// Include the addon file
@@ -37,8 +37,9 @@ class UserWall_WP_Addons {
 
 			// Extract the class name from the file path
 			$class_name = basename( $addon_file, '.php' );
-			$class_name = ucfirst( str_replace( 'addon-', '', $class_name ) );
+			$class_name = ucfirst( str_replace( 'class-userwallwp-addon-', '', $class_name ) );
 			$class_name = 'UserWallWP_Addon_' . $class_name;
+
 			// Check if the class exists and if it's an instance of UserWall_WP_Base_Addon
 			if ( class_exists( $class_name ) && is_subclass_of( $class_name, 'UserWall_WP_Base_Addon' ) ) {
 				$addon_id = strtolower( str_replace( 'UserWallWP_Addon_', '', $class_name ) );
