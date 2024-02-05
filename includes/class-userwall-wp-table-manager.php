@@ -1,6 +1,13 @@
 <?php
+/**
+ * UserWall_WP_Table_Manager class
+ */
 class UserWall_WP_Table_Manager {
-	// Method to get the table names
+	/**
+	 *  Method to get the table names
+	 *
+	 * @return void
+	 */
 	public static function get_table_names() {
 		global $wpdb;
 

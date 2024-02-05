@@ -1,4 +1,7 @@
 <?php
+/**
+ * UserWall_WP_Shortcode class
+ */
 class UserWall_WP_Shortcode {
 	public function __construct() {
 		add_shortcode( 'userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode' ), 10, 1 );
@@ -7,10 +10,21 @@ class UserWall_WP_Shortcode {
 		add_action( 'wp_footer', array( $this, 'add_tmpls' ) );
 	}
 
+	/**
+	 * Renders the JS template files.
+	 *
+	 * @return void
+	 */
 	public function add_tmpls() {
 		include_once USERWALL_WP_PLUGIN_DIR . 'templates/tmpls.php';
 	}
 
+	/**
+	 * Userwall Shortcode.
+	 *
+	 * @param array $atts
+	 * @return void
+	 */
 	public function userwall_wp_post_form_shortcode( $atts = array() ) {
 		// Extract shortcode attributes with defaults
 		$atts = shortcode_atts(
@@ -43,11 +57,18 @@ class UserWall_WP_Shortcode {
 		$post_types     = user_wall_get_post_types();
 		$content_types  = user_wall_get_content_types();
 		$max_characters = ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0;
+		$allow_tiltes   = ! empty( $options['allow_tiltes'] ) ? absint( $options['allow_tiltes'] ) : 0;
 		include USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'; // Create a post form template
 		$this->add_tmpls();
 		return ob_get_clean();
 	}
 
+	/**
+	 * User Profile Shortcode callback
+	 *
+	 * @param array $atts
+	 * @return void
+	 */
 	public function userwall_wp_profile_shortcode( $atts = array() ) {
 		// Extract shortcode attributes with defaults
 		$atts                = shortcode_atts(
@@ -74,6 +95,12 @@ class UserWall_WP_Shortcode {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Single Post Shortcode
+	 *
+	 * @param array $atts
+	 * @return void
+	 */
 	public function userwall_wp_post_single_shortcode( $atts = array() ) {
 		ob_start();
 		$args = array(

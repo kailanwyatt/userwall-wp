@@ -422,7 +422,7 @@ class UserWall_WP_AJAX_Manager {
 
 		wp_send_json_error( 'No term found' );
 	}
-	
+
 	/**
 	 * Post like for post.
 	 *

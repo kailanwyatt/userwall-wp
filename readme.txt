@@ -1,5 +1,5 @@
 === UserWall WP ===
-Contributors:      userwallswp, kailanwyatt
+Contributors:      userwallswp, kailanw
 Donate link:       https://userwallwp.com
 Tags:              user wall, user activity, user activity wall, profiles, groups, activity, notifications, community, social networking
 License:           GNU General Public License v2 or later
@@ -26,15 +26,6 @@ Transform your WordPress website into a vibrant social community with UserWall W
 - **Content Bookmarking:** Save posts to revisit them later using the bookmark feature.
 - **Follow Authors:** Stay updated with posts from your favorite authors.
 - **Moderation Tools:** Administrators can manage and moderate user-generated content.
-
-#### Pro Version
-Upgrade to UserWall WP Pro for advanced features and customization options:
-- **Multiple Post Types:** Create various post types like articles, discussions, and more.
-- **Private Groups:** Establish private groups for exclusive discussions.
-- **Enhanced Notifications:** Receive real-time notifications for comments, mentions, and reactions.
-- **Custom Themes:** Customize the appearance of your UserWall with premium themes.
-- **User Analytics:** Gain insights into user engagement with advanced analytics.
-- **Developer API:** Extend functionality with the UserWall WP API for developers.
 
 UserWall WP Pro provides unmatched flexibility and scalability to take your community to the next level!
 

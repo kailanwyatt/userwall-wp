@@ -43,7 +43,7 @@ class UserWall_WP_Admin {
 			'User Wall',
 			'manage_options',
 			$this->dashboard_page_key,
-			array( $this, 'dashboard_page' ),
+			array( $this, 'posts_page' ),
 			'dashicons-admin-generic'
 		);
 
@@ -52,8 +52,8 @@ class UserWall_WP_Admin {
 
 		// Additional menus
 
-		$this->add_submenu( 'Posts', 'Posts', 'userwall-wp-posts', array( $this, 'posts_page' ) );
-		$this->add_submenu( 'Comments', 'Comments', 'userwall-wp-comments', array( $this, 'comments_page' ) );
+		//$this->add_submenu( 'Posts', 'Posts', 'userwall-wp-posts', array( $this, 'posts_page' ) );
+		//$this->add_submenu( 'Comments', 'Comments', 'userwall-wp-comments', array( $this, 'comments_page' ) );
 		if ( $addons_manager->is_active( 'groups' ) ) {
 			//$this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page'));
 		}
@@ -123,26 +123,6 @@ class UserWall_WP_Admin {
 			?>
 		</form>
 		<?php
-	}
-
-	public function polls_page() {
-		// Polls page content goes here
-	}
-
-	public function media_page() {
-		// Media page content goes here
-	}
-
-	public function albums_page() {
-		// Albums page content goes here
-	}
-
-	public function reports_page() {
-		// Reports page content goes here
-	}
-
-	public function user_reputation_page() {
-		// User Reputation page content goes here
 	}
 
 	public function posts_page() {

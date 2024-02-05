@@ -95,13 +95,17 @@ function InfiniteScroll(contentId) {
             const postIdElements = content.querySelectorAll('[data-postid]');
             
             // Initialize a variable to store the lowest postid
-            let lowestPostId = Number.MAX_SAFE_INTEGER;
+            let lowestPostId = 0;
 
             // Loop through all elements with data-postid attribute
             postIdElements.forEach(function (element) {
                 const postid = parseInt(element.getAttribute('data-postid'));
-                if (!isNaN(postid) && postid < lowestPostId) {
-                    lowestPostId = postid;
+                if (!isNaN(postid) ) {
+                    if ( ! lowestPostId ) {
+                        lowestPostId = postid;
+                    } else if ( postid < lowestPostId ) {
+                        lowestPostId = postid;
+                    }
                 }
             });
 
@@ -1278,11 +1282,11 @@ jQuery(document).ready(function($) {
 
                     // Update character count
                     var charCountDiv = jQuery('#userwall-wp-charcount');
-                    charCountDiv.text('Characters: ' + charCount + '/' + maxChars);
+                    charCountDiv.text( charCount + '/' + maxChars);
 
                     // Add 'max-reached' class to character count if limit is reached
                     if (charCount > maxChars) {
-                        charCountDiv.html('Characters: ' + charCount + '/' + maxChars + ' <span class="max-reached">(Max limit reached)</span>');
+                        charCountDiv.html( charCount + '/' + maxChars + ' <span class="max-reached">(Max limit reached)</span>');
                         
                         // Optional: Prevent further typing
                         quillPostEditor.deleteText(maxChars, charCount - maxChars);

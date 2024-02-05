@@ -126,9 +126,9 @@ class UserWall_WP_FileManager {
 	}
 
 	public function get_file_url( $file_name, $post_id = '', $group_id = '' ) {
-		if ( $this->post_type === 'user' && ! empty( $this->user_id ) ) {
+		if ( 'user' === $this->post_type && ! empty( $this->user_id ) ) {
 			$directory = 'users-uploads/' . $this->user_id . '/';
-		} elseif ( $this->post_type === 'post' && ! empty( $post_id ) ) {
+		} elseif ( 'post' === $this->post_type && ! empty( $post_id ) ) {
 			$directory = 'group-uploads/' . $group_id . '/';
 		} else {
 			return false; // Cannot determine the file directory

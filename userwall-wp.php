@@ -12,7 +12,13 @@
  * Requires PHP: 7.0
  */
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Define plugin constants
+define( 'USERWALL_WP_VERSION', '0.0.1' );
 define( 'USERWALL_WP_PLUGIN_FILE', __FILE__ );
 define( 'USERWALL_WP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'USERWALL_WP_PLUGIN_ADDONS_DIR', plugin_dir_path( __FILE__ ) . 'includes/addons/' );
@@ -51,14 +57,3 @@ require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp.php';
 // Create an instance of the UserWall_WP_Addons class
 $addons_manager = new UserWall_WP_Addons();
 $addons_manager->load_addons();
-
-function user_wall_wp_add_type_attribute( $tag, $handle, $src ) {
-	// if not your script, do nothing and return original $tag
-	if ( 'userwall-wp-js' !== $handle ) {
-		return $tag;
-	}
-	// change the script tag by adding type="module" and return it.
-	$tag = '<script type="module" src="' . esc_url( $src ) . '"></script>';
-	return $tag;
-}
-add_filter( 'script_loader_tag', 'user_wall_wp_add_type_attribute', 10, 3 );

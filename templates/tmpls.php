@@ -1,5 +1,3 @@
-<script type="text/html" id="tmpl-thread-shared-post">
-</script>
 <script type="text/html" id="tmpl-userwall-wp-feed-template">
 	<?php do_action( 'wp_userwall_header' ); ?>
 	<!-- Loop through userwall -->
@@ -77,25 +75,6 @@
 				<# } #>
 			</div>
 			<?php endif; ?>
-			<?php
-			/*
-			<!-- Reaction Area -->
-			<div class="userwall-wp-reactions">
-				<!-- Display reaction count -->
-				<!-- Reactions count and emoji picker trigger -->
-				<span class="userwall-wp-reaction-count" aria-label="<?php esc_html_e('Reactions count', 'userwall-wp'); ?>">{{ thread.reaction_count }}</span>
-				<button class="emoji-picker-trigger" aria-label="<?php esc_html_e('Emoji Picker', 'userwall-wp'); ?>">😀</button>
-
-				<!-- Reaction buttons -->
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Like', 'userwall-wp'); ?>"><?php esc_html_e('Like', 'userwall-wp'); ?></button>
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Love', 'userwall-wp'); ?>"><?php esc_html_e('Love', 'userwall-wp'); ?>"</button>
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Haha', 'userwall-wp'); ?>"><?php esc_html_e('Haha', 'userwall-wp'); ?></button>
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Wow', 'userwall-wp'); ?>"><?php esc_html_e('Wow', 'userwall-wp'); ?></button>
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Sad', 'userwall-wp'); ?>"><?php esc_html_e('Sad', 'userwall-wp'); ?></button>
-				<button class="userwall-wp-reaction-button" aria-label="<?php esc_html_e('Angry', 'userwall-wp'); ?>"><?php esc_html_e('Sad', 'userwall-wp'); ?></button>
-			</div>
-			*/
-			?>
 			<?php userwall_wp_get_interaction_tmpl( 'thread' ); ?>
 			<?php if ( is_user_logged_in() ) : ?>
 			<!-- comment box -->

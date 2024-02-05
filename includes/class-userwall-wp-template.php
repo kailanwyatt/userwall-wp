@@ -1,7 +1,15 @@
 <?php
+/**
+ * UserWall_Template class
+ */
 class UserWall_Template {
-	// Get a template from the plugin's templates folder
-	public static function get_template( $template_name ) {
+	/**
+	 * Get a template from the plugin's templates folder
+	 *
+	 * @param string $template_name
+	 * @return void
+	 */
+	public static function get_template( $template_name = '' ) {
 		// Check if the template file exists in the theme folder
 		$theme_template = locate_template( 'userwall-wp/' . $template_name );
 
@@ -14,9 +22,14 @@ class UserWall_Template {
 		return USERWALL_WP_PLUGIN_DIR . 'templates/' . $template_name;
 	}
 
+	/**
+	 * Enqueue Assets needed.
+	 *
+	 * @return void
+	 */
 	public function enqueue_assets() {
 		// Enqueue JavaScript
-		wp_enqueue_script( 'userwall-wp-js', USERWALL_WP_PLUGIN_URL . '/assets/js/userwall-wp.js', array( 'jquery', 'wp-util', 'wp-hooks', 'jquery-ui-core' ), '1.0', true );
+		wp_enqueue_script( 'userwall-wp-js', USERWALL_WP_PLUGIN_URL . '/assets/js/userwall-wp.js', array( 'jquery', 'wp-util', 'wp-hooks', 'jquery-ui-core' ), USERWALL_WP_VERSION, true );
 
 		$ajax_nonce = wp_create_nonce( 'userwall_wp_nonce' );
 
@@ -43,6 +56,6 @@ class UserWall_Template {
 		wp_localize_script( 'userwall-wp-js', 'userwallWPObject', apply_filters( 'userwall_wp_localize_script', $userwall_wp_data ) );
 
 		// Enqueue CSS
-		wp_enqueue_style( 'userwall-wp-css', USERWALL_WP_PLUGIN_URL . '/assets/css/userwall-wp.css', array(), '1.0', 'all' );
+		wp_enqueue_style( 'userwall-wp-css', USERWALL_WP_PLUGIN_URL . '/assets/css/userwall-wp.css', array(), USERWALL_WP_VERSION, 'all' );
 	}
 }

@@ -5,10 +5,30 @@
  * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
  */
 class UserWall_WP_Post_Manager {
+	/**
+	 * table_posts variable
+	 *
+	 * @var array
+	 */
 	private $table_posts;
+
+	/**
+	 * wpdb
+	 *
+	 * @var object
+	 */
 	private $wpdb;
+
+	/**
+	 * authors
+	 *
+	 * @var array
+	 */
 	private $authors;
 
+	/**
+	 * Construct
+	 */
 	public function __construct() {
 		global $wpdb;
 		$this->wpdb        = $wpdb;
@@ -16,6 +36,13 @@ class UserWall_WP_Post_Manager {
 		$this->authors     = array();
 	}
 
+	/**
+	 * Get author information for post.
+	 *
+	 * @param integer $user_id
+	 *
+	 * @return array
+	 */
 	private function get_author_info( $user_id = 0 ) {
 		// Ensure the user ID is an integer
 		$user_id = intval( $user_id );
@@ -61,6 +88,7 @@ class UserWall_WP_Post_Manager {
 
 		return apply_filters( 'userwall_wp_get_author_info', $this->authors[ $user_id ], $user_id );
 	}
+
 	/**
 	 * Create a new post.
 	 *
@@ -128,6 +156,13 @@ class UserWall_WP_Post_Manager {
 		return false !== $result;
 	}
 
+	/**
+	 * Moderate post function.
+	 *
+	 * @param integer $post_id
+	 * @param integer $current_user_id
+	 * @return boolean
+	 */
 	public function can_moderate( $post_id = 0, $current_user_id = 0 ) {
 		// Allow admins to be able to moderate anything.
 		if ( current_user_can( 'manage_options' ) ) {
@@ -265,11 +300,24 @@ class UserWall_WP_Post_Manager {
 		return apply_filters( 'userwall_wp_get_posts_latest', $posts, $last_post_id, $limit );
 	}
 
+	/**
+	 * Get Permalink function. Use helper function
+	 *
+	 * @param array $post
+	 * @return void
+	 */
 	private function get_permalink( $post = array() ) {
 		$permalink = '';
 		return $permalink;
 	}
 
+	/**
+	 * Tranforms the post for usable keys in frontend.
+	 *
+	 * @param object $post
+	 *
+	 * @return array
+	 */
 	private function transform_post( $post = array() ) {
 		$author_info                      = $this->get_author_info( $post->user_id );
 		$modified_post                    = $post;
@@ -305,6 +353,7 @@ class UserWall_WP_Post_Manager {
 
 		return apply_filters( 'userwall_wp_post_return_object', $modified_post );
 	}
+
 	/**
 	 * Get the latest posts since a given post ID.
 	 *
@@ -330,6 +379,12 @@ class UserWall_WP_Post_Manager {
 	}
 
 
+	/**
+	 * Get posts.
+	 *
+	 * @param array $args
+	 * @return array
+	 */
 	public function get_posts( $args = array() ) {
 		$defaults = array(
 			'type'      => 'posts',
@@ -343,8 +398,7 @@ class UserWall_WP_Post_Manager {
 			'order'     => 'DESC',
 		);
 
-		$args = wp_parse_args( $args, $defaults );
-		error_log( print_r( $args, true ) );
+		$args     = wp_parse_args( $args, $defaults );
 		$page     = intval( $args['page'] ); // Sanitize the page value
 		$per_page = intval( $args['per_page'] ); // Sanitize the per_page value
 		$offset   = ( $page - 1 ) * $per_page;
@@ -477,7 +531,6 @@ class UserWall_WP_Post_Manager {
 
 		$posts = $this->wpdb->get_results( $sql_query );
 
-		error_log( $this->wpdb->last_query );
 		if ( ! empty( $posts ) ) {
 			foreach ( $posts as $index => $post ) {
 				$posts[] = $this->transform_post( $post );
@@ -496,7 +549,7 @@ class UserWall_WP_Post_Manager {
 	 * @return bool Whether the report was successful or not.
 	 */
 	public function report_post( $post_id, $reporter_user_id, $report_reason ) {
-		$table_reports = $wpdb->prefix . 'userwall_reports';
+		$table_reports = $this->wpdb->prefix . 'userwall_reports';
 
 		$insert_data = array(
 			'reporter_user_id'    => $reporter_user_id,
@@ -525,7 +578,7 @@ class UserWall_WP_Post_Manager {
 		// Implement the logic to add a record in your database table
 		// to indicate that $user_id has blocked $blocked_user_id for $post_id
 
-		$table_blocklist = $wpdb->prefix . 'userwall_blocklist';
+		$table_blocklist = $this->wpdb->prefix . 'userwall_blocklist';
 
 		$insert_data = array(
 			'user_id'         => $user_id,
@@ -556,7 +609,7 @@ class UserWall_WP_Post_Manager {
 		// Implement the logic to add a record in your database table
 		// to indicate that $user_id is following $author_id for $post_id
 
-		$table_followers = $wpdb->prefix . 'userwall_user_followers';
+		$table_followers = $this->wpdb->prefix . 'userwall_user_followers';
 
 		$insert_data = array(
 			'user_id'          => $user_id,
@@ -583,7 +636,7 @@ class UserWall_WP_Post_Manager {
 	 * @return bool Whether the user successfully saved the post to bookmarks or not.
 	 */
 	public function save_post_to_bookmarks( $user_id = 0, $post_id = 0 ) {
-		$table_bookmarks = $wpdb->prefix . 'userwall_bookmarks';
+		$table_bookmarks = $this->wpdb->prefix . 'userwall_bookmarks';
 
 		$insert_data = array(
 			'user_id'       => $user_id,
@@ -642,7 +695,7 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function add_like_or_reaction( $user_id, $post_id, $comment_id = 0, $reaction_type = 'like' ) {
 		global $wpdb;
-		$table_likes = $wpdb->prefix . 'userwall_likes';
+		$table_likes = $this->wpdb->prefix . 'userwall_likes';
 
 		$insert_data = array(
 			'user_id'       => $user_id,
@@ -664,7 +717,7 @@ class UserWall_WP_Post_Manager {
 	 * @return bool Whether the deletion was successful or not.
 	 */
 	public function delete_comment( $comment_id ) {
-		$table_comments = $wpdb->prefix . 'userwall_comments';
+		$table_comments = $this->wpdb->prefix . 'userwall_comments';
 
 		do_action( 'userwall_wp_before_delete_comment', $comment_id );
 		$result = $this->wpdb->delete( $table_comments, array( 'comment_id' => $comment_id ) );
@@ -750,7 +803,15 @@ class UserWall_WP_Post_Manager {
 		return apply_filters( 'userwall_wp_get_comments_by_post_id', $comments, $post_id, $limit );
 	}
 
-	private function get_comments_recursive( $post_id, $parent_id, $limit ) {
+	/**
+	 * Get comments and child comments.
+	 *
+	 * @param integer $post_id
+	 * @param integer $parent_id
+	 * @param integer $limit
+	 * @return array
+	 */
+	private function get_comments_recursive( $post_id = 0, $parent_id = 0, $limit = 0 ) {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
@@ -800,6 +861,13 @@ class UserWall_WP_Post_Manager {
 		return false !== $result;
 	}
 
+	/**
+	 * Get total comments by post ID.
+	 *
+	 * @param integer $post_id
+	 * 
+	 * @return integer
+	 */
 	public function get_total_comment_by_post_id( $post_id = 0 ) {
 		if ( ! $post_id ) {
 			return 0;
@@ -818,6 +886,12 @@ class UserWall_WP_Post_Manager {
 		return $comments;
 	}
 
+	/**
+	 * Trim P tags from editor
+	 *
+	 * @param string $html_content
+	 * @return string
+	 */
 	private function trim_p_tags( $html_content = '' ) {
 		// Remove empty paragraphs
 		$cleaned_content = preg_replace( '/<p><br><\/p>/', '', $html_content );

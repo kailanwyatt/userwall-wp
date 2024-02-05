@@ -1,4 +1,7 @@
 <?php
+/**
+ * UserWall_WP_Post_Core class
+ */
 class UserWall_WP_Post_Core {
 
 	public function hooks() {

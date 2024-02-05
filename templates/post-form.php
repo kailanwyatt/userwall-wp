@@ -6,9 +6,11 @@
 				
 			<?php endif; ?>
 			<div class="userwall-tab-content" data-tab="post">
+				<?php if ( $allow_tiltes ) : ?>
 				<div class="userwall-wp-post-title-section">
 					<input type="text" class="userwall-wp-post-title-input" />
 				</div>
+				<?php endif; ?>
 				<!-- Post content input -->
 				<div class="userwall-wp-post-section">
 					<div id="quill-editor-post-form" class="post-quill-editor"></div>
@@ -24,7 +26,7 @@
 					</div>
 					<?php endif; ?>
 					<?php if ( $max_characters ) : ?>
-					<div id="userwall-wp-charcount" class="userwall-wp-charcount-wrapper"><div class="userwall-wp-charcount-lng">Characters: 0/<?php echo esc_html( absint( $max_characters ) ); ?></div></div>
+					<div id="userwall-wp-charcount" class="userwall-wp-charcount-wrapper"><div class="userwall-wp-charcount-lng">0/<?php echo esc_html( absint( $max_characters ) ); ?></div></div>
 					<?php endif; ?>
 				</div>
 			</div>
