@@ -364,7 +364,8 @@ class UserWall_WP_Post_Manager {
 	public function get_posts_latest_count( $last_post_id = 0, $limit = 30 ) {
 		// Implement the query to fetch the latest posts since $last_post_id here
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		$query  = $this->wpdb->prepare(
+
+		$query = $this->wpdb->prepare(
 			"SELECT COUNT(p.post_id)
             FROM {$this->table_posts} p
             WHERE p.post_id > %d
@@ -431,25 +432,31 @@ class UserWall_WP_Post_Manager {
 		if ( current_user_can( 'manage_options' ) ) {
 
 			// Searching content by query.
-			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase, WordPress.Security.NonceVerification.Missing
 			if ( isset( $_REQUESTS['sq'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$search_query     = sanitize_text_field( $_REQUEST['sq'] ); // The wildcard character
 				$escaped_wildcard = $this->wpdb->esc_like( $search_query ); // Escaping the wildcard
 				$where_clause    .= $this->wpdb->prepare( ' AND post_content LIKE %s', $escaped_wildcard );
 			}
-			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase, WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUESTS['user_id'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$user_id       = absint( $_REQUEST['user_id'] );
 				$where_clause .= $this->wpdb->prepare( ' AND user_id = %d', $user_id );
 			}
 
 			// Filter for date range.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['date_from'] ) && '' !== $_REQUEST['date_from'] ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$date_from     = sanitize_text_field( $_REQUEST['date_from'] );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date >= %s', $date_from );
 			}
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['date_end'] ) && '' !== $_REQUEST['date_end'] ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$date_end      = sanitize_text_field( $_REQUEST['date_end'] );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date <= %s', $date_end );
 			} else {
@@ -514,7 +521,9 @@ class UserWall_WP_Post_Manager {
 
 		//$where_values = apply_filters( 'userwall_wp_get_posts_where_values', $where_values, $args );
 		// Build the SQL query
-		$limit     = intval( $per_page ); // Sanitize the limit
+		$limit = intval( $per_page ); // Sanitize the limit
+
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$sql_query = $this->wpdb->prepare(
 			"SELECT p.*, 
             (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,

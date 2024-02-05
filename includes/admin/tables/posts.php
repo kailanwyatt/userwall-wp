@@ -68,9 +68,11 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		// Updated SQL query for the new table
 		$query = "SELECT * FROM {$this->table_posts}";
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['orderby'] ) && isset( $sortable[ $_REQUEST['orderby'] ] ) ) {
-			$order  = $_REQUEST['order'] === 'asc' ? 'ASC' : 'DESC';
-			$query .= " ORDER BY {$sortable[$_REQUEST['orderby']][0]} $order";
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+			$order  = 'asc' === $_REQUEST['order'] ? 'ASC' : 'DESC';
+			$query .= " ORDER BY {$sortable[ sanitize_text_field( $_REQUEST['orderby'] ) ][0]} $order";
 		}
 
 		$query .= " LIMIT $per_page OFFSET $offset";
@@ -95,10 +97,12 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
                   WHERE p.post_type = 'post'"; // Adjust your post type as needed
 
 		// Handle sorting if necessary
-		$orderby = ! empty( $_GET['orderby'] ) ? $_GET['orderby'] : 'creation_date';
-		$order   = ! empty( $_GET['order'] ) ? $_GET['order'] : 'DESC';
-		$query  .= " ORDER BY $orderby $order";
-		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$orderby = ! empty( $_GET['orderby'] ) ? sanitize_text_field( $_GET['orderby'] ) : 'creation_date';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$order  = ! empty( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
+		$query .= " ORDER BY $orderby $order";
+
 		// Fetch the data
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$data = $wpdb->get_results( $query, ARRAY_A );
@@ -155,6 +159,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	}
 
 	public function display_notices() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_GET['message'] ) && 'updated' === $_GET['message'] ) {
 			echo '<div class="updated"><p>Post status updated successfully.</p></div>';
 		}

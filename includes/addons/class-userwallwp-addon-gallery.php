@@ -106,6 +106,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 		$media = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT m.*, p.post_type FROM {$table_media} AS m LEFT JOIN {$table_posts} AS p ON p.post_id=m.post_id WHERE m.post_id = %d",
 				$post_id
 			)

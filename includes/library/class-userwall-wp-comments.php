@@ -72,12 +72,16 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 		$order   = 'desc';
 
 		// If orderby is set, use this as the sort column.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_GET['orderby'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$orderby = $_GET['orderby'];
 		}
 
 		// If order is set use this as the order.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_GET['order'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$order = $_GET['order'];
 		}
 

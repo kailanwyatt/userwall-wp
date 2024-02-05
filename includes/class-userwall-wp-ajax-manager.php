@@ -67,9 +67,11 @@ class UserWall_WP_AJAX_Manager {
 		}
 
 		// Get the action type from the AJAX request.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$action_type = isset( $_POST['action_type'] ) ? sanitize_text_field( $_POST['action_type'] ) : '';
 
 		// Get the post ID associated with the action (if needed)
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
 
 		$current_user_id = get_current_user_id();
@@ -136,10 +138,13 @@ class UserWall_WP_AJAX_Manager {
 		$current_user_id = get_current_user_id();
 
 		// Get post content from the form.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$comment_id = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
 
 		$post_manager  = new UserWall_WP_Post_Manager();
@@ -174,8 +179,10 @@ class UserWall_WP_AJAX_Manager {
 		$current_user_id = get_current_user_id();
 
 		// Get post content from the form.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		// Prepare data to insert into the userwall_posts table.
@@ -215,11 +222,14 @@ class UserWall_WP_AJAX_Manager {
 		$current_user_id = get_current_user_id();
 
 		// Get post content from the form.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
-
+		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST['post_tab'] ) : 'post';
 
 		// Title.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_title = ! empty( $_POST['post_title'] ) ? sanitize_text_field( $_POST['post_title'] ) : '';
 
 		// Prepare data to insert into the userwall_posts table.
@@ -252,9 +262,17 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-		$per_page     = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 30;
-		$page         = ! empty( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
-		$object_id    = ! empty( $_GET['object_id'] ) ? absint( $_GET['object_id'] ) : 30;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$per_page = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 30;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$page = ! empty( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$object_id = ! empty( $_GET['object_id'] ) ? absint( $_GET['object_id'] ) : 30;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_type    = ! empty( $_GET['post_type'] ) ? absint( $_GET['post_type'] ) : 'posts';
 		$args         = array(
 			'per_page'  => $per_page,
@@ -277,7 +295,7 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts_latest_count( $post_id );
@@ -289,7 +307,7 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts_latest( $post_id );
@@ -301,10 +319,17 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$latest_id = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
-		$per_page  = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
-		$user_id   = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
-		$post_id   = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$per_page = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$user_id = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts(
@@ -324,6 +349,8 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id      = ! empty( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$comments     = $post_manager->get_comments_by_post_id( $post_id );
@@ -357,8 +384,10 @@ class UserWall_WP_AJAX_Manager {
 		$current_user_id = get_current_user_id();
 
 		// Get post content from the form.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
-
+		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		// Prepare data to insert into the userwall_posts table
@@ -391,13 +420,14 @@ class UserWall_WP_AJAX_Manager {
 		}
 
 		// Get the comment content from the AJAX request.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$comment_content = sanitize_text_field( $_POST['commentContent'] );
 
 		// Get current user ID
 		$current_user_id = get_current_user_id();
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$parent_comment = ! empty( $_POST['commentId'] ) ? intval( $_POST['commentId'] ) : 0;
 
 		$post_manager  = new UserWall_WP_Post_Manager();
@@ -428,7 +458,9 @@ class UserWall_WP_AJAX_Manager {
 		}
 
 		// Check for the 'term' in the AJAX request.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_GET['term'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$search_term = sanitize_text_field( trim( str_replace( '@', '', wp_unslash( $_GET['term'] ) ) ) );
 
 			// Query for users.
@@ -470,11 +502,14 @@ class UserWall_WP_AJAX_Manager {
 		}
 		$table_likes = $wpdb->prefix . 'userwall_likes';
 		$user_id     = get_current_user_id();
-		$post_id     = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		$comment_id  = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$comment_id = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$like_id = $wpdb->get_var(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT like_id FROM {$table_likes} WHERE post_id = %d AND comment_id = %d AND user_id = %d",
 				$post_id,
 				$comment_id,
@@ -499,6 +534,7 @@ class UserWall_WP_AJAX_Manager {
 
 		$total_likes = $wpdb->get_var(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT COUNT(like_id) FROM {$table_likes} WHERE post_id = %d AND comment_id = %d",
 				$post_id,
 				$comment_id

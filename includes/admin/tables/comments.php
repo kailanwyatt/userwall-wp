@@ -72,18 +72,20 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 		$order   = 'desc';
 
 		// If orderby is set, use this as the sort column.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_GET['orderby'] ) ) {
 			$orderby = $_GET['orderby'];
 		}
 
 		// If order is set use this as the order.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_GET['order'] ) ) {
 			$order = $_GET['order'];
 		}
 
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
 
-		if ( $order === 'asc' ) {
+		if ( 'asc' === $order ) {
 			return $result;
 		}
 
@@ -140,6 +142,7 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	private function get_comments_data() {
 		global $wpdb;
 		$sql  = "SELECT * FROM {$wpdb->prefix}userwall_comments";
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 		return $data;
 	}

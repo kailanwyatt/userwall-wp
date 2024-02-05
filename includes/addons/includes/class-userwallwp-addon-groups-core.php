@@ -42,7 +42,7 @@ class UserWallWP_Addon_Groups_Core {
 		}
 		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/groups.php';
 		$groups_list = new Userwall_Groups_List_Table();
-
+		
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( $_GET['action'] ) : '';
 		if ( 'add_new' === $action ) {
 			// Check user capability

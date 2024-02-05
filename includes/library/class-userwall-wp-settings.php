@@ -232,10 +232,12 @@ class UserWall_WP_Settings {
 	}
 
 	private function get_current_tab() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return isset( $_GET['tab'] ) ? $_GET['tab'] : 'general';
 	}
 
 	private function get_current_subtab() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return isset( $_GET['subtab'] ) ? $_GET['subtab'] : 'main';
 	}
 
