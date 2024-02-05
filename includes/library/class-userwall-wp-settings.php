@@ -1,5 +1,5 @@
 <?php
-class WP_Custom_Settings_API {
+class UserWall_WP_Settings {
 	private $tabs    = array();
 	private $subtabs = array();
 	private $options = array();
@@ -189,11 +189,6 @@ class WP_Custom_Settings_API {
 		);
 	}
 
-	public function example_field_callback() {
-		$options = get_option( 'userwall_wp' );
-		echo '<input type="text" name="userwall_wp[example_field]" value="' . esc_attr( $options['example_field'] ?? '' ) . '"/>';
-	}
-
 	private function init_general_secondary_settings() {
 		add_settings_section(
 			'wp_custom_general_secondary',
@@ -221,7 +216,7 @@ class WP_Custom_Settings_API {
 	public function show_navigation() {
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $tab => $name ) {
-			$class = ( $tab == $this->get_current_tab() ) ? ' nav-tab-active' : '';
+			$class = ( $tab === $this->get_current_tab() ) ? ' nav-tab-active' : '';
 			echo "<a class='nav-tab$class' href='?page=userwall-wp-settings&tab=$tab'>$name</a>";
 		}
 		echo '</h2>';
@@ -229,7 +224,7 @@ class WP_Custom_Settings_API {
 		if ( isset( $this->subtabs[ $this->get_current_tab() ] ) ) {
 			echo '<ul class="subsubsub">';
 			foreach ( $this->subtabs[ $this->get_current_tab() ] as $subtab => $name ) {
-				$class = ( $subtab == $this->get_current_subtab() ) ? ' current' : '';
+				$class = ( $subtab === $this->get_current_subtab() ) ? ' current' : '';
 				echo "<li><a class='$class' href='?page=userwall-wp-settings&tab={$this->get_current_tab()}&subtab=$subtab'>$name</a> | </li>";
 			}
 			echo '</ul>';

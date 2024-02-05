@@ -1,5 +1,5 @@
 <?php
-class WP_Thread_Integration_Ultimate_Member {
+class UserWall_UltimateMember {
 	public function __construct() {
 	}
 

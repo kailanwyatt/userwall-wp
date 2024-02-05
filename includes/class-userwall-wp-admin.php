@@ -1,7 +1,9 @@
 <?php
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-settings.php';
 
-
+/**
+ * UserWall_WP_Admin class
+ */
 class UserWall_WP_Admin {
 	private static $instance;
 
@@ -14,7 +16,7 @@ class UserWall_WP_Admin {
 	private function __construct() {
 		$this->dashboard_page_key = 'userwall-wp-dashboard';
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
-		$this->settings_api = new WP_Custom_Settings_API( 'userwall-wp-settings' );
+		$this->settings_api = new UserWall_WP_Settings( 'userwall-wp-settings' );
 		add_action( 'admin_init', array( $this->settings_api, 'admin_init' ) );
 		add_action( 'admin_init', array( $this, 'process_addon_action' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );

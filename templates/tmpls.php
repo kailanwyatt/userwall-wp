@@ -33,7 +33,7 @@
 			<# if ( thread.user_id == userwallWPObject.user_id ) { #>
 			<!-- Edit Form (hidden by default) -->
 			<div class="edit-form userwall-edit-post-section" style="display: none;">
-				<# if (  userwallWPObject.settings.allow_titles ) { #>
+				<# if ( userwallWPObject.settings.allow_titles ) { #>
 				<div class="userwall-wp-post-title-section">
 					<input type="text" class="userwall-wp-post-title-edit-input" value="{{ thread.post_title }}" />
 				</div>

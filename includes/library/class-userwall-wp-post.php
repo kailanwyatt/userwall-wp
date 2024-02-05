@@ -50,16 +50,16 @@ class UserWall_WP_Post {
 	 *
 	 * @param stdClass $object
 	 */
-	public function __construct( $object ) {
-		$this->post_id         = $object->post_id;
-		$this->post_title      = $object->post_title;
-		$this->post_content    = $object->post_content;
-		$this->post_type       = $object->post_type;
-		$this->post_status     = $object->post_status;
-		$this->creation_date   = $object->creation_date;
-		$this->user_id         = $object->user_id;
-		$this->comments_count  = $object->comments_count;
-		$this->reactions_count = $object->reactions_count;
+	public function __construct( $post ) {
+		$this->post_id         = $post->post_id;
+		$this->post_title      = $post->post_title;
+		$this->post_content    = $post->post_content;
+		$this->post_type       = $post->post_type;
+		$this->post_status     = $post->post_status;
+		$this->creation_date   = $post->creation_date;
+		$this->user_id         = $post->user_id;
+		$this->comments_count  = $post->comments_count;
+		$this->reactions_count = $post->reactions_count;
 	}
 
 	/**

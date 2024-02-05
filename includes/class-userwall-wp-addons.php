@@ -1,13 +1,35 @@
 <?php
+/**
+ * UserWall_WP_Addons class
+ */
 class UserWall_WP_Addons {
+	/**
+	 * Addons list.
+	 *
+	 * @var array
+	 */
 	private $addons = array();
 
+	/**
+	 * Active Addons list.
+	 *
+	 * @var array
+	 */
 	private $active_addons;
 
+	/**
+	 * Construct
+	 */
 	public function __construct() {
 		$this->active_addons = get_option( 'userwall_wp_active_addons', array() );
 	}
 
+	/**
+	 * Registers addons
+	 *
+	 * @param array $addons
+	 * @return void
+	 */
 	public function register_addons( $addons = array() ) {
 		$addons = array();
 
@@ -20,7 +42,13 @@ class UserWall_WP_Addons {
 		$this->addons = $addons;
 	}
 
-	private function register_internal_addons( $addons ) {
+	/**
+	 * Register the internal addons
+	 *
+	 * @param array $addons
+	 * @return void
+	 */
+	private function register_internal_addons( $addons = array() ) {
 
 		$addons = array();
 
@@ -29,7 +57,7 @@ class UserWall_WP_Addons {
 
 		// Use glob to find PHP files with class names starting with 'UserWallWP_Addon_'
 		$addon_files = glob( $addon_dir . 'class-userwallwp-addon-*.php' );
-		
+
 		// Loop through the found files
 		foreach ( $addon_files as $addon_file ) {
 			// Include the addon file
@@ -50,11 +78,22 @@ class UserWall_WP_Addons {
 		return $addons;
 	}
 
+	/**
+	 * Returns the addons available.
+	 *
+	 * @return void
+	 */
 	public function get_addons() {
 		return $this->addons;
 	}
 
-	public function get_addon_by_id( $id ) {
+	/**
+	 * Get addon by ID.
+	 *
+	 * @param string $id
+	 * @return mixed
+	 */
+	public function get_addon_by_id( $id = '' ) {
 		if ( ! $id ) {
 			return;
 		}
@@ -64,6 +103,11 @@ class UserWall_WP_Addons {
 		}
 	}
 
+	/**
+	 * Get installed addons.
+	 *
+	 * @return array
+	 */
 	public function get_installed_addons() {
 		// Get the list of installed addons from your storage mechanism
 		$addons = get_option( 'userwall_wp_installed_addons', array() ); // You can use options to store addon data
@@ -87,6 +131,11 @@ class UserWall_WP_Addons {
 		return $addon_objects;
 	}
 
+	/**
+	 * Load addons.
+	 *
+	 * @return void
+	 */
 	public function load_addons() {
 		if ( ! empty( $this->active_addons ) ) {
 			// Load and activate addons
@@ -102,15 +151,33 @@ class UserWall_WP_Addons {
 		}
 	}
 
-	public function is_active( $addon_id ) {
+	/**
+	 * Check if addon is active.
+	 *
+	 * @param string $addon_id
+	 * @return boolean
+	 */
+	public function is_active( $addon_id = '' ) {
 		return in_array( $addon_id, array_keys( $this->active_addons ), true );
 	}
-
-	public function activate_addon( $addon_id ) {
+	
+	/**
+	 * Activate addon.
+	 *
+	 * @param string $addon_id
+	 * @return void
+	 */
+	public function activate_addon( $addon_id = '' ) {
 		$addon = $this->get_addon_by_id( $addon_id )->activate_addon();
 	}
 
-	public function deactivate_addon( $addon_id ) {
+	/**
+	 * Deactivate addon.
+	 *
+	 * @param string $addon_id
+	 * @return void
+	 */
+	public function deactivate_addon( $addon_id = '' ) {
 		$addon = $this->get_addon_by_id( $addon_id )->deactivate_addon();
 	}
 }

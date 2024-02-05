@@ -1,4 +1,7 @@
 <?php
+/**
+ * UserWall_WP_Blocks class
+ */
 class UserWall_WP_Blocks {
 	public function __construct() {
 		// Register Gutenberg block

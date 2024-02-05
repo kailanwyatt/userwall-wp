@@ -4,17 +4,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( class_exists( 'BP_Component' ) ) {
-	class BP_Your_Component extends BP_Component {
-
+	class UserWall_BuddyPress extends BP_Component {
+		private $custom_global;
 		/**
 		 * Constructor method.
 		 */
 		public function __construct() {
 			parent::start(
 				// Your component ID.
-				'custom',
+				'activity-wall',
 				// Your component Name.
-				__( 'Custom component', 'custom-text-domain' ),
+				__( 'Activity Wall', 'userwall-wp' ),
 				/*
 				 * The path from where additional files should be included.
 				 *
@@ -82,7 +82,7 @@ if ( class_exists( 'BP_Component' ) ) {
 			$this->custom_global = true;
 		}
 
-		function bp_custom_add_on_screen_displayed() {
+		public function bp_custom_add_on_screen_displayed() {
 			echo 'It works!';
 		}
 
@@ -91,7 +91,7 @@ if ( class_exists( 'BP_Component' ) ) {
 		 * navigation arrays. Of course you can use different screen functions
 		 * for each of your sub navigation items.
 		 */
-		function bp_custom_add_on_screen_callback() {
+		public function bp_custom_add_on_screen_callback() {
 			bp_core_load_template( 'members/single/home' );
 
 			add_action( 'bp_template_content', array( $this, 'bp_custom_add_on_screen_displayed' ) );
@@ -99,8 +99,8 @@ if ( class_exists( 'BP_Component' ) ) {
 	}
 
 
-	function bp_your_component_init() {
-		buddypress()->custom = new BP_Your_Component();
+	function user_wall_bp_init() {
+		buddypress()->custom = new UserWall_BuddyPress();
 	}
-	add_action( 'bp_setup_components', 'bp_your_component_init' );
+	add_action( 'bp_setup_components', 'user_wall_bp_init' );
 }

@@ -865,7 +865,7 @@ class UserWall_WP_Post_Manager {
 	 * Get total comments by post ID.
 	 *
 	 * @param integer $post_id
-	 * 
+	 *
 	 * @return integer
 	 */
 	public function get_total_comment_by_post_id( $post_id = 0 ) {
