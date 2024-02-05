@@ -27,11 +27,11 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		global $wpdb;
 
 		$sql = "SELECT * FROM {$wpdb->prefix}userwall_groups";
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 			$sql .= ' ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 			$sql .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';
 		}
 

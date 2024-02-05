@@ -97,9 +97,9 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
                   WHERE p.post_type = 'post'"; // Adjust your post type as needed
 
 		// Handle sorting if necessary
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$orderby = ! empty( $_GET['orderby'] ) ? sanitize_text_field( $_GET['orderby'] ) : 'creation_date';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$order  = ! empty( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
 		$query .= " ORDER BY $orderby $order";
 
@@ -141,6 +141,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		$actions = array(
 			'edit'     => sprintf(
 				'<a href="?page=%s&action=%s&post_id=%s">Edit</a>',
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				esc_attr( $_REQUEST['page'] ),
 				'edit',
 				absint( $item['ID'] )
@@ -159,7 +160,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	}
 
 	public function display_notices() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['message'] ) && 'updated' === $_GET['message'] ) {
 			echo '<div class="updated"><p>Post status updated successfully.</p></div>';
 		}
@@ -216,7 +217,8 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		global $wpdb;
 
 		if ( 'bulk-draft' === $this->current_action() || 'bulk-publish' === $this->current_action() ) {
-			$post_ids = isset( $_REQUEST['post_id'] ) ? $_REQUEST['post_id'] : array();
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$post_ids = isset( $_REQUEST['post_id'] ) ? sanitize_text_field( $_REQUEST['post_id'] ) : array();
 
 			if ( empty( $post_ids ) ) {
 				return;

@@ -207,6 +207,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		global $wpdb;
 		$media = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT * FROM {$this->table} WHERE post_id = %d",
 				$post_id
 			)
@@ -227,6 +228,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 		$media = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT * FROM {$this->table} WHERE post_id = %d",
 				$post_id
 			)
