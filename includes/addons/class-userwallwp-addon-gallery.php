@@ -95,9 +95,9 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 			'title' => __( 'Image', 'userwall-wp' ),
 			'icon'  => 'photo',
 		);
-
 		return $content_post_types;
 	}
+
 	public function userwall_wp_before_delete_post( $post_id ) {
 		global $wpdb;
 
@@ -147,7 +147,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		$media_ids    = array();
 		if ( ! empty( $_FILES['post_images'] ) ) {
 			foreach ( $_FILES['post_images']['name'] as $index => $value ) {
-				if ( $_FILES['post_images']['error'][ $index ] == 0 ) {
+				if ( 0 === $_FILES['post_images']['error'][ $index ] ) {
 					$file_path = $file_manager->upload_file(
 						array(
 							'name'      => $_FILES['post_images']['name'][ $index ],
@@ -159,16 +159,18 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 						)
 					);
 
-					$insert_result = $wpdb->insert(
-						$wpdb->prefix . 'userwall_media',
-						array(
-							'post_id'   => $post_id,
-							'file_path' => $file_path,
-						)
-					);
-					if ( false !== $insert_result ) {
-						$media_ids[] = $insert_result;
-						do_action( 'userwall_wp_after_image_added', $insert_result, $post_id, $file_path );
+					if ( $file_path ) {
+						$insert_result = $wpdb->insert(
+							$wpdb->prefix . 'userwall_media',
+							array(
+								'post_id'   => $post_id,
+								'file_path' => $file_path,
+							)
+						);
+						if ( false !== $insert_result ) {
+							$media_ids[] = $insert_result;
+							do_action( 'userwall_wp_after_image_added', $insert_result, $post_id, $file_path );
+						}
 					}
 				}
 			}

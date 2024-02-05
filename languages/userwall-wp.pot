@@ -2,9 +2,9 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: UserWall WP 0.0.1\n"
+"Project-Id-Version: UserWall WP 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/userwall-wp\n"
-"POT-Creation-Date: 2024-02-04 07:33:08+00:00\n"
+"POT-Creation-Date: 2024-02-05 14:25:54+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -265,14 +265,14 @@ msgid "Group Avatar URL"
 msgstr ""
 
 #: includes/admin/templates/add-post.php:18
-#: includes/class-userwall-wp-admin.php:116
-#: includes/class-userwall-wp-admin.php:173
+#: includes/class-userwall-wp-admin.php:118
+#: includes/class-userwall-wp-admin.php:155
 #: release/1.0.0/includes/admin/templates/add-post.php:18
-#: release/1.0.0/includes/class-userwall-wp-admin.php:116
-#: release/1.0.0/includes/class-userwall-wp-admin.php:173
+#: release/1.0.0/includes/class-userwall-wp-admin.php:118
+#: release/1.0.0/includes/class-userwall-wp-admin.php:155
 #: release/svn/includes/admin/templates/add-post.php:18
-#: release/svn/includes/class-userwall-wp-admin.php:116
-#: release/svn/includes/class-userwall-wp-admin.php:173
+#: release/svn/includes/class-userwall-wp-admin.php:118
+#: release/svn/includes/class-userwall-wp-admin.php:155
 msgid "Add Post"
 msgstr ""
 
@@ -294,9 +294,9 @@ msgstr ""
 msgid "Coming Soon"
 msgstr ""
 
-#: includes/class-userwall-wp-admin.php:212
-#: release/1.0.0/includes/class-userwall-wp-admin.php:212
-#: release/svn/includes/class-userwall-wp-admin.php:212
+#: includes/class-userwall-wp-admin.php:194
+#: release/1.0.0/includes/class-userwall-wp-admin.php:194
+#: release/svn/includes/class-userwall-wp-admin.php:194
 msgid "Addon \"%s\" has been deactivated."
 msgstr ""
 
@@ -351,21 +351,27 @@ msgstr ""
 msgid "Could not add comment. Please try again."
 msgstr ""
 
-#: includes/class-userwall-wp-core.php:19
-#: release/1.0.0/includes/class-userwall-wp-core.php:19
-#: release/svn/includes/class-userwall-wp-core.php:19
+#: includes/class-userwall-wp-blocks.php:19
+#: release/1.0.0/includes/class-userwall-wp-blocks.php:19
+#: release/svn/includes/class-userwall-wp-blocks.php:19
+msgid "User Wall"
+msgstr ""
+
+#: includes/class-userwall-wp-core.php:22
+#: release/1.0.0/includes/class-userwall-wp-core.php:22
+#: release/svn/includes/class-userwall-wp-core.php:22
 msgid "User"
 msgstr ""
 
-#: includes/class-userwall-wp-shortcode.php:39
-#: release/1.0.0/includes/class-userwall-wp-shortcode.php:39
-#: release/svn/includes/class-userwall-wp-shortcode.php:39
+#: includes/class-userwall-wp-shortcode.php:53
+#: release/1.0.0/includes/class-userwall-wp-shortcode.php:53
+#: release/svn/includes/class-userwall-wp-shortcode.php:53
 msgid "Post"
 msgstr ""
 
-#: includes/class-userwall-wp-template.php:30
-#: release/1.0.0/includes/class-userwall-wp-template.php:30
-#: release/svn/includes/class-userwall-wp-template.php:30
+#: includes/class-userwall-wp-template.php:43
+#: release/1.0.0/includes/class-userwall-wp-template.php:43
+#: release/svn/includes/class-userwall-wp-template.php:43
 msgid "What are you're thoughs?"
 msgstr ""
 
@@ -387,10 +393,10 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
-#: includes/integrations/buddypress.php:17
-#: release/1.0.0/includes/integrations/buddypress.php:17
-#: release/svn/includes/integrations/buddypress.php:17
-msgid "Custom component"
+#: includes/integrations/class-userwall-buddypress.php:17
+#: release/1.0.0/includes/integrations/class-userwall-buddypress.php:17
+#: release/svn/includes/integrations/class-userwall-buddypress.php:17
+msgid "Activity Wall"
 msgstr ""
 
 #: includes/library/class-userwall-wp-settings.php:9
@@ -417,105 +423,93 @@ msgstr ""
 msgid "Single Post Page"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:56
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:56
-#: release/svn/includes/library/class-userwall-wp-settings.php:56
-msgid "Post Index Page"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:64
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:64
-#: release/svn/includes/library/class-userwall-wp-settings.php:64
-msgid "Post Types"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:80
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:80
-#: release/svn/includes/library/class-userwall-wp-settings.php:80
+#: includes/library/class-userwall-wp-settings.php:57
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:57
+#: release/svn/includes/library/class-userwall-wp-settings.php:57
 msgid "Character Limit"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:65
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:65
+#: release/svn/includes/library/class-userwall-wp-settings.php:65
+msgid "Allow Titles on Posts"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:73
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:73
+#: release/svn/includes/library/class-userwall-wp-settings.php:73
+msgid "Open Posts Page"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:82
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:82
+#: release/svn/includes/library/class-userwall-wp-settings.php:82
+msgid "Editor Options"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:84
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:84
+#: release/svn/includes/library/class-userwall-wp-settings.php:84
+msgid "Bold"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:85
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:85
+#: release/svn/includes/library/class-userwall-wp-settings.php:85
+msgid "Italic"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:86
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:86
+#: release/svn/includes/library/class-userwall-wp-settings.php:86
+msgid "Underline"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:87
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:87
+#: release/svn/includes/library/class-userwall-wp-settings.php:87
+msgid "Strike"
 msgstr ""
 
 #: includes/library/class-userwall-wp-settings.php:88
 #: release/1.0.0/includes/library/class-userwall-wp-settings.php:88
 #: release/svn/includes/library/class-userwall-wp-settings.php:88
-msgid "Allow Titles on Posts"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:96
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:96
-#: release/svn/includes/library/class-userwall-wp-settings.php:96
-msgid "Open Posts Page"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:105
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:105
-#: release/svn/includes/library/class-userwall-wp-settings.php:105
-msgid "Editor Options"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:107
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:107
-#: release/svn/includes/library/class-userwall-wp-settings.php:107
-msgid "Bold"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:108
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:108
-#: release/svn/includes/library/class-userwall-wp-settings.php:108
-msgid "Italic"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:109
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:109
-#: release/svn/includes/library/class-userwall-wp-settings.php:109
-msgid "Underline"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:110
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:110
-#: release/svn/includes/library/class-userwall-wp-settings.php:110
-msgid "Strike"
-msgstr ""
-
-#: includes/library/class-userwall-wp-settings.php:111
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:111
-#: release/svn/includes/library/class-userwall-wp-settings.php:111
 msgid "List"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:112
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:112
-#: release/svn/includes/library/class-userwall-wp-settings.php:112
+#: includes/library/class-userwall-wp-settings.php:89
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:89
+#: release/svn/includes/library/class-userwall-wp-settings.php:89
 msgid "Headers"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:113
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:113
-#: release/svn/includes/library/class-userwall-wp-settings.php:113
+#: includes/library/class-userwall-wp-settings.php:90
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:90
+#: release/svn/includes/library/class-userwall-wp-settings.php:90
 msgid "Blockquote"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:114
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:114
-#: release/svn/includes/library/class-userwall-wp-settings.php:114
+#: includes/library/class-userwall-wp-settings.php:91
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:91
+#: release/svn/includes/library/class-userwall-wp-settings.php:91
 msgid "Code Block"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:193
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:193
-#: release/svn/includes/library/class-userwall-wp-settings.php:193
+#: includes/library/class-userwall-wp-settings.php:170
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:170
+#: release/svn/includes/library/class-userwall-wp-settings.php:170
 msgid "-Page-"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:223
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:223
-#: release/svn/includes/library/class-userwall-wp-settings.php:223
+#: includes/library/class-userwall-wp-settings.php:195
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:195
+#: release/svn/includes/library/class-userwall-wp-settings.php:195
 msgid "Secondary Settings"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:235
-#: release/1.0.0/includes/library/class-userwall-wp-settings.php:235
-#: release/svn/includes/library/class-userwall-wp-settings.php:235
+#: includes/library/class-userwall-wp-settings.php:207
+#: release/1.0.0/includes/library/class-userwall-wp-settings.php:207
+#: release/svn/includes/library/class-userwall-wp-settings.php:207
 msgid "Advanced Settings"
 msgstr ""
 
@@ -524,80 +518,80 @@ msgstr ""
 msgid "Avatar of %s"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:47 release/svn/templates/tmpls.php:47
-#: templates/tmpls.php:47
+#: release/1.0.0/templates/tmpls.php:45 release/svn/templates/tmpls.php:45
+#: templates/tmpls.php:45
 msgid "Save Changes"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:48 release/svn/templates/tmpls.php:48
-#: templates/tmpls.php:48
+#: release/1.0.0/templates/tmpls.php:46 release/svn/templates/tmpls.php:46
+#: templates/tmpls.php:46
 msgid "Cancel Changes"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:57 release/1.0.0/templates/tmpls.php:160
-#: release/svn/templates/tmpls.php:57 release/svn/templates/tmpls.php:160
-#: templates/tmpls.php:57 templates/tmpls.php:160
+#: release/1.0.0/templates/tmpls.php:55 release/1.0.0/templates/tmpls.php:139
+#: release/svn/templates/tmpls.php:55 release/svn/templates/tmpls.php:139
+#: templates/tmpls.php:55 templates/tmpls.php:139
 msgid "Edit"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:60 release/1.0.0/templates/tmpls.php:163
-#: release/svn/templates/tmpls.php:60 release/svn/templates/tmpls.php:163
-#: templates/tmpls.php:60 templates/tmpls.php:163
+#: release/1.0.0/templates/tmpls.php:58 release/1.0.0/templates/tmpls.php:142
+#: release/svn/templates/tmpls.php:58 release/svn/templates/tmpls.php:142
+#: templates/tmpls.php:58 templates/tmpls.php:142
 msgid "Delete"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:63 release/1.0.0/templates/tmpls.php:166
-#: release/svn/templates/tmpls.php:63 release/svn/templates/tmpls.php:166
-#: templates/tmpls.php:63 templates/tmpls.php:166
+#: release/1.0.0/templates/tmpls.php:61 release/1.0.0/templates/tmpls.php:145
+#: release/svn/templates/tmpls.php:61 release/svn/templates/tmpls.php:145
+#: templates/tmpls.php:61 templates/tmpls.php:145
 msgid "Block"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:66 release/1.0.0/templates/tmpls.php:169
-#: release/svn/templates/tmpls.php:66 release/svn/templates/tmpls.php:169
-#: templates/tmpls.php:66 templates/tmpls.php:169
+#: release/1.0.0/templates/tmpls.php:64 release/1.0.0/templates/tmpls.php:148
+#: release/svn/templates/tmpls.php:64 release/svn/templates/tmpls.php:148
+#: templates/tmpls.php:64 templates/tmpls.php:148
 msgid "Report"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:69 release/1.0.0/templates/tmpls.php:172
-#: release/svn/templates/tmpls.php:69 release/svn/templates/tmpls.php:172
-#: templates/tmpls.php:69 templates/tmpls.php:172
+#: release/1.0.0/templates/tmpls.php:67 release/1.0.0/templates/tmpls.php:151
+#: release/svn/templates/tmpls.php:67 release/svn/templates/tmpls.php:151
+#: templates/tmpls.php:67 templates/tmpls.php:151
 msgid "Embed Post"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:72 release/1.0.0/templates/tmpls.php:175
-#: release/svn/templates/tmpls.php:72 release/svn/templates/tmpls.php:175
-#: templates/tmpls.php:72 templates/tmpls.php:175
+#: release/1.0.0/templates/tmpls.php:70 release/1.0.0/templates/tmpls.php:154
+#: release/svn/templates/tmpls.php:70 release/svn/templates/tmpls.php:154
+#: templates/tmpls.php:70 templates/tmpls.php:154
 msgid "Save"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:75 release/1.0.0/templates/tmpls.php:178
-#: release/svn/templates/tmpls.php:75 release/svn/templates/tmpls.php:178
-#: templates/tmpls.php:75 templates/tmpls.php:178
+#: release/1.0.0/templates/tmpls.php:73 release/1.0.0/templates/tmpls.php:157
+#: release/svn/templates/tmpls.php:73 release/svn/templates/tmpls.php:157
+#: templates/tmpls.php:73 templates/tmpls.php:157
 msgid "Follow"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:106 release/svn/templates/tmpls.php:106
-#: templates/tmpls.php:106
+#: release/1.0.0/templates/tmpls.php:85 release/svn/templates/tmpls.php:85
+#: templates/tmpls.php:85
 msgid "Share Comment"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:163 release/svn/templates/tmpls.php:163
-#: templates/tmpls.php:163
+#: release/1.0.0/templates/tmpls.php:142 release/svn/templates/tmpls.php:142
+#: templates/tmpls.php:142
 msgid "Delete Comment"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:186 release/svn/templates/tmpls.php:186
-#: templates/tmpls.php:186
+#: release/1.0.0/templates/tmpls.php:165 release/svn/templates/tmpls.php:165
+#: templates/tmpls.php:165
 msgid "Reply"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:194 release/svn/templates/tmpls.php:194
-#: templates/tmpls.php:194
+#: release/1.0.0/templates/tmpls.php:173 release/svn/templates/tmpls.php:173
+#: templates/tmpls.php:173
 msgid "Submit Reply"
 msgstr ""
 
-#: release/1.0.0/templates/tmpls.php:195 release/svn/templates/tmpls.php:195
-#: templates/tmpls.php:195
+#: release/1.0.0/templates/tmpls.php:174 release/svn/templates/tmpls.php:174
+#: templates/tmpls.php:174
 msgid "Cancel Reply"
 msgstr ""
 

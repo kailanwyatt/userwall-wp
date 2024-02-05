@@ -1,4 +1,7 @@
 <?php
+if ( ! function_exists( 'wp_handle_upload' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+}
 /**
  * UserWall_WP_FileManager class
  */
@@ -59,6 +62,19 @@ class UserWall_WP_FileManager {
 	}
 
 	/**
+	 * Set custom upload directory.
+	 *
+	 * @return void
+	 */
+	public function set_custom_upload_directory( $dirs = array() ) {
+		$dirs['path']    = $this->upload_dir;
+		$dirs['basedir'] = $this->upload_dir;
+		$dirs['url']     = $this->upload_dir;
+		$dirs['baseurl'] = $this->upload_dir;
+		return $dirs;
+	}
+
+	/**
 	 * Upload file method.
 	 *
 	 * @param array $file
@@ -82,12 +98,12 @@ class UserWall_WP_FileManager {
 		// Construct the full path to the uploaded file
 		$file_path = $this->upload_dir . $unique_filename . '.' . $file_extension;
 
-		// Move the uploaded file to the specified path
-		if ( move_uploaded_file( $file['tmp_name'], $file_path ) ) {
-			return $file_path; // Return the file path on success
-		} else {
-			return false; // Return false on failure
-		}
+		// Move the uploaded file to the specified path.
+		$upload_overrides = array( 'test_form' => false );
+		add_filter( 'upload_dir', array( $this, 'set_custom_upload_directory' ) );
+		$uploaded_file = wp_handle_upload( $file, $upload_overrides );
+		remove_filter( 'upload_dir', array( $this, 'set_custom_upload_directory' ) );
+		return ! empty( $uploaded_file['file'] ) ? $uploaded_file['file'] : false;
 	}
 
 	/**

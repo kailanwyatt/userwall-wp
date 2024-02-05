@@ -140,7 +140,6 @@ class UserWall_WP_Addons {
 		if ( ! empty( $this->active_addons ) ) {
 			// Load and activate addons
 			foreach ( $this->active_addons as $addon ) {
-
 				if ( isset( $addon['file'] ) && file_exists( $addon['file'] ) && ! class_exists( $addon['class'] ) ) {
 
 					include_once $addon['file'];

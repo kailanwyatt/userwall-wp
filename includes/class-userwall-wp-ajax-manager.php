@@ -1,12 +1,22 @@
 <?php
 /**
+ * If this file is called directly, abort.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+/**
  * UserWall_WP_AJAX_Manager class
  *
- *  * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+ * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+ * phpcs:disable WordPress.Security.NonceVerification.Recommended
  */
 class UserWall_WP_AJAX_Manager {
+	/**
+	 * Construct function.
+	 */
 	public function __construct() {
-		// Add action hooks for handling AJAX requests
+		// Add action hooks for handling AJAX requests.
 		add_action( 'wp_ajax_userwall_wp_save_post', array( $this, 'userwall_wp_save_post' ) );
 		add_action( 'wp_ajax_fetch_data_by_thread', array( $this, 'fetch_data_by_thread' ) );
 		add_action( 'wp_ajax_nopriv_fetch_data_by_thread', array( $this, 'fetch_data_by_thread' ) );
@@ -44,19 +54,19 @@ class UserWall_WP_AJAX_Manager {
 	 * @return bool Whether the nonce is valid.
 	 */
 	private function is_valid_nonce( $nonce_field = 'nonce', $nonce_action = 'userwall_wp_nonce' ) {
-		if ( isset( $_POST[ $nonce_field ] ) && wp_verify_nonce( $_POST[ $nonce_field ], $nonce_action ) ) {
+		if ( isset( $_REQUEST[ $nonce_field ] ) && wp_verify_nonce( wp_unslash( $_REQUEST[ $nonce_field ] ), $nonce_action ) ) {
 			return true;
 		}
 		return false;
 	}
 
 	public function handle_post_action() {
-		// Check for nonce security
+		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
-		// Get the action type from the AJAX request
+		// Get the action type from the AJAX request.
 		$action_type = isset( $_POST['action_type'] ) ? sanitize_text_field( $_POST['action_type'] ) : '';
 
 		// Get the post ID associated with the action (if needed)
@@ -65,11 +75,11 @@ class UserWall_WP_AJAX_Manager {
 		$current_user_id = get_current_user_id();
 		$post_manager    = new UserWall_WP_Post_Manager();
 
-		// Perform actions based on the action type
+		// Perform actions based on the action type.
 		switch ( $action_type ) {
 			case 'Delete':
 				if ( $post_manager->can_moderate( $post_id, $current_user_id ) ) {
-					// Handle Delete action
+					// Handle Delete action.
 
 					$posts = $post_manager->delete_post( $post_id );
 				} else {
@@ -77,45 +87,55 @@ class UserWall_WP_AJAX_Manager {
 				break;
 			case 'Block':
 				$blocked_user_id = $post_manager->get_user_id_by_post_id();
-				// Handle Block action
+				// Handle Block action.
 				$post_manager->block_user_for_post( $current_user_id, $blocked_user_id, $post_id );
-				// You can perform your block logic here
+				// You can perform your block logic here.
 				break;
 			case 'Report':
-				// Handle Report action
-				// You can perform your report logic here
+				// Handle Report action.
+				// You can perform your report logic here.
 				break;
 			case 'Embed-post':
-				// Handle Embed Post action
-				// You can perform your embed logic here
+				// Handle Embed Post action.
+				// You can perform your embed logic here.
 				break;
 			case 'Save':
-				// Handle Save action
+				// Handle Save action.
 				$post_manager->save_post_to_bookmarks( $current_user_id, $post_id );
 				break;
 			case 'Follow':
-				// Handle Follow action
+				// Handle Follow action.
 				//$post->follow_author_of_post()
 				break;
 			default:
-				// Handle unknown action type
+				// Handle unknown action type.
 				wp_send_json_error( array( 'message' => 'Unknown action type.' ) );
 		}
 
-		// Send a success response (if needed)
+		// Send a success response (if needed).
 		wp_send_json_success( array( 'message' => 'Action successful.' ) );
 	}
 
+	/**
+	 * Update Comment.
+	 *
+	 * @return void
+	 */
 	public function userwall_wp_update_comment() {
-		// Check if user is logged in
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
+
+		// Check if user is logged in.
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => __( 'You must be logged in to update comment.', 'userwall-wp' ) ) );
 		}
 
-		// Get current user ID
+		// Get current user ID.
 		$current_user_id = get_current_user_id();
 
-		// Get post content from the form
+		// Get post content from the form.
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
@@ -140,20 +160,25 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function userwall_wp_update_post() {
-		// Check if user is logged in
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
+
+		// Check if user is logged in.
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => __( 'You must be logged in to create a post.', 'userwall-wp' ) ) );
 		}
 
-		// Get current user ID
+		// Get current user ID.
 		$current_user_id = get_current_user_id();
 
-		// Get post content from the form
+		// Get post content from the form.
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
-		// Prepare data to insert into the userwall_posts table
+		// Prepare data to insert into the userwall_posts table.
 		$post_data = array(
 			'content' => $post_content,
 		);
@@ -176,32 +201,32 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function userwall_wp_save_post() {
-		// Check for nonce security
+		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
-		// Check if user is logged in
+		// Check if user is logged in.
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => __( 'You must be logged in to create a post.', 'userwall-wp' ) ) );
 		}
 
-		// Get current user ID
+		// Get current user ID.
 		$current_user_id = get_current_user_id();
 
-		// Get post content from the form
+		// Get post content from the form.
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
 		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST['post_tab'] ) : 'post';
 
-		// Title
+		// Title.
 		$post_title = ! empty( $_POST['post_title'] ) ? sanitize_text_field( $_POST['post_title'] ) : '';
 
-		// Prepare data to insert into the userwall_posts table
+		// Prepare data to insert into the userwall_posts table.
 		$post_data = array(
 			'title'         => $post_title,
 			'content'       => $post_content,
-			'post_type'     => 'posts', // Change to your desired post type
+			'post_type'     => 'posts', // Change to your desired post type.
 			'creation_date' => current_time( 'mysql' ),
 			'user_id'       => $current_user_id,
 		);
@@ -222,27 +247,11 @@ class UserWall_WP_AJAX_Manager {
 		}
 	}
 
-	public function handle_ajax_request() {
-		// Check for nonce security
-		if ( ! $this->is_valid_nonce() ) {
-			wp_send_json_error( array( 'message' => 'Invalid nonce.' ) );
-		}
-
-		// Your AJAX request handling logic goes here
-		// You can access POST data using $_POST array
-		// Process the request and prepare a response
-
-		$response = array(
-			'status'  => 'success',
-			'message' => 'AJAX request successful!',
-			'data'    => $_POST, // Include any data you want to send back
-		);
-
-		// Send JSON response
-		wp_send_json( $response );
-	}
-
 	public function fetch_data_by_thread() {
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
 		$per_page     = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 30;
 		$page         = ! empty( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
 		$object_id    = ! empty( $_GET['object_id'] ) ? absint( $_GET['object_id'] ) : 30;
@@ -264,9 +273,9 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function fetch_latest_thread_notice() {
-		// Check for nonce security
+		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
-			//wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
@@ -276,9 +285,9 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function fetch_latest_thread() {
-		// Check for nonce security
+		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
-			//wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
@@ -288,6 +297,10 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function load_more_posts() {
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
 		$latest_id = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
 		$per_page  = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
 		$user_id   = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
@@ -307,6 +320,10 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function load_comments() {
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
 		$post_id      = ! empty( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$comments     = $post_manager->get_comments_by_post_id( $post_id );
@@ -326,15 +343,20 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function post_comment() {
-		// Check if user is logged in
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
+
+		// Check if user is logged in.
 		if ( ! is_user_logged_in() ) {
 			wp_send_json_error( array( 'message' => __( 'You must be logged in to add a comment.', 'userwall-wp' ) ) );
 		}
 
-		// Get current user ID
+		// Get current user ID.
 		$current_user_id = get_current_user_id();
 
-		// Get post content from the form
+		// Get post content from the form.
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
 
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
@@ -363,7 +385,12 @@ class UserWall_WP_AJAX_Manager {
 	}
 
 	public function comment_reply_callback() {
-		// Get the comment content from the AJAX request
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
+
+		// Get the comment content from the AJAX request.
 		$comment_content = sanitize_text_field( $_POST['commentContent'] );
 
 		// Get current user ID
@@ -395,16 +422,21 @@ class UserWall_WP_AJAX_Manager {
 	 * @return void
 	 */
 	public function fetch_usernames_callback() {
-		// Check for the 'term' in the AJAX request
-		if ( isset( $_GET['term'] ) ) {
-			$search_term = sanitize_text_field( trim( str_replace( '@', '', $_GET['term'] ) ) );
+		// Check for nonce security.
+		if ( ! $this->is_valid_nonce() ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+		}
 
-			// Query for users
+		// Check for the 'term' in the AJAX request.
+		if ( isset( $_GET['term'] ) ) {
+			$search_term = sanitize_text_field( trim( str_replace( '@', '', wp_unslash( $_GET['term'] ) ) ) );
+
+			// Query for users.
 			$user_query = new WP_User_Query(
 				array(
 					'search'         => '*' . esc_attr( $search_term ) . '*',
 					'search_columns' => array( 'user_login', 'user_nicename' ),
-					'number'         => 10, // Limit the number of results
+					'number'         => 10, // Limit the number of results.
 				)
 			);
 
@@ -413,7 +445,7 @@ class UserWall_WP_AJAX_Manager {
 			$usernames = array();
 			if ( ! empty( $users ) ) {
 				foreach ( $users as $user ) {
-					$usernames[] = $user->user_login; // or user_nicename, depending on your preference
+					$usernames[] = $user->user_login; // or user_nicename, depending on your preference.
 				}
 			}
 
@@ -426,18 +458,21 @@ class UserWall_WP_AJAX_Manager {
 	/**
 	 * Post like for post.
 	 *
+	 * phpcs:ignore WordPress.Security.NonceVerification.Missing
+	 *
 	 * @return void
 	 */
 	public function userwall_wp_post_like() {
 		global $wpdb;
+		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
-			//wp_send_json_error(array('message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 		$table_likes = $wpdb->prefix . 'userwall_likes';
 		$user_id     = get_current_user_id();
 		$post_id     = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 		$comment_id  = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$like_id = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT like_id FROM {$table_likes} WHERE post_id = %d AND comment_id = %d AND user_id = %d",

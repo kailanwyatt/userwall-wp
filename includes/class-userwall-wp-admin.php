@@ -207,7 +207,7 @@ class UserWall_WP_Admin {
 			$addons_manager = new UserWall_WP_Addons();
 			$addons_manager->register_addons();
 			$addons = $addons_manager->get_addons();
-			if ( 'addon' === $_POST['addon_action'] ) {
+			if ( 'activate' === $_POST['addon_action'] ) {
 				// Activate the addon
 				if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids, true ) ) {
 					$addon = ! empty( $addons[ $addon_id ] ) ? $addons[ $addon_id ] : array();

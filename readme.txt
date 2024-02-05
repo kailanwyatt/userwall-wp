@@ -1,13 +1,13 @@
 === UserWall WP ===
-Contributors:      userwallswp, kailanw
+Contributors:      kailanw
 Donate link:       https://userwallwp.com
 Tags:              user wall, user activity, user activity wall, profiles, groups, activity, notifications, community, social networking
-License:           GNU General Public License v2 or later
-License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP:      5.6
 Requires at least: 5.8
 Tested up to:      6.4.2
-Stable tag:        0.0.1
+Stable tag:        1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Transform your WordPress website into a vibrant social community with UserWall WP. Empower users to connect, interact, and share their thoughts seamlessly.
 
@@ -17,7 +17,6 @@ Transform your WordPress website into a vibrant social community with UserWall W
 
 ### Features
 
-#### Free Version
 - **Create Posts:** Users can craft and share posts, including text and media.
 - **Interactive Comments:** Engage in dynamic conversations with threaded comments.
 - **User Mentioning:** Mention other users in posts and comments for better interaction.
@@ -59,7 +58,7 @@ Prepare to transform your WordPress site into a thriving community with UserWall
 
 == Changelog ==
 
-= 1.0 =
+= 1.0.0 =
 * Initial release of UserWall WP.
 
 == Upgrade Notice ==

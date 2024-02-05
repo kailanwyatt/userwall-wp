@@ -84,6 +84,7 @@ function InfiniteScroll(contentId) {
             const data = new URLSearchParams();
             data.append('action', 'userwall_wp_load_more_posts');
             data.append('per_page', itemsPerPage);
+            data.append('nonce', userwallWPObject.nonce);
             if ( threadWrapper.dataset.post_id && !isNaN(threadWrapper.dataset.post_id) ) {
                 data.append( 'post_id', threadWrapper.dataset.post_id );
             }
@@ -827,31 +828,6 @@ jQuery(document).ready(function($) {
                 jQuery('#image-upload').val('');
             });
         
-            // Handle form submission with AJAX
-            jQuery('#userwall-wp-post-form2').submit(function(event) {
-                event.preventDefault();
-        
-                // Get form data including images
-                const formData = new FormData(this);
-                formData.append('action', sessionID);
-
-                // Perform AJAX request for form submission
-                $.ajax({
-                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        // Handle the AJAX response here
-                        console.log('Form submitted successfully');
-                    },
-                    error: function(error) {
-                        // Handle AJAX error here
-                        console.error('Error submitting form:', error);
-                    }
-                });
-            });
             var that = this;
 
             jQuery(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
@@ -1116,6 +1092,7 @@ jQuery(document).ready(function($) {
             formData.append( 'action', 'userwall_wp_save_post' );
             formData.append( 'nonce', userwallWPObject.nonce );
             formData.append( 'post_tab', tab );
+            formData.append( 'nonce', userwallWPObject.nonce);
             
             // Perform AJAX request to save the post
             jQuery.ajax({

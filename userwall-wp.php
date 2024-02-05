@@ -2,7 +2,7 @@
 /**
  * Plugin Name: UserWall WP
  * Description: A versatile plugin that combines microblogging and forum functionality within WordPress, enhancing user engagement and interaction.
- * Version: 0.0.1
+ * Version: 1.0.0
  * Author: UserWall WP
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'USERWALL_WP_VERSION', '0.0.1' );
+define( 'USERWALL_WP_VERSION', '1.0.0' );
 define( 'USERWALL_WP_PLUGIN_FILE', __FILE__ );
 define( 'USERWALL_WP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'USERWALL_WP_PLUGIN_ADDONS_DIR', plugin_dir_path( __FILE__ ) . 'includes/addons/' );
@@ -33,14 +33,17 @@ register_activation_hook( __FILE__, 'userwall_wp_activate' );
 // Hook into plugin deactivation
 register_deactivation_hook( __FILE__, 'userwall_wp_deactivate' );
 
-// Include the addon management class (UserWall_WP_Addons)
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php';
+
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-core.php';
+
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-profile.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php';
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-core.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/helper-functions.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/icons.php';
+
+// Include the addon management class (UserWall_WP_Addons)
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-addons.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-admin.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-blocks.php';
