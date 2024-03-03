@@ -1,16 +1,39 @@
 <?php
+/**
+ * Include settings library.
+ */
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-settings.php';
 
 /**
  * UserWall_WP_Admin class
  */
 class UserWall_WP_Admin {
+	/**
+	 * Instance
+	 *
+	 * @var UserWall_WP_Admin
+	 */
 	private static $instance;
 
+	/**
+	 * Undocumented variable
+	 *
+	 * @var object
+	 */
 	private $settings_api;
 
+	/**
+	 * Dashboard page key.
+	 *
+	 * @var string
+	 */
 	private $dashboard_page_key;
 
+	/**
+	 * Option for active addons.
+	 *
+	 * @var string
+	 */
 	private $option_active_addons = 'userwall_wp_active_addons';
 
 	private function __construct() {
@@ -142,6 +165,9 @@ class UserWall_WP_Admin {
 		include USERWALL_WP_PLUGIN_DIR . '/templates/tmpls.php';
 	}
 
+	/**
+	 * Display the posts view template.
+	 */
 	private function posts_view_template() {
 		if ( ! class_exists( 'WP_List_Table' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -152,26 +178,31 @@ class UserWall_WP_Admin {
 		echo '<div class="wrap"><h1>Manage Posts</h1>';
 		$posts_table->display_notices();
 		?>
-		<a href="<?php echo admin_url( 'admin.php?page=userwall-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
-		<form method="get" action="<?php echo admin_url( 'admin.php' ); ?>">
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html( 'Add Post', 'userwall-wp' ); ?></a>
+		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
 			<input type="hidden" name="page" value="userwall-wp-posts" />
 			<?php
-			//$posts_table->prepare_items();
-			//$posts_table->search_box('Search Posts', 'post_title');
-			//$posts_table->display();
+			// $posts_table->prepare_items();
+			// $posts_table->search_box( 'Search Posts', 'post_title' );
+			// $posts_table->display();
 			?>
 		</form>
 		<?php
 	}
 
+	/**
+	 * Display the addons page.
+	 */
 	public function addons_page() {
 		include USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/addons.php';
 	}
 
+	/**
+	 * Display the settings page.
+	 */
 	public function settings_page() {
-
 		echo '<div class="wrap">';
-		echo '<h1>' . get_admin_page_title() . '</h1>';
+		echo '<h1>' . esc_html( get_admin_page_title() ) . '</h1>';
 		$this->settings_api->show_navigation();
 		echo '<div>';
 		$this->settings_api->show_forms();
@@ -179,31 +210,39 @@ class UserWall_WP_Admin {
 		echo '</div>';
 	}
 
+	/**
+	 * Display admin notices.
+	 */
 	public function admin_notices() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['addon_status'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended 
-			$addon_id = ! empty( $_GET['addon_id'] ) ? sanitize_text_field( $_GET['addon_id'] ) : '';
+			$addon_id = ! empty( $_GET['addon_id'] ) ? sanitize_text_field( wp_unslash( $_GET['addon_id'] ) ) : '';
 			if ( ! $addon_id ) {
 				return;
 			}
-			// Instantiate the addon management class
+			// Instantiate the addon management class.
 			$addons_manager = new UserWall_WP_Addons();
 			$addons         = $addons_manager->register_addons();
 			$addon          = $addons_manager->get_addon_by_id( $addon_id );
 			echo '<div class="notice notice-success is-dismissible">';
 			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-			echo '<p>' . sprintf( __( 'Addon "%s" has been deactivated.', 'userwall-wp' ), $addon->get_name() ) . '</p>';
+			echo '<p>' . sprintf( esc_html__( 'Addon "%s" has been deactivated.', 'userwall-wp' ), esc_html( $addon->get_name() ) ) . '</p>';
 			echo '</div>';
 		}
 	}
 
+	/**
+	 * Process the addon action.
+	 */
 	public function process_addon_action() {
 		// Check if the form was submitted.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['addon_action'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$addon_id          = sanitize_text_field( $_POST['addon_id'] );
+			if ( isset( $_POST['addon_id'] ) ) {
+				$addon_id = sanitize_text_field( wp_unslash( $_POST['addon_id'] ) );
+			}
 			$active_addons     = get_option( $this->option_active_addons, array() );
 			$active_addons_ids = array_keys( $active_addons );
 			$redirect_url      = admin_url( 'admin.php?page=userwall-wp-addons' );
@@ -261,7 +300,7 @@ class UserWall_WP_Admin {
 					do_action( 'userwall_wp_after_addon_activated', $addon_id );
 				}
 			}
-			wp_redirect( $redirect_url );
+			wp_safe_redirect( $redirect_url );
 			exit;
 		}
 	}

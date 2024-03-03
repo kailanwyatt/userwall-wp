@@ -1,4 +1,10 @@
 <?php
+/**
+ * UserWall_WP_FileManager class
+ *
+ * @package UserWall_WP_FileManager
+ */
+
 if ( ! function_exists( 'wp_handle_upload' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 }
@@ -30,8 +36,8 @@ class UserWall_WP_FileManager {
 	/**
 	 * Constructor
 	 *
-	 * @param string $id
-	 * @param string $post_type
+	 * @param string $id The ID.
+	 * @param string $post_type The post type.
 	 */
 	public function __construct( $id = '', $post_type = 'user' ) {
 		$this->post_type  = $post_type;
@@ -41,13 +47,11 @@ class UserWall_WP_FileManager {
 
 	/**
 	 * Method to generate the upload directory path based on post type and ID
-	 *
-	 * @return void
 	 */
 	private function generate_upload_directory_path() {
 		$upload_dir = wp_upload_dir();
 
-		// The uploads directory path is stored in the 'path' element of the returned array
+		// The uploads directory path is stored in the 'path' element of the returned array.
 		$uploads_path = $upload_dir['basedir'];
 
 		$directory = $uploads_path . '/userwall-wp/';
@@ -64,7 +68,8 @@ class UserWall_WP_FileManager {
 	/**
 	 * Set custom upload directory.
 	 *
-	 * @return void
+	 * @param array $dirs The upload directories.
+	 * @return array The modified upload directories.
 	 */
 	public function set_custom_upload_directory( $dirs = array() ) {
 		$dirs['path']    = $this->upload_dir;
@@ -77,49 +82,53 @@ class UserWall_WP_FileManager {
 	/**
 	 * Upload file method.
 	 *
-	 * @param array $file
+	 * @param array $file The file to be uploaded.
 	 * @return void
 	 */
 	public function upload_file( $file = array() ) {
-		// Ensure the upload directory exists
+		// Ensure the upload directory exists.
 		if ( ! is_dir( $this->upload_dir ) ) {
 			wp_mkdir_p( $this->upload_dir );
 		}
 
-		// Use pathinfo() to get the file name and extension
+		// Use pathinfo() to get the file name and extension.
 		$file_info = pathinfo( $file['name'] );
 
-		$file_name      = $file_info['filename']; // File name without extension
-		$file_extension = $file_info['extension']; // File extension
+		$file_name      = $file_info['filename']; // File name without extension.
+		$file_extension = $file_info['extension']; // File extension.
 
-		// Generate a unique file name based on user/group ID and a timestamp
+		// Generate a unique file name based on user/group ID and a timestamp.
 		$unique_filename = hash( 'sha256', $this->user_id . '_' . time() . '_' . sanitize_title( $file_name ) );
 
-		// Construct the full path to the uploaded file
+		// Construct the full path to the uploaded file.
 		$file_path = $this->upload_dir . $unique_filename . '.' . $file_extension;
 
 		// Move the uploaded file to the specified path.
 		$upload_overrides = array( 'test_form' => false );
 		add_filter( 'upload_dir', array( $this, 'set_custom_upload_directory' ) );
 		$uploaded_file = wp_handle_upload( $file, $upload_overrides );
-		remove_filter( 'upload_dir', array( $this, 'set_custom_upload_directory' ) );
-		return ! empty( $uploaded_file['file'] ) ? $uploaded_file['file'] : false;
 	}
 
 	/**
-	 * Method to delete a specific file by its path
+	 * Delete file method.
 	 *
-	 * @param string $file_path
-	 * @return void
+	 * @param string $file_path The path of the file to be deleted.
+	 * @return bool True if the file is deleted successfully, false otherwise.
 	 */
 	public function delete_file( $file_path = '' ) {
 		if ( file_exists( $file_path ) ) {
-			unlink( $file_path ); // Delete the file
+			wp_delete_file( $file_path ); // Delete the file.
 
 			$parent_directory = dirname( $file_path );
 			if ( $this->is_directory_empty( $parent_directory ) ) {
-				// If the parent directory is empty, delete it
-				rmdir( $parent_directory );
+				// If the parent directory is empty, delete it.
+				global $wp_filesystem;
+				if ( ! $wp_filesystem ) {
+					require_once ABSPATH . 'wp-admin/includes/file.php';
+					WP_Filesystem();
+				}
+
+				$wp_filesystem->rmdir( $parent_directory );
 			}
 			return true;
 		}
@@ -129,7 +138,7 @@ class UserWall_WP_FileManager {
 	/**
 	 * Is Directory Empty method.
 	 *
-	 * @param string $dir
+	 * @param string $dir The directory path.
 	 * @return boolean
 	 */
 	private function is_directory_empty( $dir = '' ) {
@@ -163,7 +172,7 @@ class UserWall_WP_FileManager {
 	/**
 	 * Method to delete all group files by group ID
 	 *
-	 * @param integer $group_id
+	 * @param integer $group_id The ID of the group.
 	 * @return void
 	 */
 	public function delete_all_group_files( $group_id = 0 ) {
@@ -176,7 +185,7 @@ class UserWall_WP_FileManager {
 	/**
 	 * Method to delete all post files by post ID
 	 *
-	 * @param integer $post_id
+	 * @param integer $post_id The ID of the post.
 	 * @return void
 	 */
 	public function delete_all_post_files( $post_id = 0 ) {
@@ -187,9 +196,9 @@ class UserWall_WP_FileManager {
 	}
 
 	/**
-	 * Recursive method to delete a directory and its contents
+	 * Recursive method to delete a directory and its contents.
 	 *
-	 * @param string $dir
+	 * @param string $dir The directory path.
 	 * @return void
 	 */
 	private function delete_directory( $dir = '' ) {
@@ -200,21 +209,28 @@ class UserWall_WP_FileManager {
 					if ( is_dir( $dir . $object ) ) {
 						$this->delete_directory( $dir . $object . '/' );
 					} else {
-						unlink( $dir . $object );
+						wp_delete_file( $dir . $object );
 					}
 				}
 			}
-			rmdir( $dir );
+			// If the parent directory is empty, delete it.
+			global $wp_filesystem;
+			if ( ! $wp_filesystem ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+
+			$wp_filesystem->rmdir( $dir );
 		}
 	}
 
 	/**
-	 * Get file name.
+	 * Get file URL.
 	 *
-	 * @param string $file_name
-	 * @param string $post_id
-	 * @param string $group_id
-	 * @return void
+	 * @param string $file_name The file name.
+	 * @param string $post_id The post ID.
+	 * @param string $group_id The group ID.
+	 * @return string|false The file URL or false if the file does not exist.
 	 */
 	public function get_file_url( $file_name = '', $post_id = '', $group_id = '' ) {
 		if ( 'user' === $this->post_type && ! empty( $this->user_id ) ) {
@@ -222,15 +238,15 @@ class UserWall_WP_FileManager {
 		} elseif ( 'post' === $this->post_type && ! empty( $post_id ) ) {
 			$directory = 'group-uploads/' . $group_id . '/';
 		} else {
-			return false; // Cannot determine the file directory
+			return false; // Cannot determine the file directory.
 		}
 
 		$upload_dir = wp_upload_dir();
 
-		// The uploads directory path is stored in the 'path' element of the returned array
+		// The uploads directory path is stored in the 'path' element of the returned array.
 		$uploads_path = $upload_dir['basedir'];
 
-		//$directory = $uploads_path . '/userwall-wp/';
+		$directory = $uploads_path . '/userwall-wp/';
 		$file_path = $this->upload_dir . $file_name;
 		if ( file_exists( $file_path ) ) {
 			$upload_dir = wp_upload_dir();
@@ -238,6 +254,6 @@ class UserWall_WP_FileManager {
 			return $base_url . '/userwall-wp/' . $directory . $file_name;
 		}
 
-		return false; // File does not exist
+		return false; // File does not exist.
 	}
 }

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Get the template.
+ *
+ * @param string $template_name Name of the template.
+ * @param array  $args Arguments for the template.
+ * @return void
+ */
 function uswp_get_template( $template_name = '', $args = array() ) {
 	extract( $args );
 	include UserWall_Template::get_template( $template_name, $args );
@@ -7,7 +14,7 @@ function uswp_get_template( $template_name = '', $args = array() ) {
 /**
  * Helper function to get data from UserWall_WP_Profile.
  *
- * @param string $profile_key Key for the profile data to retrieve.
+ * @param string   $profile_key Key for the profile data to retrieve.
  * @param int|null $user_id User ID. If not set, use current user ID.
  * @return mixed The requested user profile data.
  */
@@ -43,7 +50,7 @@ function get_userwall_wp_profile_data( $profile_key = '', $user_id = null ) {
 /**
  * Get the user profile URL.
  *
- * @param string $username The username for the profile.
+ * @param string      $username The username for the profile.
  * @param string|null $profile_tab Optional profile tab.
  * @return string The user profile URL.
  */
@@ -82,6 +89,12 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
 	return $url;
 }
 
+/**
+ * Get the permalink for a post.
+ *
+ * @param int $post_id The ID of the post.
+ * @return string The permalink for the post.
+ */
 function user_wall_get_permalink( $post_id = 0 ) {
 	// Check if permalinks are enabled ('plain' indicates they are not).
 	if ( '' === get_option( 'permalink_structure' ) ) {
@@ -108,16 +121,34 @@ function user_wall_get_permalink( $post_id = 0 ) {
 
 	return $url;
 }
-function user_wall_get_post_types() {
-	$user_wall_core = new UserWall_WP_Post_Core();
-	return $user_wall_core->get_post_types();
-}
 
+/**
+ * Get the content types used by User Wall.
+ *
+ * @return array The content types used by User Wall.
+ */
 function user_wall_get_content_types() {
 	$user_wall_core = new UserWall_WP_Post_Core();
 	return $user_wall_core->get_post_content_types();
 }
 
+/**
+ * Get the post types used by User Wall.
+ *
+ * @return array The post types used by User Wall.
+ */
+function user_wall_get_post_types() {
+	$user_wall_core = new UserWall_WP_Post_Core();
+	return $user_wall_core->get_post_types();
+}
+
+/**
+ * Get the options for User Wall.
+ *
+ * @param string $key The option key.
+ * @param mixed  $default_var The default value if the option is not found.
+ * @return mixed The option value.
+ */
 function user_wall_get_options( $key = '', $default_var = '' ) {
 	$options = get_option( 'userwall_wp' );
 	if ( empty( $options ) ) {
@@ -142,6 +173,11 @@ function user_wall_get_options( $key = '', $default_var = '' ) {
 }
 
 if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
+	/**
+	 * Get the interaction template based on the type.
+	 *
+	 * @param string $type The type of interaction.
+	 */
 	function userwall_wp_get_interaction_tmpl( $type = '' ) {
 		?>
 	<div class="userwall-wp-activity-section">
