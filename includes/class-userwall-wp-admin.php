@@ -15,7 +15,7 @@ class UserWall_WP_Admin {
 
 	private function __construct() {
 		$this->dashboard_page_key = 'userwall-wp-dashboard';
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_menu' ), 6 );
 		$this->settings_api = new UserWall_WP_Settings( 'userwall-wp-settings' );
 		add_action( 'admin_init', array( $this->settings_api, 'admin_init' ) );
 		add_action( 'admin_init', array( $this, 'process_addon_action' ) );
@@ -33,7 +33,6 @@ class UserWall_WP_Admin {
 
 	public function enqueue_admin_scripts() {
 		// Enqueue your scripts and styles here
-		// Example:
 		wp_enqueue_style( 'my-admin-style', plugin_dir_url( __FILE__ ) . 'admin-style.css' );
 		wp_enqueue_script( 'my-admin-script', plugin_dir_url( __FILE__ ) . 'admin-script.js', array( 'jquery' ), '1.0', true );
 	}

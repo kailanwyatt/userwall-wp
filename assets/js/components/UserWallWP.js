@@ -684,7 +684,7 @@ jQuery(document).ready(function($) {
                 var $thread = jQuery(this).closest('.userwall-wp-thread');
                 var link    = $thread.data('permalink');
                 // Check if goToPage is true and the clicked element is not a link
-                if (link && postOpenType && !$(event.target).is("a")) {
+                if (!isSinglePost && link && postOpenType && !$(event.target).is("a")) {
 
                   window.location.href = link;
                 }
