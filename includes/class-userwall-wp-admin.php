@@ -36,6 +36,9 @@ class UserWall_WP_Admin {
 	 */
 	private $option_active_addons = 'userwall_wp_active_addons';
 
+	/**
+	 * Class constructor.
+	 */
 	private function __construct() {
 		$this->dashboard_page_key = 'userwall-wp-dashboard';
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 6 );
@@ -47,6 +50,11 @@ class UserWall_WP_Admin {
 		add_action( 'admin_enqueue_scripts', array( $template, 'enqueue_assets' ) );
 	}
 
+	/**
+	 * Get the singleton instance of the class.
+	 *
+	 * @return UserWall_WP_Admin
+	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -54,14 +62,23 @@ class UserWall_WP_Admin {
 		return self::$instance;
 	}
 
+	/**
+	 * Enqueue admin scripts and styles.
+	 *
+	 * @return void
+	 */
 	public function enqueue_admin_scripts() {
-		// Enqueue your scripts and styles here
+		// Enqueue your scripts and styles here.
 		wp_enqueue_style( 'my-admin-style', plugin_dir_url( __FILE__ ) . 'admin-style.css' );
 		wp_enqueue_script( 'my-admin-script', plugin_dir_url( __FILE__ ) . 'admin-script.js', array( 'jquery' ), '1.0', true );
 	}
 
+	/**
+	 * Add menu page.
+	 *
+	 * @return void
+	 */
 	public function add_menu() {
-
 		add_menu_page(
 			'User WallP',
 			'User Wall',
@@ -71,23 +88,27 @@ class UserWall_WP_Admin {
 			'dashicons-admin-generic'
 		);
 
-		// Instantiate the addon management class
+		// Instantiate the addon management class.
 		$addons_manager = new UserWall_WP_Addons();
 
-		// Additional menus
+		// Additional menus.
 
-		//$this->add_submenu( 'Posts', 'Posts', 'userwall-wp-posts', array( $this, 'posts_page' ) );
-		//$this->add_submenu( 'Comments', 'Comments', 'userwall-wp-comments', array( $this, 'comments_page' ) );
+		// $this->add_submenu( 'Posts', 'Posts', 'userwall-wp-posts', array( $this, 'posts_page' ) );  // This is the default page.
+		// $this->add_submenu( 'Comments', 'Comments', 'userwall-wp-comments', array( $this, 'comments_page' ) ); // This is the default page.
+		/*
 		if ( $addons_manager->is_active( 'groups' ) ) {
-			//$this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page'));
-		}
+			// $this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page')); // This is the default page.
+		}*/
 		if ( $addons_manager->is_active( 'polls' ) ) {
 			$this->add_submenu( 'Polls', 'Polls', 'userwall-wp-polls', array( $this, 'polls_page' ) );
 		}
+
+		/*
 		if ( $addons_manager->is_active( 'gallery' ) ) {
-			//$this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page'));
-			//$this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page'));
+			// $this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page')); // This is the default page.
+			// $this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page')); // This is the default page.
 		}
+		*/
 
 		// Add a hook to add additional submenus.
 		$submenus = apply_filters( 'userwall_wp_submenus', array() );
@@ -108,12 +129,21 @@ class UserWall_WP_Admin {
 				}
 			}
 		}
-		//$this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page'));
-		//$this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page'));
+		// $this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page')); // This is the default page.
+		// $this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page')); // This is the default page.
 		$this->add_submenu( 'Addons', 'Addons', 'userwall-wp-addons', array( $this, 'addons_page' ) );
 		$this->add_submenu( 'Settings', 'Settings', 'userwall-wp-settings', array( $this, 'settings_page' ) );
 	}
 
+	/**
+	 * Add submenu page.
+	 *
+	 * @param string   $title       The title of the submenu page.
+	 * @param string   $menu_title  The menu title of the submenu page.
+	 * @param string   $menu_slug   The menu slug of the submenu page.
+	 * @param callable $callback    The callback function to render the submenu page.
+	 * @return void
+	 */
 	private function add_submenu( $title, $menu_title, $menu_slug, $callback ) {
 		add_submenu_page(
 			$this->dashboard_page_key,
@@ -125,11 +155,20 @@ class UserWall_WP_Admin {
 		);
 	}
 
+	/**
+	 * Render the dashboard page.
+	 *
+	 * @return void
+	 */
 	public function dashboard_page() {
-		// Dashboard page content goes here
+		// Dashboard page content goes here.
 	}
 
-	// Define callback methods for each submenu page
+	/**
+	 * Render the comments page.
+	 *
+	 * @return void
+	 */
 	public function comments_page() {
 		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/comments.php';
 		$posts_table = new Userwall_Comments_List_Table();
@@ -137,8 +176,8 @@ class UserWall_WP_Admin {
 		echo '<div class="wrap"><h1>Manage Posts</h1>';
 		$posts_table->display_notices();
 		?>
-		<a href="<?php echo admin_url( 'admin.php?page=userwall-wp-posts&add-post' ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
-		<form method="get" action="<?php echo admin_url( 'admin.php' ); ?>">
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
+		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
 			<input type="hidden" name="page" value="userwall-wp-posts" />
 			<?php
 			$posts_table->prepare_items();
@@ -149,24 +188,29 @@ class UserWall_WP_Admin {
 		<?php
 	}
 
+	/**
+	 * Render the posts page.
+	 *
+	 * @return void
+	 */
 	public function posts_page() {
 		$this->add_post_template();
-		return;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['add-post'] ) ) {
-
-		} else {
-			$this->posts_view_template();
-		}
 	}
 
+	/**
+	 * Render the add post template.
+	 *
+	 * @return void
+	 */
 	private function add_post_template() {
 		include USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php';
 		include USERWALL_WP_PLUGIN_DIR . '/templates/tmpls.php';
 	}
 
 	/**
-	 * Display the posts view template.
+	 * Render the posts view template.
+	 *
+	 * @return void
 	 */
 	private function posts_view_template() {
 		if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -191,14 +235,18 @@ class UserWall_WP_Admin {
 	}
 
 	/**
-	 * Display the addons page.
+	 * Render the addons page.
+	 *
+	 * @return void
 	 */
 	public function addons_page() {
 		include USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/addons.php';
 	}
 
 	/**
-	 * Display the settings page.
+	 * Render the settings page.
+	 *
+	 * @return void
 	 */
 	public function settings_page() {
 		echo '<div class="wrap">';
@@ -211,7 +259,9 @@ class UserWall_WP_Admin {
 	}
 
 	/**
-	 * Display admin notices.
+	 * Render admin notices.
+	 *
+	 * @return void
 	 */
 	public function admin_notices() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
@@ -234,6 +284,8 @@ class UserWall_WP_Admin {
 
 	/**
 	 * Process the addon action.
+	 *
+	 * @return void
 	 */
 	public function process_addon_action() {
 		// Check if the form was submitted.
@@ -256,7 +308,7 @@ class UserWall_WP_Admin {
 				if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids, true ) ) {
 					$addon = ! empty( $addons[ $addon_id ] ) ? $addons[ $addon_id ] : array();
 					if ( $addon ) {
-						//$active_addons[][ $addon_id ] = $addon;
+						// $active_addons[][ $addon_id ] = $addon;
 						$class_name       = get_class( $addon );
 						$reflection_class = new ReflectionClass( $class_name );
 						$file_path        = $reflection_class->getFileName();

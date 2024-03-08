@@ -1,3 +1,11 @@
+<?php
+/**
+ * This file is the template for the post form.
+ *
+ * @package Userwall_WP
+ */
+
+?>
 <?php if ( is_user_logged_in() && $show_form ) : ?>
 <div class="userwall-wp-form-wrapper">
 	<form id="userwall-wp-post-form" enctype='multipart/form-data'>

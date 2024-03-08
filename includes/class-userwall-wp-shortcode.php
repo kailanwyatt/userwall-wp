@@ -3,6 +3,9 @@
  * UserWall_WP_Shortcode class
  */
 class UserWall_WP_Shortcode {
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		add_shortcode( 'userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode' ), 10, 1 );
 		add_shortcode( 'userwall_wp_post_single', array( $this, 'userwall_wp_post_single_shortcode' ), 10, 1 );
@@ -22,11 +25,10 @@ class UserWall_WP_Shortcode {
 	/**
 	 * Userwall Shortcode.
 	 *
-	 * @param array $atts
-	 * @return void
+	 * @param array $atts Shortcode attributes.
 	 */
 	public function userwall_wp_post_form_shortcode( $atts = array() ) {
-		// Extract shortcode attributes with defaults
+		// Extract shortcode attributes with defaults.
 		$atts = shortcode_atts(
 			array(
 				'type'          => 'posts',
@@ -47,7 +49,7 @@ class UserWall_WP_Shortcode {
 		$show_form     = wp_validate_boolean( $atts['show_form'] );
 		$options       = user_wall_get_options();
 		$use_editor    = ! empty( $options['enable_rich_editor'] ) ? true : false;
-		// Output the post form
+		// Output the post form.
 		ob_start();
 		$post_tabs = array(
 			'post' => __( 'Post', 'userwall-wp' ),
@@ -66,11 +68,10 @@ class UserWall_WP_Shortcode {
 	/**
 	 * User Profile Shortcode callback
 	 *
-	 * @param array $atts
-	 * @return void
+	 * @param array $atts Shortcode attributes.
 	 */
 	public function userwall_wp_profile_shortcode( $atts = array() ) {
-		// Extract shortcode attributes with defaults
+		// Extract shortcode attributes with defaults.
 		$atts                = shortcode_atts(
 			array(
 				'type'          => 'posts',
@@ -96,12 +97,11 @@ class UserWall_WP_Shortcode {
 	}
 
 	/**
-	 * Single Post Shortcode
+	 * Single Post Shortcode.
 	 *
-	 * @param array $atts
-	 * @return void
+	 * @param array $atts Shortcode attributes.
 	 */
-	public function userwall_wp_post_single_shortcode( $atts = array() ) {
+	public function userwall_wp_post_single_shortcode() {
 		ob_start();
 		$args = array(
 			'post_id' => get_query_var( 'thread_id' ),

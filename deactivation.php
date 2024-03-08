@@ -1,14 +1,18 @@
 <?php
-
+/**
+ * Deactivation functions for the User Wall plugin.
+ *
+ * @file  deactivation.php
+ */
 function userwall_wp_deactivate() {
-	// Check if the option for deletion is set to true
+	// Check if the option for deletion is set to true.
 	$delete_on_deactivation = get_option( 'userwall_wp_delete_deactivation', false );
 	$delete_on_deactivation = 1;
-	// If the option is set to true, delete the tables
+	// If the option is set to true, delete the tables.
 	if ( $delete_on_deactivation ) {
 		global $wpdb;
 
-		// Define the table names with the "userwall_" prefix
+		// Define the table names with the "userwall_" prefix.
 		$table_posts              = $wpdb->prefix . 'userwall_posts';
 		$table_comments           = $wpdb->prefix . 'userwall_comments';
 		$table_likes              = $wpdb->prefix . 'userwall_likes';
@@ -29,7 +33,7 @@ function userwall_wp_deactivate() {
 		$table_poll_options       = $wpdb->prefix . 'userwall_poll_options';
 		$table_blocklist          = $wpdb->prefix . 'userwall_blocklist';
 
-		// SQL queries to drop the tables
+		// SQL queries to drop the tables.
 		$sql_queries = array(
 			"DROP TABLE IF EXISTS $table_comments",
 			"DROP TABLE IF EXISTS $table_likes",
@@ -53,10 +57,12 @@ function userwall_wp_deactivate() {
 
 		);
 
-		// Delete the tables
+		// Include the WordPress database upgrade file.
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		// Execute the SQL queries to create the tables.
 		foreach ( $sql_queries as $sql_query ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$wpdb->query( $sql_query );
+			dbDelta( $sql_query );
 		}
 	}
 }

@@ -10,7 +10,13 @@ class UserWall_WP_Blocks {
 		add_filter( 'block_categories', array( $this, 'register_user_wall_category' ), 10, 2 );
 	}
 
-	public function register_user_wall_category( $categories, $post ) {
+	/**
+	 * Register the User Wall category.
+	 *
+	 * @param array $categories The existing block categories.
+	 * @return array The modified block categories.
+	 */
+	public function register_user_wall_category( $categories ) {
 		return array_merge(
 			$categories,
 			array(
@@ -34,6 +40,12 @@ class UserWall_WP_Blocks {
 		);
 	}
 
+	/**
+	 * Render the User Wall block.
+	 *
+	 * @param array $attributes The block attributes.
+	 * @return string The rendered block content.
+	 */
 	public function render_user_wall_block( $attributes ) {
 		$type = 'wall-posts';
 		// Server-side rendering of the block.
@@ -54,6 +66,9 @@ class UserWall_WP_Blocks {
 		}
 	}
 
+	/**
+	 * Enqueue block editor assets
+	 */
 	public function wp_userwall_enqueue_block_editor_assets() {
 		wp_enqueue_script(
 			'wp-userwall-block-script',

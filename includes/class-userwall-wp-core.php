@@ -4,6 +4,9 @@
  */
 class UserWall_WP_Post_Core {
 
+	/**
+	 * Constructor
+	 */
 	public function hooks() {
 		add_action( 'init', array( $this, 'add_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'register_query_vars' ) );
@@ -12,9 +15,20 @@ class UserWall_WP_Post_Core {
 		add_action( 'userwall_profile_content_main', array( $this, 'userwall_profile_content' ), 10, 2 );
 	}
 
+	/**
+	 * Add profile tabs
+	 *
+	 * @param array $tabs Profile tabs.
+	 * @return array
+	 */
 	public function userwall_wp_profile_tabs( $tabs = array() ) {
 	}
 
+	/**
+	 * Get post types
+	 *
+	 * @return array
+	 */
 	public function get_post_types() {
 		$post_types         = apply_filters( 'user_wall_post_types', array() );
 		$default_post_types = array(
@@ -25,16 +39,28 @@ class UserWall_WP_Post_Core {
 		return array_merge( $default_post_types, $post_types );
 	}
 
+	/**
+	 * Get post content types
+	 *
+	 * @return array
+	 */
 	public function get_post_content_types() {
 		$content_post_types = apply_filters( 'userwall_wp_get_post_content_types', array() );
 		return $content_post_types;
 	}
 
+	/**
+	 * Get post content types
+	 *
+	 * @return array
+	 */
 	public function userwall_profile_content( $profile_id = 0 ) {
 		echo do_shortcode( '[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $profile_id . '"]' );
 	}
 
-	// Method to add rewrite rules
+	/**
+	 * Add rewrite rules
+	 */
 	public function add_rewrite_rules() {
 		$options = user_wall_get_options();
 		if ( ! empty( $options['user_page'] ) ) {
@@ -54,6 +80,12 @@ class UserWall_WP_Post_Core {
 		}
 	}
 
+	/**
+	 * Register query vars
+	 *
+	 * @param array $vars Query vars.
+	 * @return array
+	 */
 	public function register_query_vars( $vars ) {
 		$vars[] = 'username';
 		$vars[] = 'thread_id';
@@ -64,7 +96,9 @@ class UserWall_WP_Post_Core {
 		return $vars;
 	}
 
-	// Method to load custom template
+	/**
+	 * Template loader
+	 */
 	public function template_loader() {
 		global $uwwp_profile_info;
 		$username     = get_query_var( 'username' );
@@ -77,7 +111,7 @@ class UserWall_WP_Post_Core {
 		if ( $username ) {
 			$user = get_user_by( 'login', $username );
 			if ( ! $user ) {
-				// User does not exist, redirect to 404 page
+				// User does not exist, redirect to 404 page.
 				global $wp_query;
 				$wp_query->set_404();
 				status_header( 404 );
