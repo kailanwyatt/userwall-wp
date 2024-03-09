@@ -1,6 +1,12 @@
 <?php
 /**
  * UserWall_WP_Shortcode class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Shortcode class
  */
 class UserWall_WP_Shortcode {
 	/**

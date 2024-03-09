@@ -2,6 +2,12 @@
 /**
  * Class for Managing Posts and Comments.
  *
+ * @package UserWall_WP
+ */
+
+/**
+ * Class for Managing Posts and Comments.
+ *
  * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
  */
 class UserWall_WP_Post_Manager {

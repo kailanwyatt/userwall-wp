@@ -1,5 +1,11 @@
 <?php
 /**
+ * UserWall_WP_AJAX_Manager class
+ *
+ * @package UserWall_WP
+ */
+
+/**
  * If this file is called directly, abort.
  */
 if ( ! defined( 'ABSPATH' ) ) {

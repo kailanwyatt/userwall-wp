@@ -211,3 +211,22 @@ if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
 		<?php
 	}
 endif;
+
+/**
+ * Get the group meta.
+ *
+ * @param int    $group_id The group ID.
+ * @param string $key The meta key.
+ * @param bool   $single Whether to return a single value.
+ * @return mixed The group meta.
+ */
+function get_group_meta( $group_id, $key = '', $single = false ) {
+	$group_meta = get_post_meta( $group_id, 'group_meta', true );
+	if ( $key ) {
+		if ( $single ) {
+			return ! empty( $group_meta[ $key ] ) ? $group_meta[ $key ] : '';
+		}
+		return ! empty( $group_meta[ $key ] ) ? $group_meta[ $key ] : array();
+	}
+	return $group_meta;
+}

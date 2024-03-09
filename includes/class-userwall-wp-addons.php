@@ -2,6 +2,12 @@
 /**
  * UserWall_WP_Addons class.
  * This class handles the registration, activation, and deactivation of addons in UserWall_WP plugin.
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Addons class.
  */
 class UserWall_WP_Addons {
 	/**

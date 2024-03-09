@@ -1,6 +1,12 @@
 <?php
 /**
  * UserWall_WP_Blocks class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Blocks class
  */
 class UserWall_WP_Blocks {
 	public function __construct() {

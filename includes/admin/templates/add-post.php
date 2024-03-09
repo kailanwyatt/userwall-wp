@@ -1,3 +1,11 @@
+<?php
+/**
+ * This file is the template for the add post page.
+ *
+ * @package Userwall_WP
+ */
+
+?>
 <style>
 	.userwall-wp-admin-posts-wrapper {
 		max-width: 600px

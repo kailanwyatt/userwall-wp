@@ -1,5 +1,11 @@
 <?php
 /**
+ * UserWallWP_Addon_Reactions class
+ *
+ * @package Userwall_WP
+ */
+
+/**
  * Class UserWallWP_Addon_Reactions
  */
 class UserWallWP_Addon_Reactions extends UserWall_WP_Base_Addon {

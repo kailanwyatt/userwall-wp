@@ -1,10 +1,21 @@
 <?php
+/**
+ * UserWallWP_Addon_Groups class
+ *
+ * @package Userwall_WP
+ */
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+/**
+ * Userwall_Groups_List_Table class
+ */
 class Userwall_Groups_List_Table extends WP_List_Table {
-
+	/**
+	 * Constructor, we override the parent to pass our own arguments.
+	 */
 	public function __construct() {
 		parent::__construct(
 			array(
@@ -18,8 +29,8 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Retrieve groups data from the database
 	 *
-	 * @param int $per_page
-	 * @param int $page_number
+	 * @param int $per_page Number of items per page.
+	 * @param int $page_number Current page number.
 	 *
 	 * @return mixed
 	 */
@@ -30,14 +41,16 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-			$sql .= ' ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
+			$order_by = isset( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : '';
+			$sql     .= ' ORDER BY ' . esc_sql( $order_by );
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-			$sql .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';
+			$order = ! empty( $_REQUEST['order'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) : 'ASC';
+			$sql  .= ' ' . esc_sql( $order );
 		}
 
 		$sql .= " LIMIT $per_page";
 		$sql .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.PlaceholderNoop, WordPress.DB.PreparedSQL.PlaceholderNoop
 		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
 		return $result;
 	}
@@ -45,7 +58,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Delete a group record.
 	 *
-	 * @param int $id group ID
+	 * @param int $id group ID.
 	 */
 	public static function delete_group( $id ) {
 		global $wpdb;
@@ -72,14 +85,14 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 
 	/** Text displayed when no group data is available */
 	public function no_items() {
-		_e( 'No groups available.', 'userwall-wp' );
+		esc_html_e( 'No groups available.', 'userwall-wp' );
 	}
 
 	/**
 	 * Render a column when no column specific method exists.
 	 *
-	 * @param array $item
-	 * @param string $column_name
+	 * @param array  $item    The current item.
+	 * @param string $column_name The name of the column.
 	 *
 	 * @return mixed
 	 */
@@ -92,8 +105,6 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 			case 'creator_user_id':
 				$user = get_user_by( 'ID', $item[ $column_name ] );
 				return ! empty( $user ) ? $user->display_name : $item[ $column_name ];
-			default:
-				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
 		}
 	}
 
@@ -128,6 +139,11 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		return $sortable_columns;
 	}
 
+	/**
+	 * Returns an associative array containing the bulk action.
+	 *
+	 * @return array
+	 */
 	public function get_hidden_columns() {
 		return array();
 	}
@@ -140,12 +156,11 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 		$hidden   = $this->get_hidden_columns();
 		$sortable = $this->get_sortable_columns();
 
-		// Ensure that $sortable is defined as an associative array
+		// Ensure that $sortable is defined as an associative array.
 		$sortable              = array();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		/** Process bulk action */
-		// $this->process_bulk_action();
 
 		$per_page     = $this->get_items_per_page( 'groups_per_page', 25 );
 		$current_page = $this->get_pagenum();
@@ -153,14 +168,21 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items, // WE have to calculate the total number of items
-				'per_page'    => $per_page, // WE have to determine how many items to show on a page
+				'total_items' => $total_items, // WE have to calculate the total number of items.
+				'per_page'    => $per_page, // WE have to determine how many items to show on a page.
 			)
 		);
 
 		$this->items = self::get_groups( $per_page, $current_page );
 	}
 
+	/**
+	 * Render the bulk edit checkbox
+	 *
+	 * @param array $item The current item.
+	 *
+	 * @return string
+	 */
 	public function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="group[]" value="%s" />',

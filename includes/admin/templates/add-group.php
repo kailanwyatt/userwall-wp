@@ -1,8 +1,18 @@
+<?php
+/**
+ * This file is the template for the add group page.
+ *
+ * @package Userwall_WP
+ */
+
+?>
 <div class="wrap">
-	<h2><?php echo esc_html__( 'Add New Group', 'wp-userwall-groups-admin-table' ); ?></h2>
-	<form method="post" action="">
+	<div class="wrap">
+		<h2><?php echo esc_html__( 'Add New Group', 'wp-userwall-groups-admin-table' ); ?></h2>
+
+		<form method="post" action="">
 			<?php
-			// Nonce field for security
+			// Nonce field for security.
 			wp_nonce_field( 'userwall_create_group', 'userwall_group_nonce' );
 			?>
 
@@ -27,4 +37,5 @@
 
 			<?php submit_button( 'Create Group' ); ?>
 		</form>
+	</div>
 </div>

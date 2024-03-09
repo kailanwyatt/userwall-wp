@@ -1,4 +1,17 @@
 <?php
+/**
+ * UserWall_WP_Post_Core class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * Get Userwall get icon
+ *
+ * @param string $icon_name  Icon name.
+ *
+ * @return string
+ */
 function userwall_get_icon( $icon_name = '' ) {
 	if ( ! $icon_name ) {
 		return;

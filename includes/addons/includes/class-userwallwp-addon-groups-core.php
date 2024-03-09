@@ -71,7 +71,7 @@ class UserWallWP_Addon_Groups_Core {
 			print 'Sorry, your nonce did not verify.';
 			exit;
 		}
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/groups.php';
+		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-groups-list-table.php';
 		$groups_list = new Userwall_Groups_List_Table();
 
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';

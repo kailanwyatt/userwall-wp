@@ -1,6 +1,12 @@
 <?php
 /**
  * UserWall_WP_Post_Core class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Post_Core class
  */
 class UserWall_WP_Post_Core {
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Class UserWall_WP_Profile
+ * Class for managing a WordPress user profile.
+ *
+ * @package UserWall_WP
+ */
 
 /**
  * Class UserWall_WP_Profile

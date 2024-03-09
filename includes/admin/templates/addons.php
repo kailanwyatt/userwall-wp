@@ -1,25 +1,30 @@
 <?php
+/**
+ * This file is the template for the addons page.
+ *
+ * @package Userwall_WP
+ */
 
-// Instantiate the addon management class
+// Instantiate the addon management class.
 $addons_manager = new UserWall_WP_Addons();
 
-// Register and load addons
+// Register and load addons.
 $addons = array();
 $addons = $addons_manager->register_addons( $addons );
 
-// Get the list of installed addons
+// Get the list of installed addons.
 $addons = $addons_manager->get_addons();
 ?>
 <div class="wrap">
-	<h2><?php echo get_admin_page_title(); ?></h2>
+	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 	<div>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Version</th>
-					<th>Status</th>
+					<th><?php esc_html_e( 'Name', 'userwall-wp' ); ?></th>
+					<th><?php esc_html_e( 'Description', 'userwall-wp' ); ?></th>
+					<th><?php esc_html_e( 'Version', 'userwall-wp' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'userwall-wp' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -47,7 +52,7 @@ $addons = $addons_manager->get_addons();
 								<?php endif; ?>
 							</form>
 							<?php else : ?>
-								<?php _e( 'Coming Soon', 'userwall-wp' ); ?>
+								<?php esc_html_e( 'Coming Soon', 'userwall-wp' ); ?>
 							<?php endif; ?>
 						</td>
 					</tr>

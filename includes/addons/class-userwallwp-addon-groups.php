@@ -1,5 +1,11 @@
 <?php
 /**
+ * UserWallWP_Addon_Groups class
+ *
+ * @package Userwall_WP
+ */
+
+/**
  * Class UserWallWP_Addon_Groups
  */
 class UserWallWP_Addon_Groups extends UserWall_WP_Base_Addon {

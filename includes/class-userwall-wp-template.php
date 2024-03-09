@@ -1,6 +1,12 @@
 <?php
 /**
  * UserWall_Template class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_Template class
  */
 class UserWall_Template {
 	/**

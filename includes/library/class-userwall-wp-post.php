@@ -1,46 +1,75 @@
 <?php
+/**
+ * UserWall_WP_Post class
+ *
+ * Class for managing a WordPress post.
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Post class
+ */
 class UserWall_WP_Post {
 	/**
+	 * The post ID.
+	 *
 	 * @var int
 	 */
 	private $post_id;
 
 	/**
+	 * The post title.
+	 *
 	 * @var string
 	 */
 	private $post_title;
 
 	/**
+	 * The post content.
+	 *
 	 * @var string
 	 */
 	private $post_content;
 
 	/**
+	 * The post type.
+	 *
 	 * @var string
 	 */
 	private $post_type;
 
 	/**
+	 * The post status.
+	 *
 	 * @var string
 	 */
 	private $post_status;
 
 	/**
+	 * The creation date of the post.
+	 *
 	 * @var string
 	 */
 	private $creation_date;
 
 	/**
+	 * The user ID associated with the post.
+	 *
 	 * @var int
 	 */
 	private $user_id;
 
 	/**
+	 * The number of comments on the post.
+	 *
 	 * @var int
 	 */
 	private $comments_count;
 
 	/**
+	 * The number of reactions on the post.
+	 *
 	 * @var int
 	 */
 	private $reactions_count;
@@ -48,7 +77,7 @@ class UserWall_WP_Post {
 	/**
 	 * WordPress_Post constructor.
 	 *
-	 * @param stdClass $object
+	 * @param stdClass $object The post object.
 	 */
 	public function __construct( $post ) {
 		$this->post_id         = $post->post_id;

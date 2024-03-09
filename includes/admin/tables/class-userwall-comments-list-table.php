@@ -1,12 +1,17 @@
 <?php
 /**
  * Class for Userwall Comments List Table
+ *
+ * @package Userwall_WP
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+/**
+ * Class for Userwall Comments List Table
+ */
 class Userwall_Comments_List_Table extends WP_List_Table {
 
 	/**
@@ -26,11 +31,12 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	 * Text displayed when no comment data is available.
 	 */
 	public function no_items() {
-		_e( 'No comments available.', 'userwall-wp' );
+		esc_html_e( 'No comments available.', 'userwall-wp' );
 	}
 
 	/**
 	 * Define the columns that are going to be used in the table.
+	 *
 	 * @return array $columns, the array of columns to use with the table.
 	 */
 	public function get_columns() {
@@ -46,8 +52,9 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 	/**
 	 * Render a column when no specific column method exists.
-	 * @param array $item
-	 * @param string $column_name
+	 *
+	 * @param array  $item    The current item.
+	 * @param string $column_name The name of the column.
 	 * @return mixed
 	 */
 	public function column_default( $item, $column_name ) {
@@ -64,10 +71,13 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 	/**
 	 * Allows you to sort the data by the variables set in the $_GET.
+	 *
+	 * @param array $a The first item to compare.
+	 * @param array $b The second item to compare.
 	 * @return mixed
 	 */
 	private function sort_data( $a, $b ) {
-		// Set defaults
+		// Set defaults.
 		$orderby = 'comment_date';
 		$order   = 'desc';
 
@@ -75,14 +85,14 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-			$orderby = sanitize_text_field( $_GET['orderby'] );
+			$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
 		}
 
 		// If order is set use this as the order.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['order'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$order = sanitize_text_field( $_GET['order'] );
+			$order = sanitize_text_field( wp_unslash( $_GET['order'] ) );
 		}
 
 		$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
@@ -90,8 +100,6 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 		if ( 'asc' === $order ) {
 			return $result;
 		}
-
-		return -$result;
 	}
 
 	/**
@@ -126,6 +134,7 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 	/**
 	 * Define the sortable columns
+	 *
 	 * @return array $sortable_columns, the array of columns that can be sorted by the user.
 	 */
 	public function get_sortable_columns() {
@@ -139,19 +148,21 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 
 	/**
 	 * Retrieve the comment data from the database.
+	 *
 	 * @return array $data, the array of comment data.
 	 */
 	private function get_comments_data() {
 		global $wpdb;
-		$sql  = "SELECT * FROM {$wpdb->prefix}userwall_comments";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = "SELECT * FROM {$wpdb->prefix}userwall_comments";
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 		return $data;
 	}
 
 	/**
 	 * Checkbox column for bulk actions.
-	 * @param array $item
+	 *
+	 * @param array $item The current item.
 	 * @return string
 	 */
 	public function column_cb( $item ) {

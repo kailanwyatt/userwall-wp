@@ -2,6 +2,13 @@
 /**
  * Class UserWall_WP_Group
  * Class for managing a WordPress group.
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * Class UserWall_WP_Group
+ * Class for managing a WordPress group.
  */
 class UserWall_WP_Group {
 

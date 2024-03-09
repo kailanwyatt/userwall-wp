@@ -1,9 +1,36 @@
 <?php
+/**
+ * UserWall_WP_Settings class
+ *
+ * @package UserWall_WP
+ */
+
+ /**
+  * UserWall_WP_Settings class
+  */
 class UserWall_WP_Settings {
+	/**
+	 * Tabs array
+	 *
+	 * @var array
+	 */
 	private $tabs    = array();
+	/**
+	 * Subtabs array
+	 *
+	 * @var array
+	 */
 	private $subtabs = array();
+	/**
+	 * Options array
+	 *
+	 * @var array
+	 */
 	private $options = array();
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		$this->tabs = array(
 			'general' => __( 'General', 'userwall-wp' ),
@@ -18,6 +45,9 @@ class UserWall_WP_Settings {
 		$this->options = get_option( 'userwall_wp' );
 	}
 
+	/**
+	 * Initialize the settings
+	 */
 	public function admin_init() {
 		register_setting( 'userwall_wp', 'userwall_wp' );
 		$this->init_general_main_settings();
@@ -25,6 +55,9 @@ class UserWall_WP_Settings {
 		$this->init_advanced_settings();
 	}
 
+	/**
+	 * Initialize the general main settings
+	 */
 	private function init_general_main_settings() {
 		add_settings_section(
 			'userwall_settings_general',
@@ -49,7 +82,7 @@ class UserWall_WP_Settings {
 			)
 		);
 
-		// Character Limit Field
+		// Character Limit Field.
 		$this->get_field(
 			array(
 				'type'  => 'text',
@@ -74,7 +107,7 @@ class UserWall_WP_Settings {
 			)
 		);
 
-		// Editor Settings Fields
+		// Editor Settings Fields.
 		$this->get_field(
 			array(
 				'type'    => 'checkbox',
@@ -143,7 +176,7 @@ class UserWall_WP_Settings {
 					$checked = '';
 					foreach ( $args['options'] as $option_key => $option ) {
 						if ( ! empty( $args['value'] ) && is_array( $args['value'] ) ) {
-							$checked = checked( in_array( $option_key, array_keys( $args['value'] ) ), true, false );
+							$checked = checked( in_array( $option_key, array_keys( $args['value'] ), true ), true, false );
 						}
 						$input .= '<div><label>';
 						$input .= '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . '][' . $option_key . ']" ' . $checked . '/>';
@@ -164,7 +197,7 @@ class UserWall_WP_Settings {
 			case 'pages_dropdown':
 				$input = '<select name="userwall_wp[' . esc_attr( $args['name'] ) . ']">';
 
-				// Get the list of pages
+				// Get the list of pages.
 				$pages    = get_pages();
 				$selected = selected( $args['value'], '', false );
 				$input   .= '<option value="" ' . $selected . '>' . esc_html__( '-Page-', 'userwall-wp' ) . '</option>';
@@ -189,6 +222,9 @@ class UserWall_WP_Settings {
 		);
 	}
 
+	/**
+	 * Initialize the general secondary settings
+	 */
 	private function init_general_secondary_settings() {
 		add_settings_section(
 			'wp_custom_general_secondary',
@@ -201,6 +237,9 @@ class UserWall_WP_Settings {
 		// Additional fields for the Secondary Subtab can be added here.
 	}
 
+	/**
+	 * Initialize the advanced settings
+	 */
 	private function init_advanced_settings() {
 		add_settings_section(
 			'wp_custom_advanced',
@@ -213,6 +252,9 @@ class UserWall_WP_Settings {
 		// Additional fields for the Advanced Tab can be added here.
 	}
 
+	/**
+	 * Add the settings page
+	 */
 	public function show_navigation() {
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $tab => $name ) {
@@ -231,16 +273,30 @@ class UserWall_WP_Settings {
 		}
 	}
 
+	/**
+	 * Get the current tab
+	 *
+	 * @return string
+	 */
 	private function get_current_tab() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return isset( $_GET['tab'] ) ? $_GET['tab'] : 'general';
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+		return $tab;
 	}
 
+	/**
+	 * Get the current subtab
+	 *
+	 * @return string
+	 */
 	private function get_current_subtab() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return isset( $_GET['subtab'] ) ? $_GET['subtab'] : 'main';
+		return isset( $_GET['subtab'] ) ? sanitize_text_field( wp_unslash( $_GET['subtab'] ) ) : 'main';
 	}
 
+	/**
+	 * Show the settings forms
+	 */
 	public function show_forms() {
 		echo '<form method="post" action="options.php">';
 		settings_fields( 'userwall_wp' );
@@ -259,6 +315,9 @@ class UserWall_WP_Settings {
 		echo '</form>';
 	}
 
+	/**
+	 * Show the general settings
+	 */
 	private function show_general_settings() {
 		$current_subtab = $this->get_current_subtab();
 		switch ( $current_subtab ) {
@@ -271,6 +330,9 @@ class UserWall_WP_Settings {
 		}
 	}
 
+	/**
+	 * Show the advanced settings
+	 */
 	private function show_advanced_settings() {
 		do_settings_sections( 'wp_custom_advanced' );
 	}

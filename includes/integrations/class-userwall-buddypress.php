@@ -1,10 +1,29 @@
 <?php
+/**
+ * UserWall_WP_BuddyPress class
+ *
+ * Class for managing BuddyPress integration.
+ *
+ * @package UserWall_WP
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * UserWall_WP_BuddyPress class
+ */
 if ( class_exists( 'BP_Component' ) ) {
+	/**
+	 * UserWall_BuddyPress class
+	 */
 	class UserWall_BuddyPress extends BP_Component {
+		/**
+		 * The component ID.
+		 *
+		 * @var string
+		 */
 		private $custom_global;
 		/**
 		 * Constructor method.
@@ -15,14 +34,6 @@ if ( class_exists( 'BP_Component' ) ) {
 				'activity-wall',
 				// Your component Name.
 				__( 'Activity Wall', 'userwall-wp' ),
-				/*
-				 * The path from where additional files should be included.
-				 *
-				 * FYI: this class is inside an `/inc` subdirectory of your add-on directory.
-				 *
-				 * Below is a typical relative path for it:
-				 * `/wp-content/plugins/bp-custom/inc/classes/class-bp-custom-component.php
-				 */
 				plugin_dir_path( __DIR__ ),
 			);
 		}
@@ -32,7 +43,7 @@ if ( class_exists( 'BP_Component' ) ) {
 		 *
 		 * @since 12.0.0
 		 *
-		 * @param array $main_nav Associative array
+		 * @param array $main_nav Associative array of main navigation items.
 		 * @param array $sub_nav  Optional. Multidimensional Associative array.
 		 */
 		public function register_nav( $main_nav = array(), $sub_nav = array() ) {
@@ -82,6 +93,11 @@ if ( class_exists( 'BP_Component' ) ) {
 			$this->custom_global = true;
 		}
 
+		/**
+		 * The screen function referenced as the `$screen_function` of your
+		 * navigation arrays. Of course you can use different screen functions
+		 * for each of your sub navigation items.
+		 */
 		public function bp_custom_add_on_screen_displayed() {
 			echo 'It works!';
 		}
@@ -99,6 +115,9 @@ if ( class_exists( 'BP_Component' ) ) {
 	}
 
 
+	/**
+	 * Initiate the component.
+	 */
 	function user_wall_bp_init() {
 		buddypress()->custom = new UserWall_BuddyPress();
 	}

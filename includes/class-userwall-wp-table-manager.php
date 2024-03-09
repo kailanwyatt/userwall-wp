@@ -1,6 +1,12 @@
 <?php
 /**
  * UserWall_WP_Table_Manager class
+ *
+ * @package UserWall_WP
+ */
+
+/**
+ * UserWall_WP_Table_Manager class
  */
 class UserWall_WP_Table_Manager {
 	/**

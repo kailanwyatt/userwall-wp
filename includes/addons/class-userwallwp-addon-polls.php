@@ -1,5 +1,11 @@
 <?php
 /**
+ * UserWallWP_Addon_Polls class
+ *
+ * @package Userwall_WP
+ */
+
+/**
  * Class UserWallWP_Addon_Polls
  */
 class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {

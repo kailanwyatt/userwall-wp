@@ -1,5 +1,11 @@
 <?php
 /**
+ * The main plugin file.
+ *
+ * @package UserWall_WP
+ */
+
+/**
  * This is the UserWall_WP class.
  */
 class UserWall_WP {

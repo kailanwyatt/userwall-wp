@@ -1,5 +1,11 @@
 <?php
 /**
+ * UserWall_WP_Admin class
+ *
+ * @package UserWall_WP
+ */
+
+/**
  * Include settings library.
  */
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-settings.php';
@@ -69,7 +75,7 @@ class UserWall_WP_Admin {
 	 */
 	public function enqueue_admin_scripts() {
 		// Enqueue your scripts and styles here.
-		wp_enqueue_style( 'my-admin-style', plugin_dir_url( __FILE__ ) . 'admin-style.css' );
+		wp_enqueue_style( 'my-admin-style', plugin_dir_url( __FILE__ ) . 'admin-style.css', array(), '1.0' );
 		wp_enqueue_script( 'my-admin-script', plugin_dir_url( __FILE__ ) . 'admin-script.js', array( 'jquery' ), '1.0', true );
 	}
 
@@ -91,24 +97,9 @@ class UserWall_WP_Admin {
 		// Instantiate the addon management class.
 		$addons_manager = new UserWall_WP_Addons();
 
-		// Additional menus.
-
-		// $this->add_submenu( 'Posts', 'Posts', 'userwall-wp-posts', array( $this, 'posts_page' ) );  // This is the default page.
-		// $this->add_submenu( 'Comments', 'Comments', 'userwall-wp-comments', array( $this, 'comments_page' ) ); // This is the default page.
-		/*
-		if ( $addons_manager->is_active( 'groups' ) ) {
-			// $this->add_submenu('Groups', 'Groups', 'userwall-wp-groups', array($this, 'groups_page')); // This is the default page.
-		}*/
 		if ( $addons_manager->is_active( 'polls' ) ) {
 			$this->add_submenu( 'Polls', 'Polls', 'userwall-wp-polls', array( $this, 'polls_page' ) );
 		}
-
-		/*
-		if ( $addons_manager->is_active( 'gallery' ) ) {
-			// $this->add_submenu('Media', 'Media', 'userwall-wp-media', array($this, 'media_page')); // This is the default page.
-			// $this->add_submenu('Albums', 'Albums', 'userwall-wp-albums', array($this, 'albums_page')); // This is the default page.
-		}
-		*/
 
 		// Add a hook to add additional submenus.
 		$submenus = apply_filters( 'userwall_wp_submenus', array() );
@@ -170,7 +161,7 @@ class UserWall_WP_Admin {
 	 * @return void
 	 */
 	public function comments_page() {
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/comments.php';
+		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-comments-list-table.php';
 		$posts_table = new Userwall_Comments_List_Table();
 
 		echo '<div class="wrap"><h1>Manage Posts</h1>';
@@ -216,7 +207,7 @@ class UserWall_WP_Admin {
 		if ( ! class_exists( 'WP_List_Table' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 		}
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/posts.php';
+		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-wp-posts-table.php';
 		$posts_table = new UserWall_WP_Posts_Table();
 
 		echo '<div class="wrap"><h1>Manage Posts</h1>';
