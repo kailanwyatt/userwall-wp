@@ -124,8 +124,6 @@ class UserWall_WP_Admin {
 				}
 			}
 		}
-		// $this->add_submenu('Reports', 'Reports', 'userwall-wp-reports', array($this, 'reports_page')); // This is the default page.
-		// $this->add_submenu('User Reputation', 'User Reputation', 'userwall-wp-user-reputation', array($this, 'user_reputation_page')); // This is the default page.
 		$this->add_submenu( 'Addons', 'Addons', 'userwall-wp-addons', array( $this, 'addons_page' ) );
 		$this->add_submenu( 'Settings', 'Settings', 'userwall-wp-settings', array( $this, 'settings_page' ) );
 	}
@@ -217,14 +215,9 @@ class UserWall_WP_Admin {
 		echo '<div class="wrap"><h1>Manage Posts</h1>';
 		$posts_table->display_notices();
 		?>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html( 'Add Post', 'userwall-wp' ); ?></a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html__( 'Add Post', 'userwall-wp' ); ?></a>
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
 			<input type="hidden" name="page" value="userwall-wp-posts" />
-			<?php
-			// $posts_table->prepare_items();
-			// $posts_table->search_box( 'Search Posts', 'post_title' );
-			// $posts_table->display();
-			?>
 		</form>
 		<?php
 	}

@@ -403,7 +403,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 	 */
 	public function add_js() {
 		?>
-		<div id="imageModal">Test</div>
+		<div id="imageModal"></div>
 		<script>
 			jQuery(document).ready(function($) {
 				wp.hooks.addFilter('userwall_wp_content_filter', 'custom_userwall_wp_filter', function(post) {

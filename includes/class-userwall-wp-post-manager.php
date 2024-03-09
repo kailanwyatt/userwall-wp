@@ -224,11 +224,6 @@ class UserWall_WP_Post_Manager {
 	public function get_post_by_id( $post_id ) {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 
-		if ( $this->wpdb->has_cap( 'identifier_placeholders' ) ) {
-			$placeholders = array( '%d', '%d', '%d' );
-		} else {
-			$placeholders = array( '%s', '%s', '%s' );
-		}
 		$post = $this->wpdb->get_row(
 			$this->wpdb->prepare(
 				'SELECT p.*, 
@@ -327,17 +322,6 @@ class UserWall_WP_Post_Manager {
 			}
 		}
 		return apply_filters( 'userwall_wp_get_posts_latest', $posts, $last_post_id, $limit );
-	}
-
-	/**
-	 * Get Permalink function. Use helper function
-	 *
-	 * @param array $post Post Object.
-	 * @return string
-	 */
-	private function get_permalink( $post = array() ) {
-		$permalink = '';
-		return $permalink;
 	}
 
 	/**

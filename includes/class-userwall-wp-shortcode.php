@@ -70,7 +70,7 @@ class UserWall_WP_Shortcode {
 		$content_types  = user_wall_get_content_types();
 		$max_characters = ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0;
 		$allow_tiltes   = ! empty( $options['allow_tiltes'] ) ? absint( $options['allow_tiltes'] ) : 0;
-		include USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'; // Create a post form template
+		include USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'; // Create a post form template.
 		$this->add_tmpls();
 		return ob_get_clean();
 	}

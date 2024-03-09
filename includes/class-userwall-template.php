@@ -64,7 +64,7 @@ class UserWall_Template {
 
 		// Localize the script with the data.
 		wp_localize_script( 'userwall-wp-js', 'userwallWPObject', apply_filters( 'userwall_wp_localize_script', $userwall_wp_data ) );
-		
+
 		// Enqueue CSS.
 		wp_enqueue_style( 'userwall-wp-css', USERWALL_WP_PLUGIN_URL . '/assets/css/userwall-wp.css', array(), USERWALL_WP_VERSION, 'all' );
 	}

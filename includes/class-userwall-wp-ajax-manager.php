@@ -106,7 +106,7 @@ class UserWall_WP_AJAX_Manager {
 				}
 				break;
 			case 'Block':
-				$blocked_user_id = $post_manager->get_user_id_by_post_id();
+				$blocked_user_id = $post_manager->get_user_id_by_post_id( $post_id );
 				// Handle Block action.
 				$post_manager->block_user_for_post( $current_user_id, $blocked_user_id, $post_id );
 				// You can perform your block logic here.
@@ -317,7 +317,7 @@ class UserWall_WP_AJAX_Manager {
 				'params' => $args,
 			)
 		);
-		// php:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

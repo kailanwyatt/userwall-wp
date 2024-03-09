@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void
  */
 function uswp_get_template( $template_name = '', $args = array() ) {
+	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 	extract( $args );
 	include UserWall_Template::get_template( $template_name, $args );
 }
@@ -75,14 +76,14 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
 		}
 		$url = add_query_arg(
 			array(
-				'username'     => urlencode( $username ),
+				'username'     => rawurlencode( $username ),
 				'user_profile' => 1,
 			),
 			$url
 		);
-		$url = home_url( '/' ) . '?pagename=u&username=' . urlencode( $username ) . '&user_profile=1';
+		$url = home_url( '/' ) . '?pagename=u&username=' . rawurlencode( $username ) . '&user_profile=1';
 		if ( $profile_tab ) {
-			$url = add_query_arg( array( 'profile_tab' => urlencode( $profile_tab ) ), $url );
+			$url = add_query_arg( array( 'profile_tab' => rawurlencode( $profile_tab ) ), $url );
 		}
 	} else {
 		// Build a pretty URL.
