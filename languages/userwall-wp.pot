@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UserWall WP 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/userwall-wp\n"
-"POT-Creation-Date: 2024-02-05 20:52:45+00:00\n"
+"POT-Creation-Date: 2024-03-09 17:10:35+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,384 +13,403 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: includes/addons/class-userwallwp-addon-bookmarks.php:13
+#: includes/addons/class-userwallwp-addon-bookmarks.php:41
 msgid "Bookmarks"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-bookmarks.php:17
+#: includes/addons/class-userwallwp-addon-bookmarks.php:50
 msgid "This addon adds ability to save bookmarks from the wall."
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-files.php:13
+#: includes/addons/class-userwallwp-addon-files.php:38
 msgid "Files"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-files.php:17
+#: includes/addons/class-userwallwp-addon-files.php:47
 msgid "This addon adds ability to add and download files on the wall."
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-followers.php:13
+#: includes/addons/class-userwallwp-addon-followers.php:39
 msgid "Followers"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-followers.php:17
+#: includes/addons/class-userwallwp-addon-followers.php:48
 msgid "This addon adds ability to have users follow each other."
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-gallery.php:17
+#: includes/addons/class-userwallwp-addon-gallery.php:47
 msgid "Gallery"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-gallery.php:21
+#: includes/addons/class-userwallwp-addon-gallery.php:56
 msgid "An easy way to add Photo uploads to user wall"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-gallery.php:25
-#: includes/addons/class-userwallwp-addon-groups.php:16
-#: includes/addons/class-userwallwp-addon-polls.php:16
-#: includes/addons/class-userwallwp-addon-reactions.php:16
+#: includes/addons/class-userwallwp-addon-gallery.php:65
+#: includes/addons/class-userwallwp-addon-groups.php:48
+#: includes/addons/class-userwallwp-addon-polls.php:48
+#: includes/addons/class-userwallwp-addon-reactions.php:48
 msgid "UserWallWP"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-gallery.php:95
-#: includes/addons/class-userwallwp-addon-gallery.php:127
+#: includes/addons/class-userwallwp-addon-gallery.php:158
+#: includes/addons/class-userwallwp-addon-gallery.php:206
 msgid "Image"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-groups.php:8
-#: includes/addons/class-userwallwp-addon-groups.php:12
-#: includes/admin/tables/groups.php:12
+#: includes/addons/class-userwallwp-addon-groups.php:30
+#: includes/addons/class-userwallwp-addon-groups.php:39
+#: includes/admin/tables/class-userwall-groups-list-table.php:26
 msgid "Groups"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-polls.php:8
+#: includes/addons/class-userwallwp-addon-polls.php:30
 msgid "Polls"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-polls.php:12
+#: includes/addons/class-userwallwp-addon-polls.php:39
 msgid "A way to add Polls to posts with expiration"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-polls.php:111
+#: includes/addons/class-userwallwp-addon-polls.php:176
 msgid "Poll"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-reactions.php:8
+#: includes/addons/class-userwallwp-addon-reactions.php:30
 msgid "Reactions"
 msgstr ""
 
-#: includes/addons/class-userwallwp-addon-reactions.php:12
+#: includes/addons/class-userwallwp-addon-reactions.php:39
 msgid "Adds User Reactions to posts and comments"
 msgstr ""
 
-#: includes/addons/includes/class-userwallwp-addon-groups-core.php:66
-#: includes/admin/templates/add-group.php:2
+#: includes/addons/includes/class-userwallwp-addon-groups-core.php:97
+#: includes/admin/templates/add-group.php:14
 msgid "Add New Group"
 msgstr ""
 
-#: includes/admin/tables/comments.php:18
-#: includes/library/class-userwall-wp-comments.php:18
+#: includes/admin/tables/class-userwall-comments-list-table.php:26
+#: includes/library/class-userwall-comments-list-table.php:27
 msgid "Comment"
 msgstr ""
 
-#: includes/admin/tables/comments.php:19
-#: includes/library/class-userwall-wp-comments.php:19
+#: includes/admin/tables/class-userwall-comments-list-table.php:27
+#: includes/library/class-userwall-comments-list-table.php:28
 msgid "Comments"
 msgstr ""
 
-#: includes/admin/tables/comments.php:29
-#: includes/library/class-userwall-wp-comments.php:29
+#: includes/admin/tables/class-userwall-comments-list-table.php:37
+#: includes/library/class-userwall-comments-list-table.php:38
 msgid "No comments available."
 msgstr ""
 
-#: includes/admin/tables/comments.php:39
-#: includes/library/class-userwall-wp-comments.php:39
+#: includes/admin/tables/class-userwall-comments-list-table.php:48
+#: includes/library/class-userwall-comments-list-table.php:49
 msgid "Content"
 msgstr ""
 
-#: includes/admin/tables/comments.php:40 includes/admin/tables/groups.php:110
-#: includes/library/class-userwall-wp-comments.php:40
+#: includes/admin/tables/class-userwall-comments-list-table.php:49
+#: includes/admin/tables/class-userwall-groups-list-table.php:124
+#: includes/library/class-userwall-comments-list-table.php:50
 msgid "Date"
 msgstr ""
 
-#: includes/admin/tables/comments.php:41
-#: includes/library/class-userwall-wp-comments.php:41
+#: includes/admin/tables/class-userwall-comments-list-table.php:50
+#: includes/library/class-userwall-comments-list-table.php:51
 msgid "User ID"
 msgstr ""
 
-#: includes/admin/tables/comments.php:42
-#: includes/library/class-userwall-wp-comments.php:42
+#: includes/admin/tables/class-userwall-comments-list-table.php:51
+#: includes/library/class-userwall-comments-list-table.php:52
 msgid "Post ID"
 msgstr ""
 
-#: includes/admin/tables/groups.php:11
+#: includes/admin/tables/class-userwall-groups-list-table.php:25
 msgid "Group"
 msgstr ""
 
-#: includes/admin/tables/groups.php:75
+#: includes/admin/tables/class-userwall-groups-list-table.php:91
 msgid "No groups available."
 msgstr ""
 
-#: includes/admin/tables/groups.php:108
+#: includes/admin/tables/class-userwall-groups-list-table.php:122
+#: includes/admin/templates/addons.php:27
 msgid "Name"
 msgstr ""
 
-#: includes/admin/tables/groups.php:109
-#: includes/admin/templates/add-group.php:19
+#: includes/admin/tables/class-userwall-groups-list-table.php:123
+#: includes/admin/templates/add-group.php:32
+#: includes/admin/templates/addons.php:28
 msgid "Description"
 msgstr ""
 
-#: includes/admin/tables/groups.php:111
+#: includes/admin/tables/class-userwall-groups-list-table.php:125
 msgid "Creator By"
 msgstr ""
 
-#: includes/admin/tables/posts.php:209
+#: includes/admin/tables/class-userwall-wp-posts-table.php:335
+#: includes/admin/tables/lass-userwall-wp-posts-table.php:363
 msgid "Change to Draft"
 msgstr ""
 
-#: includes/admin/tables/posts.php:210
+#: includes/admin/tables/class-userwall-wp-posts-table.php:336
+#: includes/admin/tables/lass-userwall-wp-posts-table.php:364
 msgid "Publish"
 msgstr ""
 
-#: includes/admin/templates/add-group.php:11
+#: includes/admin/templates/add-group.php:24
 msgid "Group Name"
 msgstr ""
 
-#: includes/admin/templates/add-group.php:15
+#: includes/admin/templates/add-group.php:28
 msgid "Group Slug"
 msgstr ""
 
-#: includes/admin/templates/add-group.php:23
+#: includes/admin/templates/add-group.php:36
 msgid "Group Avatar URL"
 msgstr ""
 
-#: includes/admin/templates/add-post.php:18
-#: includes/class-userwall-wp-admin.php:118
-#: includes/class-userwall-wp-admin.php:156
+#: includes/admin/templates/add-post.php:29
+#: includes/class-userwall-wp-admin.php:172
+#: includes/class-userwall-wp-admin.php:218
 msgid "Add Post"
 msgstr ""
 
-#: includes/admin/templates/add-post.php:22
+#: includes/admin/templates/add-post.php:33
 msgid "Add Post Details"
 msgstr ""
 
-#: includes/admin/templates/add-post.php:32
+#: includes/admin/templates/add-post.php:43
 msgid "Posts"
 msgstr ""
 
-#: includes/admin/templates/addons.php:50
+#: includes/admin/templates/addons.php:29
+msgid "Version"
+msgstr ""
+
+#: includes/admin/templates/addons.php:30
+msgid "Status"
+msgstr ""
+
+#: includes/admin/templates/addons.php:59
 msgid "Coming Soon"
 msgstr ""
 
-#: includes/class-userwall-wp-admin.php:197
-msgid "Addon \"%s\" has been deactivated."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:66
-#: includes/class-userwall-wp-ajax-manager.php:129
-#: includes/class-userwall-wp-ajax-manager.php:170
-#: includes/class-userwall-wp-ajax-manager.php:213
-#: includes/class-userwall-wp-ajax-manager.php:263
-#: includes/class-userwall-wp-ajax-manager.php:296
-#: includes/class-userwall-wp-ajax-manager.php:308
-#: includes/class-userwall-wp-ajax-manager.php:320
-#: includes/class-userwall-wp-ajax-manager.php:350
-#: includes/class-userwall-wp-ajax-manager.php:375
-#: includes/class-userwall-wp-ajax-manager.php:419
-#: includes/class-userwall-wp-ajax-manager.php:457
-#: includes/class-userwall-wp-ajax-manager.php:501
-msgid "Invalid nonce."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:134
-msgid "You must be logged in to update comment."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:154
-#: includes/class-userwall-wp-ajax-manager.php:197
-#: includes/class-userwall-wp-ajax-manager.php:247
-msgid "Post creation failed. Please try again."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:175
-#: includes/class-userwall-wp-ajax-manager.php:218
-msgid "You must be logged in to create a post."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:380
-msgid "You must be logged in to add a comment."
-msgstr ""
-
-#: includes/class-userwall-wp-ajax-manager.php:402
-#: includes/class-userwall-wp-ajax-manager.php:437
-msgid "Could not add comment. Please try again."
-msgstr ""
-
-#: includes/class-userwall-wp-blocks.php:19
-msgid "User Wall"
-msgstr ""
-
-#: includes/class-userwall-wp-core.php:22
-msgid "User"
-msgstr ""
-
-#: includes/class-userwall-wp-shortcode.php:53
-msgid "Post"
-msgstr ""
-
-#: includes/class-userwall-wp-template.php:43
+#: includes/class-userwall-template.php:53
 msgid "What are you're thoughs?"
 msgstr ""
 
-#: includes/helper-functions.php:148
+#: includes/class-userwall-wp-admin.php:268
+#. translators: Placeholder for the addon name.
+msgid "Addon \"%s\" has been deactivated."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:83
+#: includes/class-userwall-wp-ajax-manager.php:148
+#: includes/class-userwall-wp-ajax-manager.php:194
+#: includes/class-userwall-wp-ajax-manager.php:242
+#: includes/class-userwall-wp-ajax-manager.php:296
+#: includes/class-userwall-wp-ajax-manager.php:331
+#: includes/class-userwall-wp-ajax-manager.php:349
+#: includes/class-userwall-wp-ajax-manager.php:368
+#: includes/class-userwall-wp-ajax-manager.php:402
+#: includes/class-userwall-wp-ajax-manager.php:433
+#: includes/class-userwall-wp-ajax-manager.php:481
+#: includes/class-userwall-wp-ajax-manager.php:521
+#: includes/class-userwall-wp-ajax-manager.php:562
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:153
+msgid "You must be logged in to update comment."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:172
+#: includes/class-userwall-wp-ajax-manager.php:220
+#: includes/class-userwall-wp-ajax-manager.php:274
+msgid "Post creation failed. Please try again."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:199
+#: includes/class-userwall-wp-ajax-manager.php:247
+msgid "You must be logged in to create a post."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:438
+msgid "You must be logged in to add a comment."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:458
+#: includes/class-userwall-wp-ajax-manager.php:500
+msgid "Could not add comment. Please try again."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:549
+msgid "No term found"
+msgstr ""
+
+#: includes/class-userwall-wp-blocks.php:38
+msgid "User Wall"
+msgstr ""
+
+#: includes/class-userwall-wp-post-core.php:46
+msgid "User"
+msgstr ""
+
+#: includes/class-userwall-wp-shortcode.php:65
+msgid "Post"
+msgstr ""
+
+#: includes/helper-functions.php:195
 msgid "Reactions count"
 msgstr ""
 
-#: includes/helper-functions.php:158
+#: includes/helper-functions.php:205
 msgid "Comment Count"
 msgstr ""
 
-#: includes/helper-functions.php:167
+#: includes/helper-functions.php:214
 msgid "Share"
 msgstr ""
 
-#: includes/integrations/class-userwall-buddypress.php:17
+#: includes/integrations/class-userwall-buddypress.php:39
 msgid "Activity Wall"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:9
+#: includes/library/class-userwall-wp-settings.php:40
 msgid "General"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:14
+#: includes/library/class-userwall-wp-settings.php:45
 msgid "Main"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:40
+#: includes/library/class-userwall-wp-settings.php:77
 msgid "User Page"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:48
+#: includes/library/class-userwall-wp-settings.php:85
 msgid "Single Post Page"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:57
+#: includes/library/class-userwall-wp-settings.php:94
 msgid "Character Limit"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:65
+#: includes/library/class-userwall-wp-settings.php:102
 msgid "Allow Titles on Posts"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:73
+#: includes/library/class-userwall-wp-settings.php:110
 msgid "Open Posts Page"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:82
+#: includes/library/class-userwall-wp-settings.php:119
 msgid "Editor Options"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:84
+#: includes/library/class-userwall-wp-settings.php:121
 msgid "Bold"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:85
+#: includes/library/class-userwall-wp-settings.php:122
 msgid "Italic"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:86
+#: includes/library/class-userwall-wp-settings.php:123
 msgid "Underline"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:87
+#: includes/library/class-userwall-wp-settings.php:124
 msgid "Strike"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:88
+#: includes/library/class-userwall-wp-settings.php:125
 msgid "List"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:89
+#: includes/library/class-userwall-wp-settings.php:126
 msgid "Headers"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:90
+#: includes/library/class-userwall-wp-settings.php:127
 msgid "Blockquote"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:91
+#: includes/library/class-userwall-wp-settings.php:128
 msgid "Code Block"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:170
+#: includes/library/class-userwall-wp-settings.php:207
 msgid "-Page-"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:195
+#: includes/library/class-userwall-wp-settings.php:236
 msgid "Secondary Settings"
 msgstr ""
 
-#: includes/library/class-userwall-wp-settings.php:207
+#: includes/library/class-userwall-wp-settings.php:251
 msgid "Advanced Settings"
 msgstr ""
 
-#: templates/profile.php:4
+#: templates/profile.php:16
+#. translators: Avatar alt text placeholder.
 msgid "Avatar of %s"
 msgstr ""
 
-#: templates/tmpls.php:45
+#: templates/tmpls.php:57
 msgid "Save Changes"
 msgstr ""
 
-#: templates/tmpls.php:46
+#: templates/tmpls.php:58
 msgid "Cancel Changes"
 msgstr ""
 
-#: templates/tmpls.php:55 templates/tmpls.php:139
+#: templates/tmpls.php:67 templates/tmpls.php:151
 msgid "Edit"
 msgstr ""
 
-#: templates/tmpls.php:58 templates/tmpls.php:142
+#: templates/tmpls.php:70 templates/tmpls.php:154
 msgid "Delete"
 msgstr ""
 
-#: templates/tmpls.php:61 templates/tmpls.php:145
+#: templates/tmpls.php:73 templates/tmpls.php:157
 msgid "Block"
 msgstr ""
 
-#: templates/tmpls.php:64 templates/tmpls.php:148
+#: templates/tmpls.php:76 templates/tmpls.php:160
 msgid "Report"
 msgstr ""
 
-#: templates/tmpls.php:67 templates/tmpls.php:151
+#: templates/tmpls.php:79 templates/tmpls.php:163
 msgid "Embed Post"
 msgstr ""
 
-#: templates/tmpls.php:70 templates/tmpls.php:154
+#: templates/tmpls.php:82 templates/tmpls.php:166
 msgid "Save"
 msgstr ""
 
-#: templates/tmpls.php:73 templates/tmpls.php:157
+#: templates/tmpls.php:85 templates/tmpls.php:169
 msgid "Follow"
 msgstr ""
 
-#: templates/tmpls.php:85
+#: templates/tmpls.php:97
 msgid "Share Comment"
 msgstr ""
 
-#: templates/tmpls.php:142
+#: templates/tmpls.php:154
 msgid "Delete Comment"
 msgstr ""
 
-#: templates/tmpls.php:165
+#: templates/tmpls.php:177
 msgid "Reply"
 msgstr ""
 
-#: templates/tmpls.php:173
+#: templates/tmpls.php:185
 msgid "Submit Reply"
 msgstr ""
 
-#: templates/tmpls.php:174
+#: templates/tmpls.php:186
 msgid "Cancel Reply"
 msgstr ""
 
