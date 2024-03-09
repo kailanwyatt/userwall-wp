@@ -284,7 +284,7 @@ class UserWall_WP_Admin {
 	 */
 	public function process_addon_action() {
 		// Check if the form was submitted.
-		if ( isset( $_POST['nonce'] ) && isset( $_POST['addon_id'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'userwall-wp-addon-action-' . sanitize_text_field( wp_unslash( $_POST['addon_id'] ) ) ) ) {
+		if ( current_user_can( 'manage_options' ) && isset( $_POST['nonce'] ) && isset( $_POST['addon_id'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'userwall-wp-addon-action-' . sanitize_text_field( wp_unslash( $_POST['addon_id'] ) ) ) ) {
 			if ( isset( $_POST['addon_action'] ) ) {
 				if ( isset( $_POST['addon_id'] ) ) {
 					$addon_id = sanitize_text_field( wp_unslash( $_POST['addon_id'] ) );

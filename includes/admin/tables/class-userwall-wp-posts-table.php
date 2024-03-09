@@ -145,7 +145,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	 */
 	public function prepare_items() {
 		global $wpdb;
-
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$per_page     = $this->get_items_per_page( 'posts_per_page', 10 );
 		$current_page = $this->get_pagenum();
 		$offset       = ( $current_page - 1 ) * $per_page;
@@ -165,9 +165,8 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		// Updated SQL query for the new table.
 		$query = $wpdb->prepare( 'SELECT * FROM %i', array( $this->table_posts ) );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+		
 		if ( ! empty( $_REQUEST['orderby'] ) && isset( $sortable[ $_REQUEST['orderby'] ] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 			$order  = isset( $_REQUEST['order'] ) && 'asc' === $_REQUEST['order'] ? 'ASC' : 'DESC';
 			$query .= " ORDER BY {$sortable[ sanitize_text_field( $_REQUEST['orderby'] ) ][0]} $order";
 		}
@@ -175,6 +174,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		$query .= " LIMIT $per_page OFFSET $offset";
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$this->items = $wpdb->get_results( $query, ARRAY_A );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -267,7 +267,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	 */
 	public function display_notices() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['message'] ) && 'updated' === $_GET['message'] ) {
+		if ( isset( $_GET['message'] ) && 'updated' === sanitize_text_field( wp_unslash( $_GET['message'] ) ) ) {
 			echo '<div class="updated"><p>Post status updated successfully.</p></div>';
 		}
 	}

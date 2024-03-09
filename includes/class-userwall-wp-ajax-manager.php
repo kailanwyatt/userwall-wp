@@ -83,12 +83,12 @@ class UserWall_WP_AJAX_Manager {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+
 		// Get the action type from the AJAX request.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$action_type = isset( $_POST['action_type'] ) ? sanitize_text_field( wp_unslash( $_POST['action_type'] ) ) : '';
 
 		// Get the post ID associated with the action (if needed).
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
 
 		$current_user_id = get_current_user_id();
@@ -102,6 +102,7 @@ class UserWall_WP_AJAX_Manager {
 
 					$posts = $post_manager->delete_post( $post_id );
 				} else {
+					wp_send_json_error( array( 'message' => 'You do not have permission to delete this post.' ) );
 				}
 				break;
 			case 'Block':
@@ -133,6 +134,7 @@ class UserWall_WP_AJAX_Manager {
 
 		// Send a success response (if needed).
 		wp_send_json_success( array( 'message' => 'Action successful.' ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -154,14 +156,13 @@ class UserWall_WP_AJAX_Manager {
 		// Get current user ID.
 		$current_user_id = get_current_user_id();
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+
 		// Get post content from the form.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : '';
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$comment_id = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
 
 		$post_manager  = new UserWall_WP_Post_Manager();
@@ -179,6 +180,7 @@ class UserWall_WP_AJAX_Manager {
 			);
 			wp_send_json_success( $return_data );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -199,12 +201,11 @@ class UserWall_WP_AJAX_Manager {
 
 		// Get current user ID.
 		$current_user_id = get_current_user_id();
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
 		// Get post content from the form.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : '';
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		// Prepare data to insert into the userwall_posts table.
@@ -227,6 +228,7 @@ class UserWall_WP_AJAX_Manager {
 			);
 			wp_send_json_success( $return_data );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -247,17 +249,15 @@ class UserWall_WP_AJAX_Manager {
 
 		// Get current user ID.
 		$current_user_id = get_current_user_id();
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
 		// Get post content from the form.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( $_POST['content'] ) : '';
+		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : '';
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( $_POST['post_tab'] ) : 'post';
+		$post_tab = ! empty( $_POST['post_tab'] ) ? sanitize_text_field( wp_unslash( $_POST['post_tab'] ) ) : 'post';
 
 		// Title.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_title = ! empty( $_POST['post_title'] ) ? sanitize_text_field( $_POST['post_title'] ) : '';
+		$post_title = ! empty( $_POST['post_title'] ) ? sanitize_text_field( wp_unslash( $_POST['post_title'] ) ) : '';
 
 		// Prepare data to insert into the userwall_posts table.
 		$post_data = array(
@@ -282,6 +282,7 @@ class UserWall_WP_AJAX_Manager {
 			);
 			wp_send_json_success( $return_data );
 		}
+		//phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -294,17 +295,13 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$per_page = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : 30;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$page = ! empty( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$object_id = ! empty( $_GET['object_id'] ) ? absint( $_GET['object_id'] ) : 30;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_type    = ! empty( $_GET['post_type'] ) ? absint( $_GET['post_type'] ) : 'posts';
 		$args         = array(
 			'per_page'  => $per_page,
@@ -320,6 +317,7 @@ class UserWall_WP_AJAX_Manager {
 				'params' => $args,
 			)
 		);
+		// php:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -332,11 +330,12 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts_latest_count( $post_id );
 		wp_send_json_success( array( 'message' => $posts ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -349,11 +348,13 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+
 		$post_id      = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$posts        = $post_manager->get_posts_latest( $post_id );
 		wp_send_json_success( array( 'posts' => $posts ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -366,16 +367,14 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+
 		$latest_id = ! empty( $_POST['last_post'] ) ? absint( $_POST['last_post'] ) : 0;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$per_page = ! empty( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 5;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$user_id = ! empty( $_POST['user_wall'] ) ? absint( $_POST['user_wall'] ) : 0;
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		$post_manager = new UserWall_WP_Post_Manager();
@@ -389,6 +388,7 @@ class UserWall_WP_AJAX_Manager {
 			)
 		);
 		wp_send_json_success( array( 'posts' => $posts ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -402,7 +402,7 @@ class UserWall_WP_AJAX_Manager {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$post_id      = ! empty( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : 0;
 		$post_manager = new UserWall_WP_Post_Manager();
 		$comments     = $post_manager->get_comments_by_post_id( $post_id );
@@ -419,6 +419,7 @@ class UserWall_WP_AJAX_Manager {
 		}
 
 		wp_send_json_success( $return_data );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -439,12 +440,10 @@ class UserWall_WP_AJAX_Manager {
 
 		// Get current user ID.
 		$current_user_id = get_current_user_id();
-
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		// Get post content from the form.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_content = ! empty( $_POST['content'] ) ? wp_kses_post( wp_unslash( $_POST['content'] ) ) : '';
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		// Prepare data to insert into the userwall_posts table.
@@ -468,6 +467,7 @@ class UserWall_WP_AJAX_Manager {
 			);
 			wp_send_json_success( $return_data );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -480,11 +480,9 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		// Get the comment content from the AJAX request.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['commentContent'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$comment_content = sanitize_text_field( wp_unslash( $_POST['commentContent'] ) );
 		} else {
 			$comment_content = '';
@@ -492,10 +490,8 @@ class UserWall_WP_AJAX_Manager {
 
 		// Get current user ID.
 		$current_user_id = get_current_user_id();
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$parent_comment = ! empty( $_POST['commentId'] ) ? intval( $_POST['commentId'] ) : 0;
+		$post_id         = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$parent_comment  = ! empty( $_POST['commentId'] ) ? intval( $_POST['commentId'] ) : 0;
 
 		$post_manager  = new UserWall_WP_Post_Manager();
 		$insert_result = $post_manager->add_comment( $current_user_id, $post_id, $comment_content, $parent_comment );
@@ -511,6 +507,7 @@ class UserWall_WP_AJAX_Manager {
 			);
 			wp_send_json_success( $return_data );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -523,11 +520,9 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
-
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		// Check for the 'term' in the AJAX request.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_GET['term'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$search_term = isset( $_GET['term'] ) ? trim( str_replace( '@', '', sanitize_text_field( wp_unslash( $_GET['term'] ) ) ) ) : '';
 
 			// Query for users.
@@ -551,13 +546,12 @@ class UserWall_WP_AJAX_Manager {
 			wp_send_json_success( $usernames );
 		}
 
-		wp_send_json_error( 'No term found' );
+		wp_send_json_error( esc_html__( 'No term found', 'userwall-wp' ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
 	 * Post like for post.
-	 *
-	 * phpcs:ignore WordPress.Security.NonceVerification.Missing
 	 *
 	 * @return void
 	 */
@@ -567,13 +561,12 @@ class UserWall_WP_AJAX_Manager {
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
 		}
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		$table_likes = $wpdb->prefix . 'userwall_likes';
 		$user_id     = get_current_user_id();
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$comment_id = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$post_id     = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$comment_id  = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$like_id = $wpdb->get_var(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -589,7 +582,7 @@ class UserWall_WP_AJAX_Manager {
 
 		// If exists then remove it.
 		if ( $like_id ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->delete(
 				$table_likes,
 				array(
@@ -603,7 +596,7 @@ class UserWall_WP_AJAX_Manager {
 			$posts        = $post_manager->add_like_or_reaction( $user_id, $post_id, $comment_id, 'like' );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$total_likes = $wpdb->get_var(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -616,6 +609,7 @@ class UserWall_WP_AJAX_Manager {
 			)
 		);
 		wp_send_json_success( array( 'total' => $total_likes ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 	}
 }
 

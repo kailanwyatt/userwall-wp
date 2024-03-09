@@ -71,14 +71,6 @@ class UserWallWP_Addon_Groups_Core {
 	 * Render groups page.
 	 */
 	public function groups_page() {
-		$group_nonce = isset( $_POST['group_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['group_nonce'] ) ) : '';
-		if ( isset( $_POST ) &&
-			isset( $_POST['group_nonce'] ) &&
-			! wp_verify_nonce( $group_nonce, 'group_security_nonce_action' )
-		) {
-			print 'Sorry, your nonce did not verify.';
-			exit;
-		}
 		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-groups-list-table.php';
 		$groups_list = new Userwall_Groups_List_Table();
 
