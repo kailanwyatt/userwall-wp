@@ -462,7 +462,7 @@ class UserWall_WP_AJAX_Manager {
 			wp_send_json_success( $return_data );
 		}
 	}
-	
+
 	/**
 	 * Comment reply callback.
 	 *

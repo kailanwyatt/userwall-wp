@@ -5,16 +5,16 @@
  * @package UserWall_WP
  */
 
- /**
-  * UserWall_WP_Settings class
-  */
+/**
+ * UserWall_WP_Settings class
+ */
 class UserWall_WP_Settings {
 	/**
 	 * Tabs array
 	 *
 	 * @var array
 	 */
-	private $tabs    = array();
+	private $tabs = array();
 	/**
 	 * Subtabs array
 	 *

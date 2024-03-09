@@ -5,16 +5,16 @@
  * @package UserWall_WP
  */
 
- /**
-  * UserWall_WP_Base_Addon class
-  */
+/**
+ * UserWall_WP_Base_Addon class
+ */
 class UserWall_WP_Base_Addon {
 	/**
 	 * Addon name
 	 *
 	 * @var string
 	 */
-	protected $addon_name        = '';
+	protected $addon_name = '';
 	/**
 	 * Addon description
 	 *
@@ -26,31 +26,31 @@ class UserWall_WP_Base_Addon {
 	 *
 	 * @var string
 	 */
-	protected $addon_author      = '';
+	protected $addon_author = '';
 	/**
 	 * Addon version
 	 *
 	 * @var string
 	 */
-	protected $addon_version     = '';
+	protected $addon_version = '';
 	/**
 	 * Addon ID
 	 *
 	 * @var string
 	 */
-	protected $addon_id          = '';
+	protected $addon_id = '';
 	/**
 	 * Addon file
 	 *
 	 * @var string
 	 */
-	public $file                 = '';
+	public $file = '';
 	/**
 	 * Whether the addon is active or not
 	 *
 	 * @var bool
 	 */
-	protected $is_active         = false;
+	protected $is_active = false;
 
 	/**
 	 * Constructor.

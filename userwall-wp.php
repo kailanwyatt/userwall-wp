@@ -36,7 +36,7 @@ register_activation_hook( __FILE__, 'userwall_wp_activate' );
 register_deactivation_hook( __FILE__, 'userwall_wp_deactivate' );
 
 
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-core.php';
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-post-core.php';
 
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-profile.php';
@@ -45,13 +45,13 @@ require_once USERWALL_WP_PLUGIN_DIR . 'includes/helper-functions.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/icons.php';
 
 // Include the addon management class (UserWall_WP_Addons).
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-addon.php';
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-base-addon.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-addons.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-admin.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-blocks.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-ajax-manager.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-post-manager.php';
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php';
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-template.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-shortcode.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-filemanager.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-table-manager.php';
