@@ -4,6 +4,14 @@
  *
  * @package UserWallWP_Addon_Groups_Core
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class UserWallWP_Addon_Groups_Core
+ */
 class UserWallWP_Addon_Groups_Core {
 	/**
 	 * Admin slug.
@@ -63,10 +71,10 @@ class UserWallWP_Addon_Groups_Core {
 	 * Render groups page.
 	 */
 	public function groups_page() {
-		$name_of_nonce_field = isset( $_POST['name_of_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['name_of_nonce_field'] ) ) : '';
+		$group_nonce = isset( $_POST['group_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['group_nonce'] ) ) : '';
 		if ( isset( $_POST ) &&
-			isset( $_POST['name_of_nonce_field'] ) &&
-			! wp_verify_nonce( $name_of_nonce_field, 'name_of_my_action' )
+			isset( $_POST['group_nonce'] ) &&
+			! wp_verify_nonce( $group_nonce, 'group_security_nonce_action' )
 		) {
 			print 'Sorry, your nonce did not verify.';
 			exit;
@@ -94,7 +102,7 @@ class UserWallWP_Addon_Groups_Core {
 			?>
 			<div class="wrap">
 				<h2>Userwall Groups</h2>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $this->admin_slug . '&action=add_new' ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New Group', 'wp-userwall-groups-admin-table' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $this->admin_slug . '&action=add_new' ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New Group', 'userwall-wp' ); ?></a>
 				<div id="poststuff">
 					<div id="post-body" class="metabox-holder">
 						<div id="post-body-content">

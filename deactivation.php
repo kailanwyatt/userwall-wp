@@ -3,8 +3,18 @@
  * Deactivation functions for the User Wall plugin.
  *
  * @file  deactivation.php
+ *
+ * @package UserWall_WP
  */
-function userwall_wp_deactivate() {
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Deactivate the User Wall plugin.
+ */
+function uswp_deactivate() {
 	// Check if the option for deletion is set to true.
 	$delete_on_deactivation = get_option( 'userwall_wp_delete_deactivation', false );
 	$delete_on_deactivation = 1;

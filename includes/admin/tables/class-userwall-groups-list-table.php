@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -37,7 +40,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	public static function get_groups( $per_page = 25, $page_number = 1 ) {
 		global $wpdb;
 
-		$sql = "SELECT * FROM {$wpdb->prefix}userwall_groups";
+		$sql = $wpdb->prepare( 'SELECT * FROM %i', array( $wpdb->prefix . 'userwall_groups' ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
@@ -50,7 +53,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 
 		$sql .= " LIMIT $per_page";
 		$sql .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.PlaceholderNoop, WordPress.DB.PreparedSQL.PlaceholderNoop
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.PlaceholderNoop, 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->get_results( $sql, 'ARRAY_A' );
 		return $result;
 	}
@@ -62,7 +65,7 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	 */
 	public static function delete_group( $id ) {
 		global $wpdb;
-
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete(
 			"{$wpdb->prefix}userwall_groups",
 			array( 'group_id' => $id ),
@@ -78,8 +81,8 @@ class Userwall_Groups_List_Table extends WP_List_Table {
 	public static function record_count() {
 		global $wpdb;
 
-		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}userwall_groups";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = $wpdb->prepare( 'SELECT COUNT(*) FROM %i ', array( $wpdb->prefix . 'userwall_groups' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		return $wpdb->get_var( $sql );
 	}
 

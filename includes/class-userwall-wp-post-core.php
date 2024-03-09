@@ -5,6 +5,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * UserWall_WP_Post_Core class
  */

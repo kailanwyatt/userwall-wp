@@ -1,5 +1,15 @@
 <?php
 /**
+ * This file is the helper functions for User Wall.
+ *
+ * @package Userwall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Get the template.
  *
  * @param string $template_name Name of the template.
@@ -18,7 +28,7 @@ function uswp_get_template( $template_name = '', $args = array() ) {
  * @param int|null $user_id User ID. If not set, use current user ID.
  * @return mixed The requested user profile data.
  */
-function get_userwall_wp_profile_data( $profile_key = '', $user_id = null ) {
+function uswp_get_userwall_wp_profile_data( $profile_key = '', $user_id = null ) {
 	global $uwwp_profile_info;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
@@ -178,7 +188,7 @@ if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
 	 *
 	 * @param string $type The type of interaction.
 	 */
-	function userwall_wp_get_interaction_tmpl( $type = '' ) {
+	function uswp_get_interaction_tmpl( $type = '' ) {
 		?>
 	<div class="userwall-wp-activity-section">
 		<div class="userwall-wp-reaction-count userwall-wp-activity-block" aria-label="<?php esc_html_e( 'Reactions count', 'userwall-wp' ); ?>">

@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 ?>
 <?php if ( is_user_logged_in() && $show_form ) : ?>
 <div class="userwall-wp-form-wrapper">
@@ -28,7 +31,7 @@
 					<div class="userwall-wp-post-types">
 						<ul>
 							<?php foreach ( $content_types as $id => $type ) : ?>
-							<li><a href="#" class="userwall-wp-post-type" data-type="<?php echo esc_attr( $id ); ?>" title="<?php echo esc_attr( $type['title'] ); ?>"><?php echo userwall_get_icon( $type['icon'] ); ?></a></li>
+							<li><a href="#" class="userwall-wp-post-type" data-type="<?php echo esc_attr( $id ); ?>" title="<?php echo esc_attr( $type['title'] ); ?>"><?php echo wp_kses_post( userwall_get_icon( $type['icon'] ) ); ?></a></li>
 							<?php endforeach; ?>
 						</ul>
 					</div>

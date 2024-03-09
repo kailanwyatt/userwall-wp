@@ -3,12 +3,18 @@
  * User Wall WP Activation
  *
  * @file  activation.php
+ *
+ * @package UserWall_WP
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Activation functions for the User Wall plugin.
  */
-function userwall_wp_activate() {
+function uswp_activate() {
 	global $wpdb;
 
 	// Define the table names with the "userwall_" prefix

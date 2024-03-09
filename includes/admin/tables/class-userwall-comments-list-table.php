@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -64,8 +67,6 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 			case 'user_id':
 			case 'post_id':
 				return $item[ $column_name ];
-			default:
-				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
 		}
 	}
 
@@ -153,7 +154,7 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	 */
 	private function get_comments_data() {
 		global $wpdb;
-		$sql = "SELECT * FROM {$wpdb->prefix}userwall_comments";
+		$sql = $wpdb->prepare( 'SELECT * FROM %i', $wpdb->prefix . 'userwall_comments' );
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 		return $data;

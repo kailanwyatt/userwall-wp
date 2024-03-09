@@ -6,6 +6,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class UserWall_WP_Group
  * Class for managing a WordPress group.

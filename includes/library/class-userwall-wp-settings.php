@@ -5,6 +5,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * UserWall_WP_Settings class
  */
@@ -49,7 +53,7 @@ class UserWall_WP_Settings {
 	 * Initialize the settings
 	 */
 	public function admin_init() {
-		register_setting( 'userwall_wp', 'userwall_wp' );
+		register_setting( 'userwall_wp', 'userwall-wp' );
 		$this->init_general_main_settings();
 		$this->init_general_secondary_settings();
 		$this->init_advanced_settings();
@@ -70,7 +74,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'pages_dropdown',
 				'name'  => 'user_page',
-				'label' => __( 'User Page', 'userwall_wp' ),
+				'label' => __( 'User Page', 'userwall-wp' ),
 			)
 		);
 
@@ -78,7 +82,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'pages_dropdown',
 				'name'  => 'single_post_page',
-				'label' => __( 'Single Post Page', 'userwall_wp' ),
+				'label' => __( 'Single Post Page', 'userwall-wp' ),
 			)
 		);
 
@@ -87,7 +91,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'text',
 				'name'  => 'character_limit',
-				'label' => __( 'Character Limit', 'userwall_wp' ),
+				'label' => __( 'Character Limit', 'userwall-wp' ),
 			)
 		);
 
@@ -95,7 +99,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'checkbox',
 				'name'  => 'allow_titles',
-				'label' => __( 'Allow Titles on Posts', 'userwall_wp' ),
+				'label' => __( 'Allow Titles on Posts', 'userwall-wp' ),
 			)
 		);
 
@@ -103,7 +107,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'checkbox',
 				'name'  => 'open_posts',
-				'label' => __( 'Open Posts Page', 'userwall_wp' ),
+				'label' => __( 'Open Posts Page', 'userwall-wp' ),
 			)
 		);
 
@@ -112,7 +116,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'    => 'checkbox',
 				'name'    => 'editor_options',
-				'label'   => __( 'Editor Options', 'userwall_wp' ),
+				'label'   => __( 'Editor Options', 'userwall-wp' ),
 				'options' => array(
 					'bold'       => __( 'Bold', 'userwall-wp' ),
 					'italic'     => __( 'Italic', 'userwall-wp' ),
@@ -215,6 +219,7 @@ class UserWall_WP_Settings {
 			$args['name'],
 			$args['label'],
 			function () use ( $input ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $input;
 			},
 			$args['section'],
@@ -243,7 +248,7 @@ class UserWall_WP_Settings {
 	private function init_advanced_settings() {
 		add_settings_section(
 			'wp_custom_advanced',
-			__( 'Advanced Settings', 'wp_custom_admin_settings_panel' ),
+			__( 'Advanced Settings', 'userwall-wp' ),
 			function () {
 				echo '<p>Advanced settings section description.</p>'; },
 			'wp_custom_advanced'
@@ -259,7 +264,7 @@ class UserWall_WP_Settings {
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $tab => $name ) {
 			$class = ( $tab === $this->get_current_tab() ) ? ' nav-tab-active' : '';
-			echo "<a class='nav-tab$class' href='?page=userwall-wp-settings&tab=$tab'>$name</a>";
+			echo '<a class="nav-tab' . esc_attr( $class ) . ' href="' . esc_url( admin_url( 'admin.php?page=userwall-wp-settings&tab=' . esc_attr( $tab ) ) ) . '">' . esc_attr( $name ) . '</a>';
 		}
 		echo '</h2>';
 
@@ -267,7 +272,7 @@ class UserWall_WP_Settings {
 			echo '<ul class="subsubsub">';
 			foreach ( $this->subtabs[ $this->get_current_tab() ] as $subtab => $name ) {
 				$class = ( $subtab === $this->get_current_subtab() ) ? ' current' : '';
-				echo "<li><a class='$class' href='?page=userwall-wp-settings&tab={$this->get_current_tab()}&subtab=$subtab'>$name</a> | </li>";
+				echo '<li><a class="' . esc_attr( $class ) . ' href="' . esc_url( admin_url( 'admin.php?page=userwall-wp-settings&tab=' . $this->get_current_tab() . '&subtab=' . esc_attr( $subtab ) ) ) . '">' . esc_attr( $name ) . '</a> | </li>';
 			}
 			echo '</ul>';
 		}

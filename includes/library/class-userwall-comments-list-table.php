@@ -5,6 +5,9 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -83,16 +86,16 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 		$order   = 'desc';
 
 		// If orderby is set, use this as the sort column.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['orderby'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
 		}
 
 		// If order is set use this as the order.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['order'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$order = sanitize_text_field( wp_unslash( $_GET['order'] ) );
 		}
 
@@ -156,8 +159,8 @@ class Userwall_Comments_List_Table extends WP_List_Table {
 	 */
 	private function get_comments_data() {
 		global $wpdb;
-		$sql = "SELECT * FROM {$wpdb->prefix}userwall_comments";
-		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = $wpdb->prepare( 'SELECT * FROM %i', array( $wpdb->prefix . 'userwall_comments' ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$data = $wpdb->get_results( $sql, ARRAY_A );
 		return $data;
 	}

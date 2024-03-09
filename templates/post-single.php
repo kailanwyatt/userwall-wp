@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 ?>
 <div id="userwall-wp-container" data-thread data-post_id="<?php echo absint( $post_id ); ?>" data-thread-wrapper>
 	<div class="userwall-wp-inner-thread"></div>

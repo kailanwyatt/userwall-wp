@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 /**
  * Class UserWallWP_Addon_Gallery
  */
@@ -122,10 +125,12 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 			"DROP TABLE IF EXISTS $table_media",
 		);
 
+		// Include the WordPress database upgrade file.
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
 		// Delete the tables.
 		foreach ( $sql_queries as $sql_query ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$wpdb->query( $sql_query );
+			dbDelta( $sql_query );
 		}
 	}
 
@@ -136,9 +141,9 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		add_filter( 'userwall_wp_post_tabs', array( $this, 'add_tab' ) );
 		add_action( 'userwall_wp_after_post_form', array( $this, 'post_form_addition' ) );
 		add_action( 'userwall_wp_create_post', array( $this, 'upload_media_files' ), 10, 1 );
-		add_filter( 'userwall_wp_get_post_by_id', array( $this, 'userwall_wp_get_post_by_id' ), 10, 2 );
+		add_filter( 'userwall_wp_get_post_by_id', array( $this, 'uswp_get_post_by_id' ), 10, 2 );
 		add_filter( 'userwall_wp_get_posts', array( $this, 'add_image_to_posts_userwall' ), 10, 2 );
-		add_action( 'userwall_wp_before_delete_post', array( $this, 'userwall_wp_before_delete_post' ), 10, 1 );
+		add_action( 'userwall_wp_before_delete_post', array( $this, 'uswp_before_delete_post' ), 10, 1 );
 		add_filter( 'userwall_wp_get_post_content_types', array( $this, 'add_content_type' ), 10, 1 );
 	}
 
@@ -162,17 +167,21 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 	 * @param int $post_id The post ID.
 	 * @return void
 	 */
-	public function userwall_wp_before_delete_post( $post_id ) {
+	public function uswp_before_delete_post( $post_id ) {
 		global $wpdb;
 
 		$table_media = $wpdb->prefix . 'userwall_media';
 		$table_posts = $wpdb->prefix . 'userwall_posts';
-
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$media = $wpdb->get_results(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT m.*, p.post_type FROM {$table_media} AS m LEFT JOIN {$table_posts} AS p ON p.post_id=m.post_id WHERE m.post_id = %d",
-				$post_id
+				'SELECT m.*, p.post_type FROM %i AS m LEFT JOIN %i AS p ON p.post_id=m.post_id WHERE m.post_id = %d',
+				array(
+					$table_media,
+					$table_posts,
+					$post_id,
+				)
 			)
 		);
 
@@ -181,7 +190,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 				// Delete the file.
 				$file_manager = new UserWall_WP_FileManager();
 				$file_manager->delete_file( $row->file_path );
-
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->delete( $table_media, array( 'media_id' => $row->media_id ) );
 			}
 		}
@@ -227,22 +236,27 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		$user_id      = get_current_user_id();
 		$file_manager = new UserWall_WP_FileManager( $user_id );
 		$media_ids    = array();
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( ! empty( $_FILES['post_images'] ) && is_array( $_FILES['post_images']['name'] ) ) {
+		// phpcs:disable WordPress.Security.NonceVerification, WordPress.Security.NonceVerification.Missing
+		if ( isset( $_FILES['post_images']['name'] ) && ! empty( $_FILES['post_images'] ) && is_array( $_FILES['post_images']['name'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			foreach ( $_FILES['post_images']['name'] as $index => $value ) {
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				if ( 0 === $_FILES['post_images']['error'][ $index ] ) {
+					// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					$file_path = $file_manager->upload_file(
 						array(
-							'name'      => $_FILES['post_images']['name'][ $index ],
-							'full_path' => $_FILES['post_images']['full_path'][ $index ],
-							'type'      => $_FILES['post_images']['type'][ $index ],
-							'tmp_name'  => $_FILES['post_images']['tmp_name'][ $index ],
-							'error'     => $_FILES['post_images']['error'][ $index ],
-							'size'      => $_FILES['post_images']['size'][ $index ],
+							// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+							'name'      => sanitize_file_name( $_FILES['post_images']['name'][ $index ] ),
+							'full_path' => sanitize_text_field( $_FILES['post_images']['full_path'][ $index ] ), // Assuming this is a path, use sanitize_text_field
+							'type'      => sanitize_mime_type( $_FILES['post_images']['type'][ $index ] ),
+							'tmp_name'  => $_FILES['post_images']['tmp_name'][ $index ], // No need to sanitize, but you should validate
+							'error'     => intval( $_FILES['post_images']['error'][ $index ] ), // Convert to integer
+							'size'      => intval( $_FILES['post_images']['size'][ $index ] ), // Convert to integer
 						)
 					);
 
 					if ( $file_path ) {
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 						$insert_result = $wpdb->insert(
 							$wpdb->prefix . 'userwall_media',
 							array(
@@ -260,6 +274,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 
 			do_action( 'userwall_wp_after_image_upload_complete', $post_id, $media_ids );
 		}
+		// phpcs:enable
 	}
 
 	/**
@@ -299,15 +314,26 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 	 * @param int   $post_id The post ID.
 	 * @return array
 	 */
-	public function userwall_wp_get_post_by_id( $post = array(), $post_id = 0 ) {
+	public function uswp_get_post_by_id( $post = object, $post_id = 0 ) {
 		global $wpdb;
-		$media = $wpdb->get_results(
-			$wpdb->prepare(
-				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM {$this->table} WHERE post_id = %d",
-				$post_id
-			)
-		);
+		$cache_key = 'userwall_wp_media_' . $post_id;
+		$media     = wp_cache_get( $cache_key );
+
+		if ( false === $media ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$media = $wpdb->get_results(
+				$wpdb->prepare(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					'SELECT * FROM %i WHERE post_id = %d',
+					array(
+						$this->table,
+						$post_id,
+					)
+				)
+			);
+
+			wp_cache_set( $cache_key, $media );
+		}
 
 		if ( ! empty( $media ) ) {
 			$post->images = $this->transform_media( $media, $post );
@@ -332,11 +358,15 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		$media     = wp_cache_get( $cache_key, 'userwall_wp_media' );
 
 		if ( false === $media ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$media = $wpdb->get_results(
 				$wpdb->prepare(
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					"SELECT * FROM {$this->table} WHERE post_id = %d",
-					$post_id
+					'SELECT * FROM %i WHERE post_id = %d',
+					array(
+						$this->table,
+						$post_id,
+					)
 				)
 			);
 

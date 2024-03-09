@@ -5,6 +5,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class for Managing Posts and Comments.
  *
@@ -175,11 +179,12 @@ class UserWall_WP_Post_Manager {
 			return true;
 		}
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		$query  = $this->wpdb->prepare(
-			"SELECT p.user_id
-            FROM {$this->table_posts} p
-            WHERE p.post_id = %d",
-			$post_id
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
+		$query = $this->wpdb->prepare(
+			'SELECT p.user_id
+            FROM %i p
+            WHERE p.post_id = %d',
+			array( $this->table_posts, $post_id )
 		);
 
 		$user_id = $this->wpdb->get_var( $query );
@@ -218,15 +223,25 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function get_post_by_id( $post_id ) {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		if ( $this->wpdb->has_cap( 'identifier_placeholders' ) ) {
+			$placeholders = array( '%d', '%d', '%d' );
+		} else {
+			$placeholders = array( '%s', '%s', '%s' );
+		}
 		$post = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT p.*, 
-                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
-                (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-                FROM {$this->table_posts} p
-                WHERE p.post_id = %d",
-				$post_id
+				'SELECT p.*, 
+                (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
+                (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+                FROM %i p
+                WHERE p.post_id = %d',
+				array(
+					$tables['comments'],
+					$tables['likes'],
+					$this->table_posts,
+					$post_id,
+				)
 			)
 		);
 		$post = $this->transform_post( $post );
@@ -244,9 +259,12 @@ class UserWall_WP_Post_Manager {
 	public function get_posts_by_user_id( $user_id, $limit = -1 ) {
 		$posts = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT * FROM {$this->table_posts} WHERE user_id = %d ORDER BY ID DESC LIMIT %d",
-				$user_id,
-				$limit
+				'SELECT * FROM %i WHERE user_id = %d ORDER BY ID DESC LIMIT %d',
+				array(
+					$this->table_posts,
+					$user_id,
+					$limit,
+				)
 			)
 		);
 		if ( ! empty( $posts ) ) {
@@ -286,15 +304,20 @@ class UserWall_WP_Post_Manager {
 		// Implement the query to fetch the latest posts since $last_post_id here.
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 		$query  = $this->wpdb->prepare(
-			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
-            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-            FROM {$this->table_posts} p
+			'SELECT p.*, 
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+            FROM %i p
             WHERE p.post_id > %d
             ORDER BY p.post_id DESC
-            LIMIT %d",
-			$last_post_id,
-			$limit
+            LIMIT %d',
+			array(
+				$tables['comments'],
+				$tables['likes'],
+				$this->table_posts,
+				$last_post_id,
+				$limit,
+			)
 		);
 
 		$posts = $this->wpdb->get_results( $query );
@@ -372,13 +395,16 @@ class UserWall_WP_Post_Manager {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 
 		$query = $this->wpdb->prepare(
-			"SELECT COUNT(p.post_id)
-            FROM {$this->table_posts} p
+			'SELECT COUNT(p.post_id)
+            FROM %i p
             WHERE p.post_id > %d
             ORDER BY p.post_id ASC
-            LIMIT %d",
-			$last_post_id,
-			$limit
+            LIMIT %d',
+			array(
+				$this->table_posts,
+				$last_post_id,
+				$limit,
+			)
 		);
 
 		$posts = $this->wpdb->get_var( $query );
@@ -538,13 +564,16 @@ class UserWall_WP_Post_Manager {
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$sql_query = $this->wpdb->prepare(
 			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,
-            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-            FROM {$this->table_posts} p
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+            FROM %i p
             WHERE {$where_clause}
             ORDER BY {$args['order_by']} {$args['order']}
             LIMIT %d
             OFFSET %d", // Add the LIMIT and OFFSET clauses.
+			$tables['comments'],
+			$tables['likes'],
+			$this->table_posts,
 			$limit, // Pass the limit value.
 			$offset, // Pass the offset value.
 			...$where_values // Pass the array of values.
@@ -756,10 +785,13 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function get_user_id_by_post_id( $post_id ) {
 		$query = $this->wpdb->prepare(
-			"SELECT user_id
-            FROM {$this->table_posts}
-            WHERE post_id = %d",
-			$post_id
+			'SELECT user_id
+            FROM %i
+            WHERE post_id = %d',
+			array(
+				$this->table_posts,
+				$post_id,
+			)
 		);
 
 		$user_id = $this->wpdb->get_var( $query );
@@ -781,10 +813,13 @@ class UserWall_WP_Post_Manager {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$comment = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT c.*
-                FROM {$tables['comments']} c
-                WHERE c.comment_id = %d",
-				$comment_id
+				'SELECT c.*
+                FROM %i c
+                WHERE c.comment_id = %d',
+				array(
+					$tables['comments'],
+					$comment_id,
+				)
 			)
 		);
 		$comment = $this->transform_post( $comment );
@@ -802,10 +837,13 @@ class UserWall_WP_Post_Manager {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$comment = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT c.*
-                FROM {$tables['comments']} c
-                WHERE c.comment_id = %d",
-				$comment_id
+				'SELECT c.*
+                FROM %i c
+                WHERE c.comment_id = %d',
+				array(
+					$tables['comments'],
+					$comment_id,
+				)
 			)
 		);
 
@@ -837,14 +875,19 @@ class UserWall_WP_Post_Manager {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				'SELECT 
 					c.*,
-					(SELECT COUNT(comment_id) FROM {$tables['comments']} WHERE parent_id = c.comment_id) AS replies_count,
-            		(SELECT COUNT(like_id) FROM {$tables['likes']} WHERE comment_id = c.comment_id) AS reactions_count 
-					FROM {$tables['comments']} AS c WHERE c.post_id = %d AND c.parent_id = %d ORDER BY c.comment_date DESC LIMIT %d",
-				$post_id,
-				$parent_id,
-				$limit
+					(SELECT COUNT(comment_id) FROM %i WHERE parent_id = c.comment_id) AS replies_count,
+            		(SELECT COUNT(like_id) FROM %i WHERE comment_id = c.comment_id) AS reactions_count 
+					FROM %i AS c WHERE c.post_id = %d AND c.parent_id = %d ORDER BY c.comment_date DESC LIMIT %d',
+				array(
+					$tables['comments'],
+					$tables['likes'],
+					$tables['comments'],
+					$post_id,
+					$parent_id,
+					$limit,
+				)
 			)
 		);
 
@@ -898,10 +941,13 @@ class UserWall_WP_Post_Manager {
 		$tables   = UserWall_WP_Table_Manager::get_table_names();
 		$comments = $this->wpdb->get_var(
 			$this->wpdb->prepare(
-				"SELECT COUNT(c.comment_id)
-                FROM {$tables['comments']} c
-                WHERE c.post_id = %d",
-				absint( $post_id )
+				'SELECT COUNT(c.comment_id)
+                FROM %i c
+                WHERE c.post_id = %d',
+				array(
+					$tables['comments'],
+					absint( $post_id ),
+				)
 			)
 		);
 

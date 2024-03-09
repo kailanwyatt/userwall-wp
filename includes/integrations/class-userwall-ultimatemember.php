@@ -6,6 +6,10 @@
  *
  * @package UserWall_WP
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 class UserWall_UltimateMember {
 	/**
 	 * Constructor.

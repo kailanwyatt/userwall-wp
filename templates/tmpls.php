@@ -1,3 +1,15 @@
+<?php
+/**
+ * JS Script Template
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+?>
 <script type="text/html" id="tmpl-userwall-wp-feed-template">
 	<?php do_action( 'wp_userwall_header' ); ?>
 	<!-- Loop through userwall -->
@@ -75,7 +87,7 @@
 				<# } #>
 			</div>
 			<?php endif; ?>
-			<?php userwall_wp_get_interaction_tmpl( 'thread' ); ?>
+			<?php uswp_get_interaction_tmpl( 'thread' ); ?>
 			<?php if ( is_user_logged_in() ) : ?>
 			<!-- comment box -->
 			<div class="comment-edit-form">
@@ -158,7 +170,7 @@
 				<# } #>
 			</div>
 			<?php endif; ?>
-			<?php userwall_wp_get_interaction_tmpl( 'comment' ); ?>
+			<?php uswp_get_interaction_tmpl( 'comment' ); ?>
 			<?php if ( is_user_logged_in() ) : ?>
 			<!-- Reply button -->
 			<div class="userwall-wp-reply">

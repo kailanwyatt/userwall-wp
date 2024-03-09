@@ -8,7 +8,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: userwall-wp
  * Domain Path: /languages
- * Requires at least: 5.6
+ * Requires at least: 6.2
  * Requires PHP: 7.0
  *
  * @package UserWall_WP
@@ -30,17 +30,17 @@ require_once USERWALL_WP_PLUGIN_DIR . 'activation.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'deactivation.php';
 
 // Register the activation hook.
-register_activation_hook( __FILE__, 'userwall_wp_activate' );
+register_activation_hook( __FILE__, 'uswp_activate' );
 
 // Hook into plugin deactivation.
-register_deactivation_hook( __FILE__, 'userwall_wp_deactivate' );
+register_deactivation_hook( __FILE__, 'uswp_deactivate' );
 
 
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-post-core.php';
 
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-post.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/class-userwall-wp-profile.php';
-require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-template.php';
+require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-template.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/helper-functions.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/library/icons.php';
 

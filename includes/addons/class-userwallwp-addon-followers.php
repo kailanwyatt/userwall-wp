@@ -1,6 +1,16 @@
 <?php
 /**
  * Class UserWallWP_Addon_Followers
+ *
+ * @package Userwall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class UserWallWP_Addon_Followers
  */
 class UserWallWP_Addon_Followers extends UserWall_WP_Base_Addon {
 

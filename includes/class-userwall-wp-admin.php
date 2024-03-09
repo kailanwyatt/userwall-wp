@@ -5,6 +5,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Include settings library.
  */
@@ -267,7 +271,7 @@ class UserWall_WP_Admin {
 			$addons         = $addons_manager->register_addons();
 			$addon          = $addons_manager->get_addon_by_id( $addon_id );
 			echo '<div class="notice notice-success is-dismissible">';
-			// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+			// translators: Placeholder for the addon name.
 			echo '<p>' . sprintf( esc_html__( 'Addon "%s" has been deactivated.', 'userwall-wp' ), esc_html( $addon->get_name() ) ) . '</p>';
 			echo '</div>';
 		}
@@ -280,71 +284,68 @@ class UserWall_WP_Admin {
 	 */
 	public function process_addon_action() {
 		// Check if the form was submitted.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( isset( $_POST['addon_action'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( isset( $_POST['addon_id'] ) ) {
-				$addon_id = sanitize_text_field( wp_unslash( $_POST['addon_id'] ) );
-			}
-			$active_addons     = get_option( $this->option_active_addons, array() );
-			$active_addons_ids = array_keys( $active_addons );
-			$redirect_url      = admin_url( 'admin.php?page=userwall-wp-addons' );
-			// Instantiate the addon management class.
-			$addons_manager = new UserWall_WP_Addons();
-			$addons_manager->register_addons();
-			$addons = $addons_manager->get_addons();
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( 'activate' === $_POST['addon_action'] ) {
-				// Activate the addon.
-				if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids, true ) ) {
-					$addon = ! empty( $addons[ $addon_id ] ) ? $addons[ $addon_id ] : array();
-					if ( $addon ) {
-						// $active_addons[][ $addon_id ] = $addon;
-						$class_name       = get_class( $addon );
-						$reflection_class = new ReflectionClass( $class_name );
-						$file_path        = $reflection_class->getFileName();
+		if ( isset( $_POST['nonce'] ) && isset( $_POST['addon_id'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'userwall-wp-addon-action-' . sanitize_text_field( wp_unslash( $_POST['addon_id'] ) ) ) ) {
+			if ( isset( $_POST['addon_action'] ) ) {
+				if ( isset( $_POST['addon_id'] ) ) {
+					$addon_id = sanitize_text_field( wp_unslash( $_POST['addon_id'] ) );
+				}
+				$active_addons     = get_option( $this->option_active_addons, array() );
+				$active_addons_ids = array_keys( $active_addons );
+				$redirect_url      = admin_url( 'admin.php?page=userwall-wp-addons' );
+				// Instantiate the addon management class.
+				$addons_manager = new UserWall_WP_Addons();
+				$addons_manager->register_addons();
+				$addons = $addons_manager->get_addons();
+				if ( 'activate' === $_POST['addon_action'] ) {
+					// Activate the addon.
+					if ( empty( $active_addons_ids ) || ! in_array( $addon_id, $active_addons_ids, true ) ) {
+						$addon = ! empty( $addons[ $addon_id ] ) ? $addons[ $addon_id ] : array();
+						if ( $addon ) {
+							$class_name       = get_class( $addon );
+							$reflection_class = new ReflectionClass( $class_name );
+							$file_path        = $reflection_class->getFileName();
 
-						$addon_array                = array();
-						$addon_array['id']          = $addon_id;
-						$addon_array['name']        = $addon->get_name();
-						$addon_array['description'] = $addon->get_description();
-						$addon_array['version']     = $addon->get_version();
-						$addon_array['active']      = $addon->is_active();
-						$addon_array['file']        = $file_path;
-						$addon_array['class']       = get_class( $addon );
-						$active_addons[ $addon_id ] = $addon_array;
+							$addon_array                = array();
+							$addon_array['id']          = $addon_id;
+							$addon_array['name']        = $addon->get_name();
+							$addon_array['description'] = $addon->get_description();
+							$addon_array['version']     = $addon->get_version();
+							$addon_array['active']      = $addon->is_active();
+							$addon_array['file']        = $file_path;
+							$addon_array['class']       = get_class( $addon );
+							$active_addons[ $addon_id ] = $addon_array;
+							update_option( $this->option_active_addons, $active_addons );
+							$addons_manager->activate_addon( $addon_id );
+							do_action( 'userwall_wp_after_addon_activated', $addon_id );
+							$redirect_url = add_query_arg(
+								array(
+									'addon_status' => 'activated',
+									'addon_id'     => $addon_id,
+								),
+								$redirect_url
+							);
+						}
+					}
+				} elseif ( 'deactivate' === $_POST['addon_action'] ) {
+					// Deactivate the addon.
+					if ( in_array( $addon_id, $active_addons_ids, true ) ) {
+						unset( $active_addons[ $addon_id ] );
 						update_option( $this->option_active_addons, $active_addons );
-						$addons_manager->activate_addon( $addon_id );
-						do_action( 'userwall_wp_after_addon_activated', $addon_id );
+						// Deactivate addon by ID.
+						$addons_manager->deactivate_addon( $addon_id );
 						$redirect_url = add_query_arg(
 							array(
-								'addon_status' => 'activated',
+								'addon_status' => 'deactivated',
 								'addon_id'     => $addon_id,
 							),
 							$redirect_url
 						);
+						do_action( 'userwall_wp_after_addon_activated', $addon_id );
 					}
 				}
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing
-			} elseif ( 'deactivate' === $_POST['addon_action'] ) {
-				// Deactivate the addon.
-				if ( in_array( $addon_id, $active_addons_ids, true ) ) {
-					unset( $active_addons[ $addon_id ] );
-					update_option( $this->option_active_addons, $active_addons );
-					// Deactivate addon by ID.
-					$addons_manager->deactivate_addon( $addon_id );
-					$redirect_url = add_query_arg(
-						array(
-							'addon_status' => 'deactivated',
-							'addon_id'     => $addon_id,
-						),
-						$redirect_url
-					);
-					do_action( 'userwall_wp_after_addon_activated', $addon_id );
-				}
+				wp_safe_redirect( $redirect_url );
+				exit;
 			}
-			wp_safe_redirect( $redirect_url );
-			exit;
 		}
 	}
 }

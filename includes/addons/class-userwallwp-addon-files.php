@@ -1,5 +1,14 @@
 <?php
 /**
+ * UserWallWP_Addon_Files class
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+/**
  * Class UserWallWP_Addon_Files
  */
 class UserWallWP_Addon_Files extends UserWall_WP_Base_Addon {

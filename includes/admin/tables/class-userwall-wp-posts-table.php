@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 /**
  * Class UserWall_WP_Posts_Table
  */
@@ -160,7 +163,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
 		// Updated SQL query for the new table.
-		$query = "SELECT * FROM {$this->table_posts}";
+		$query = $wpdb->prepare( 'SELECT * FROM %i', array( $this->table_posts ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_REQUEST['orderby'] ) && isset( $sortable[ $_REQUEST['orderby'] ] ) ) {
@@ -170,7 +173,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 		}
 
 		$query .= " LIMIT $per_page OFFSET $offset";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$this->items = $wpdb->get_results( $query, ARRAY_A );
 	}
 
@@ -181,36 +184,6 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 	 */
 	public function get_hidden_columns() {
 		return array();
-	}
-
-	/**
-	 * Get sortable columns.
-	 *
-	 * @return array
-	 */
-	public function get_posts_data() {
-		global $wpdb;
-
-		// Define your SQL query to fetch post data.
-		$query = "SELECT p.*, u.display_name AS user_name,
-                  (SELECT COUNT(*) FROM {$wpdb->prefix}comments WHERE comment_post_ID = p.post_id) AS comments_count,
-                  (SELECT COUNT(*) FROM your_reaction_table WHERE post_id = p.post_id) AS reactions_count
-                  FROM {$wpdb->prefix}posts p
-                  LEFT JOIN {$wpdb->prefix}users u ON p.post_author = u.ID
-                  WHERE p.post_type = 'post'";
-
-		// Handle sorting if necessary.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-		$orderby = ! empty( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'creation_date';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
-		$order  = ! empty( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : 'DESC';
-		$query .= " ORDER BY $orderby $order";
-
-		// Fetch the data.
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$data = $wpdb->get_results( $query, ARRAY_A );
-
-		return $data;
 	}
 
 
@@ -387,6 +360,7 @@ class UserWall_WP_Posts_Table extends WP_List_Table {
 
 			foreach ( $post_ids as $post_id ) {
 				// Update the post status for each selected post.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->update(
 					$wpdb->prefix . 'posts',
 					array( 'post_status' => $new_status ),

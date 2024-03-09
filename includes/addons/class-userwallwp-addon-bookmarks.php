@@ -1,5 +1,15 @@
 <?php
 /**
+ * UserWallWP_Addon_Bookmarks class
+ *
+ * @package Userwall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Class UserWallWP_Addon_Bookmarks
  *
  * This class represents the Bookmarks addon for UserWallWP.

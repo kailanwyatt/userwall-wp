@@ -5,12 +5,19 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * UserWall_WP_Blocks class
  */
 class UserWall_WP_Blocks {
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
-		// Register Gutenberg block
+		// Register Gutenberg block.
 		add_action( 'init', array( $this, 'register_gutenberg_block' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'wp_userwall_enqueue_block_editor_assets' ) );
 		add_filter( 'block_categories', array( $this, 'register_user_wall_category' ), 10, 2 );
@@ -28,13 +35,16 @@ class UserWall_WP_Blocks {
 			array(
 				array(
 					'slug'  => 'user-wall',
-					'title' => __( 'User Wall', 'user-wall' ),
+					'title' => __( 'User Wall', 'userwall-wp' ),
 					'icon'  => 'smiley',
 				),
 			)
 		);
 	}
 
+	/**
+	 * Register the User Wall block.
+	 */
 	public function register_gutenberg_block() {
 		register_block_type(
 			'userwall-wp/page-render',
@@ -79,7 +89,9 @@ class UserWall_WP_Blocks {
 		wp_enqueue_script(
 			'wp-userwall-block-script',
 			USERWALL_WP_PLUGIN_URL . '/assets/js/wp-userwall-block.js',
-			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' )
+			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+			filemtime( USERWALL_WP_PLUGIN_DIR . '/assets/js/wp-userwall-block.js' ),
+			array( 'in_footer' => true )
 		);
 	}
 }

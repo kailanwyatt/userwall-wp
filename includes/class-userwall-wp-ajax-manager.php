@@ -5,6 +5,10 @@
  * @package UserWall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * If this file is called directly, abort.
  */
@@ -23,7 +27,7 @@ class UserWall_WP_AJAX_Manager {
 	 */
 	public function __construct() {
 		// Add action hooks for handling AJAX requests.
-		add_action( 'wp_ajax_userwall_wp_save_post', array( $this, 'userwall_wp_save_post' ) );
+		add_action( 'wp_ajax_userwall_wp_save_post', array( $this, 'uswp_save_post' ) );
 		add_action( 'wp_ajax_fetch_data_by_thread', array( $this, 'fetch_data_by_thread' ) );
 		add_action( 'wp_ajax_nopriv_fetch_data_by_thread', array( $this, 'fetch_data_by_thread' ) );
 
@@ -42,20 +46,23 @@ class UserWall_WP_AJAX_Manager {
 		add_action( 'wp_ajax_userwall_wp_load_comments', array( $this, 'load_comments' ) );
 		add_action( 'wp_ajax_nopriv_userwall_wp_load_comments', array( $this, 'load_comments' ) );
 
-		add_action( 'wp_ajax_userwall_wp_update_post', array( $this, 'userwall_wp_update_post' ) );
-		add_action( 'wp_ajax_userwall_wp_update_comment', array( $this, 'userwall_wp_update_comment' ) );
+		add_action( 'wp_ajax_userwall_wp_update_post', array( $this, 'uswp_update_post' ) );
+		add_action( 'wp_ajax_userwall_wp_update_comment', array( $this, 'uswp_update_comment' ) );
 
 		add_action( 'wp_ajax_userwall_wp_post_comment', array( $this, 'post_comment' ) );
 
 		add_action( 'wp_ajax_userwall_wp_comment_reply', array( $this, 'comment_reply_callback' ) );
-		add_action( 'wp_ajax_userwall_wp_post_like', array( $this, 'userwall_wp_post_like' ) );
+		add_action( 'wp_ajax_userwall_wp_post_like', array( $this, 'uswp_post_like' ) );
 
-		add_action( 'wp_ajax_fetch_usernames', array( $this, 'fetch_usernames_callback' ) ); // For logged-in users
-		add_action( 'wp_ajax_nopriv_fetch_usernames', array( $this, 'fetch_usernames_callback' ) ); // For logged-out users
+		add_action( 'wp_ajax_fetch_usernames', array( $this, 'fetch_usernames_callback' ) );
+		add_action( 'wp_ajax_nopriv_fetch_usernames', array( $this, 'fetch_usernames_callback' ) );
 	}
 
 	/**
 	 * Check if the AJAX nonce is valid.
+	 *
+	 * @param string $nonce_field The nonce field name.
+	 * @param string $nonce_action The nonce action name.
 	 *
 	 * @return bool Whether the nonce is valid.
 	 */
@@ -133,7 +140,7 @@ class UserWall_WP_AJAX_Manager {
 	 *
 	 * @return void
 	 */
-	public function userwall_wp_update_comment() {
+	public function uswp_update_comment() {
 		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
@@ -179,7 +186,7 @@ class UserWall_WP_AJAX_Manager {
 	 *
 	 * @return void
 	 */
-	public function userwall_wp_update_post() {
+	public function uswp_update_post() {
 		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
@@ -227,7 +234,7 @@ class UserWall_WP_AJAX_Manager {
 	 *
 	 * @return void
 	 */
-	public function userwall_wp_save_post() {
+	public function uswp_save_post() {
 		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'userwall-wp' ) ) );
@@ -554,7 +561,7 @@ class UserWall_WP_AJAX_Manager {
 	 *
 	 * @return void
 	 */
-	public function userwall_wp_post_like() {
+	public function uswp_post_like() {
 		global $wpdb;
 		// Check for nonce security.
 		if ( ! $this->is_valid_nonce() ) {
@@ -566,19 +573,23 @@ class UserWall_WP_AJAX_Manager {
 		$post_id = ! empty( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$comment_id = ! empty( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$like_id = $wpdb->get_var(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT like_id FROM {$table_likes} WHERE post_id = %d AND comment_id = %d AND user_id = %d",
-				$post_id,
-				$comment_id,
-				$user_id
+				'SELECT like_id FROM %i WHERE post_id = %d AND comment_id = %d AND user_id = %d',
+				array(
+					$table_likes,
+					$post_id,
+					$comment_id,
+					$user_id,
+				)
 			)
 		);
 
 		// If exists then remove it.
 		if ( $like_id ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->delete(
 				$table_likes,
 				array(
@@ -592,12 +603,16 @@ class UserWall_WP_AJAX_Manager {
 			$posts        = $post_manager->add_like_or_reaction( $user_id, $post_id, $comment_id, 'like' );
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$total_likes = $wpdb->get_var(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT COUNT(like_id) FROM {$table_likes} WHERE post_id = %d AND comment_id = %d",
-				$post_id,
-				$comment_id
+				'SELECT COUNT(like_id) FROM %i WHERE post_id = %d AND comment_id = %d',
+				array(
+					$table_likes,
+					$post_id,
+					$comment_id,
+				)
 			)
 		);
 		wp_send_json_success( array( 'total' => $total_likes ) );

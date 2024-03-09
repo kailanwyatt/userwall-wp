@@ -5,6 +5,9 @@
  * @package Userwall_WP
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 // Instantiate the addon management class.
 $addons_manager = new UserWall_WP_Addons();
 
@@ -43,6 +46,7 @@ $addons = $addons_manager->get_addons();
 								?>
 							<form method="post">
 								<input type="hidden" name="addon_id" value="<?php echo esc_attr( $addon_id ); ?>">
+								<?php wp_nonce_field( 'userwall-wp-addon-action-' . $addon_id ); ?>
 								<?php if ( $is_active ) : ?>
 									<input type="hidden" name="addon_action" value="deactivate">
 									<button type="submit" class="button">Deactivate</button>
