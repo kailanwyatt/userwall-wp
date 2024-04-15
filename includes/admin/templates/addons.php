@@ -49,10 +49,10 @@ $addons = $addons_manager->get_addons();
 								<?php wp_nonce_field( 'userwall-wp-addon-action-' . $addon_id ); ?>
 								<?php if ( $is_active ) : ?>
 									<input type="hidden" name="addon_action" value="deactivate">
-									<button type="submit" class="button">Deactivate</button>
+									<button type="submit" class="button"><?php esc_html_e( 'Deactivate', 'userwall-wp' ); ?></button>
 								<?php else : ?>
 									<input type="hidden" name="addon_action" value="activate">
-									<button type="submit" class="button">Activate</button>
+									<button type="submit" class="button"><?php esc_html_e( 'Activate', 'userwall-wp' ); ?></button>
 								<?php endif; ?>
 							</form>
 							<?php else : ?>

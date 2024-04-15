@@ -10,12 +10,11 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+/**
+ * UserWall_UltimateMember class
+ */
 class UserWall_UltimateMember {
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-	}
 
 	/**
 	 * Hooks.
@@ -41,10 +40,8 @@ class UserWall_UltimateMember {
 
 	/**
 	 * Custom tab content.
-	 *
-	 * @param array $args Args.
 	 */
-	public function custom_tab_content( $args ) {
+	public function custom_tab_content() {
 		$current_user_profile_id = um_profile_id();
 		echo do_shortcode( '[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $current_user_profile_id . '"]' );
 	}

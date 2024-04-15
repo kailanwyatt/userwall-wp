@@ -155,7 +155,8 @@ class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
 
 		// Delete the tables.
 		foreach ( $sql_queries as $sql_query ) {
-			dbDelta( $sql_query );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( $sql_query );
 		}
 	}
 

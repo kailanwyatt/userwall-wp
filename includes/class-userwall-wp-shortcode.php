@@ -17,9 +17,9 @@ class UserWall_WP_Shortcode {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_shortcode( 'userwall_wp_post_form', array( $this, 'uswp_post_form_shortcode' ), 10, 1 );
-		add_shortcode( 'userwall_wp_post_single', array( $this, 'uswp_post_single_shortcode' ), 10, 1 );
-		add_shortcode( 'userwall_wp_profile', array( $this, 'uswp_profile_shortcode' ), 10, 1 );
+		add_shortcode( 'userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode' ), 10, 1 );
+		add_shortcode( 'userwall_wp_post_single', array( $this, 'userwall_wp_post_single_shortcode' ), 10, 1 );
+		add_shortcode( 'userwall_wp_profile', array( $this, 'userwall_wp_profile_shortcode' ), 10, 1 );
 		add_action( 'wp_footer', array( $this, 'add_tmpls' ) );
 	}
 
@@ -37,7 +37,7 @@ class UserWall_WP_Shortcode {
 	 *
 	 * @param array $atts Shortcode attributes.
 	 */
-	public function uswp_post_form_shortcode( $atts = array() ) {
+	public function userwall_wp_post_form_shortcode( $atts = array() ) {
 		// Extract shortcode attributes with defaults.
 		$atts = shortcode_atts(
 			array(
@@ -80,7 +80,7 @@ class UserWall_WP_Shortcode {
 	 *
 	 * @param array $atts Shortcode attributes.
 	 */
-	public function uswp_profile_shortcode( $atts = array() ) {
+	public function userwall_wp_profile_shortcode( $atts = array() ) {
 		// Extract shortcode attributes with defaults.
 		$atts                = shortcode_atts(
 			array(
@@ -101,7 +101,7 @@ class UserWall_WP_Shortcode {
 		}
 
 		ob_start();
-		uswp_get_template( 'profile.php', $args );
+		userwall_wp_get_template( 'profile.php', $args );
 		$this->add_tmpls();
 		return ob_get_clean();
 	}
@@ -109,12 +109,12 @@ class UserWall_WP_Shortcode {
 	/**
 	 * Single Post Shortcode callback.
 	 */
-	public function uswp_post_single_shortcode() {
+	public function userwall_wp_post_single_shortcode() {
 		ob_start();
 		$args = array(
 			'post_id' => get_query_var( 'thread_id' ),
 		);
-		uswp_get_template( 'post-single.php', $args );
+		userwall_wp_get_template( 'post-single.php', $args );
 		$this->add_tmpls();
 		return ob_get_clean();
 	}

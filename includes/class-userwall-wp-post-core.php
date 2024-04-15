@@ -62,7 +62,7 @@ class UserWall_WP_Post_Core {
 	/**
 	 * Get post content types
 	 *
-	 * @return array
+	 * @param int $profile_id Profile ID.
 	 */
 	public function userwall_profile_content( $profile_id = 0 ) {
 		echo do_shortcode( '[userwall_wp_post_form type="user-posts" per_page="5" object_id="' . $profile_id . '"]' );

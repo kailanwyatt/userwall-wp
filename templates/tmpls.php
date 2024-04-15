@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<# } #>
 			</div>
 			<?php endif; ?>
-			<?php uswp_get_interaction_tmpl( 'thread' ); ?>
+			<?php userwall_wp_get_interaction_tmpl( 'thread' ); ?>
 			<?php if ( is_user_logged_in() ) : ?>
 			<!-- comment box -->
 			<div class="comment-edit-form">
@@ -170,7 +170,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<# } #>
 			</div>
 			<?php endif; ?>
-			<?php uswp_get_interaction_tmpl( 'comment' ); ?>
+			<?php userwall_wp_get_interaction_tmpl( 'comment' ); ?>
 			<?php if ( is_user_logged_in() ) : ?>
 			<!-- Reply button -->
 			<div class="userwall-wp-reply">

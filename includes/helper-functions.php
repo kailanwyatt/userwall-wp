@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param array  $args Arguments for the template.
  * @return void
  */
-function uswp_get_template( $template_name = '', $args = array() ) {
+function userwall_wp_get_template( $template_name = '', $args = array() ) {
 	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 	extract( $args );
 	include UserWall_Template::get_template( $template_name, $args );
@@ -29,7 +29,7 @@ function uswp_get_template( $template_name = '', $args = array() ) {
  * @param int|null $user_id User ID. If not set, use current user ID.
  * @return mixed The requested user profile data.
  */
-function uswp_get_userwall_wp_profile_data( $profile_key = '', $user_id = null ) {
+function userwall_wp_get_userwall_wp_profile_data( $profile_key = '', $user_id = null ) {
 	global $uwwp_profile_info;
 	if ( ! $user_id ) {
 		$user_id = get_current_user_id();
@@ -189,7 +189,7 @@ if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
 	 *
 	 * @param string $type The type of interaction.
 	 */
-	function uswp_get_interaction_tmpl( $type = '' ) {
+	function userwall_wp_get_interaction_tmpl( $type = '' ) {
 		?>
 	<div class="userwall-wp-activity-section">
 		<div class="userwall-wp-reaction-count userwall-wp-activity-block" aria-label="<?php esc_html_e( 'Reactions count', 'userwall-wp' ); ?>">
@@ -240,4 +240,62 @@ function get_group_meta( $group_id, $key = '', $single = false ) {
 		return ! empty( $group_meta[ $key ] ) ? $group_meta[ $key ] : array();
 	}
 	return $group_meta;
+}
+
+/**
+ * Get the group members.
+ *
+ * @return array
+ */
+function userwall_wp_kses_extended_ruleset() {
+	$kses_defaults = wp_kses_allowed_html( 'post' );
+
+	$svg_args = array(
+		'svg'   => array(
+			'class'           => true,
+			'aria-hidden'     => true,
+			'aria-labelledby' => true,
+			'focusable'       => true,
+			'role'            => true,
+			'fill'            => true,
+			'xmlns'           => true,
+			'width'           => true,
+			'height'          => true,
+			'stroke'          => true,
+			'stroke-width'    => true,
+			'stroke-linecap'  => true,
+			'stroke-linejoin' => true,
+			'viewbox'         => true, // <= Must be lower case!
+			'viewBox'         => true, // <= Must be camel case!
+		),
+		'g'     => array( 'fill' => true ),
+		'title' => array( 'title' => true ),
+		'path'  => array(
+			'd'               => true,
+			'fill'            => true,
+			'clip-rule'       => true,
+			'fill-rule'       => true,
+			'stroke-linecap'  => true,
+			'stroke-linejoin' => true,
+			'stroke-width'    => true,
+			'stroke'          => true,
+		),
+	);
+	return array_merge( $kses_defaults, $svg_args );
+}
+
+
+/**
+ * Clean variables using sanitize_text_field. Arrays are cleaned recursively.
+ * Non-scalar values are ignored. Addapted from WooCommerce wc_clean.
+ *
+ * @param string|array $raw_value Data to sanitize.
+ * @return string|array
+ */
+function userwall_wp_clean( $raw_value ) {
+	if ( is_array( $raw_value ) ) {
+		return array_map( 'userwall_wp_clean', $raw_value );
+	} else {
+		return is_scalar( $raw_value ) ? sanitize_text_field( $raw_value ) : $raw_value;
+	}
 }

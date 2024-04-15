@@ -30,10 +30,10 @@ require_once USERWALL_WP_PLUGIN_DIR . 'activation.php';
 require_once USERWALL_WP_PLUGIN_DIR . 'deactivation.php';
 
 // Register the activation hook.
-register_activation_hook( __FILE__, 'uswp_activate' );
+register_activation_hook( __FILE__, 'userwall_wp_activate' );
 
 // Hook into plugin deactivation.
-register_deactivation_hook( __FILE__, 'uswp_deactivate' );
+register_deactivation_hook( __FILE__, 'userwall_wp_deactivate' );
 
 
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-post-core.php';

@@ -71,8 +71,6 @@ class UserWallWP_Addon_Groups_Core {
 	 * Render groups page.
 	 */
 	public function groups_page() {
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-groups-list-table.php';
-		$groups_list = new Userwall_Groups_List_Table();
 
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 		if ( 'add_new' === $action ) {
@@ -90,28 +88,6 @@ class UserWallWP_Addon_Groups_Core {
 				echo '<div class="updated"><p>Group created successfully.</p></div>';
 			}
 			include USERWALL_WP_PLUGIN_DIR . 'includes/admin/templates/add-group.php';
-		} else {
-			?>
-			<div class="wrap">
-				<h2>Userwall Groups</h2>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $this->admin_slug . '&action=add_new' ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Add New Group', 'userwall-wp' ); ?></a>
-				<div id="poststuff">
-					<div id="post-body" class="metabox-holder">
-						<div id="post-body-content">
-							<div class="meta-box-sortables ui-sortable">
-								<form method="post">
-									<?php
-									$groups_list->prepare_items();
-									$groups_list->display();
-									?>
-								</form>
-							</div>
-						</div>
-					</div>
-					<br class="clear">
-				</div>
-			</div>
-		<?php } ?>
-		<?php
+		}
 	}
 }

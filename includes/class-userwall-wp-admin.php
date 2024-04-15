@@ -158,30 +158,6 @@ class UserWall_WP_Admin {
 	}
 
 	/**
-	 * Render the comments page.
-	 *
-	 * @return void
-	 */
-	public function comments_page() {
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-comments-list-table.php';
-		$posts_table = new Userwall_Comments_List_Table();
-
-		echo '<div class="wrap"><h1>Manage Posts</h1>';
-		$posts_table->display_notices();
-		?>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html_e( 'Add Post', 'userwall-wp' ); ?></a>
-		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
-			<input type="hidden" name="page" value="userwall-wp-posts" />
-			<?php
-			$posts_table->prepare_items();
-			$posts_table->search_box( 'Search Comments', 'post_title' );
-			$posts_table->display();
-			?>
-		</form>
-		<?php
-	}
-
-	/**
 	 * Render the posts page.
 	 *
 	 * @return void
@@ -198,28 +174,6 @@ class UserWall_WP_Admin {
 	private function add_post_template() {
 		include USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php';
 		include USERWALL_WP_PLUGIN_DIR . '/templates/tmpls.php';
-	}
-
-	/**
-	 * Render the posts view template.
-	 *
-	 * @return void
-	 */
-	private function posts_view_template() {
-		if ( ! class_exists( 'WP_List_Table' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-		}
-		require_once USERWALL_WP_PLUGIN_DIR . 'includes/admin/tables/class-userwall-wp-posts-table.php';
-		$posts_table = new UserWall_WP_Posts_Table();
-
-		echo '<div class="wrap"><h1>Manage Posts</h1>';
-		$posts_table->display_notices();
-		?>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=userwall-wp-posts&add-post' ) ); ?>"><?php echo esc_html__( 'Add Post', 'userwall-wp' ); ?></a>
-		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
-			<input type="hidden" name="page" value="userwall-wp-posts" />
-		</form>
-		<?php
 	}
 
 	/**
@@ -277,7 +231,7 @@ class UserWall_WP_Admin {
 	 */
 	public function process_addon_action() {
 		// Check if the form was submitted.
-		if ( current_user_can( 'manage_options' ) && isset( $_POST['nonce'] ) && isset( $_POST['addon_id'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'userwall-wp-addon-action-' . sanitize_text_field( wp_unslash( $_POST['addon_id'] ) ) ) ) {
+		if ( current_user_can( 'manage_options' ) && isset( $_POST['_wpnonce'] ) && isset( $_POST['addon_id'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'userwall-wp-addon-action-' . sanitize_text_field( wp_unslash( $_POST['addon_id'] ) ) ) ) {
 			if ( isset( $_POST['addon_action'] ) ) {
 				if ( isset( $_POST['addon_id'] ) ) {
 					$addon_id = sanitize_text_field( wp_unslash( $_POST['addon_id'] ) );

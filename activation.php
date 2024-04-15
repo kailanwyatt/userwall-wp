@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Activation functions for the User Wall plugin.
  */
-function uswp_activate() {
+function userwall_wp_activate() {
 	global $wpdb;
 
 	// Define the table names with the "userwall_" prefix
