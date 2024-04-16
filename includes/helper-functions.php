@@ -231,7 +231,7 @@ endif;
  * @param bool   $single Whether to return a single value.
  * @return mixed The group meta.
  */
-function get_group_meta( $group_id, $key = '', $single = false ) {
+function userwall_wp_get_group_meta( $group_id, $key = '', $single = false ) {
 	$group_meta = get_post_meta( $group_id, 'group_meta', true );
 	if ( $key ) {
 		if ( $single ) {

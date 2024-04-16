@@ -53,7 +53,7 @@ class UserWall_WP_Settings {
 	 * Initialize the settings
 	 */
 	public function admin_init() {
-		register_setting( 'userwall_wp', 'userwall-wp' );
+		register_setting( 'userwall_wp', 'userwall_wp' );
 		$this->init_general_main_settings();
 		$this->init_general_secondary_settings();
 		$this->init_advanced_settings();
@@ -220,7 +220,47 @@ class UserWall_WP_Settings {
 			$args['label'],
 			function () use ( $input ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo $input;
+				echo wp_kses(
+					$input,
+					apply_filters(
+						'userwall_wp_allowed_tags',
+						array(
+							'div'      => array(
+								'class' => true,
+								'id'    => true,
+								'style' => true,
+								'title' => true,
+								'role'  => true,
+								'aria-*' => true,
+								'data-*' => true,
+								'align' => true,
+							),
+							'label'    => array(
+								'for' => true,
+								'class' => true,
+								'id'    => true,
+								'style' => true,
+								'title' => true,
+								'role'  => true,
+								'aria-*' => true,
+								'data-*' => true,
+								'align' => true,
+							),
+							'input'    => array(
+								'type'    => true,
+								'name'    => true,
+								'value'   => true,
+								'checked' => true,
+							),
+							'textarea' => array( 'name' => true, 'rows' => true, 'cols' => true),
+							'select'   => array( 'name' => true, 'size' => true, 'multiple' => true, 'disabled' => true, 'class' => true, 'id' => true, 'style' => true, 'title' => true, 'role' => true, 'aria-*' => true, 'data-*' => true, 'align' => true ),
+							'option'   => array(
+								'value'    => true,
+								'selected' => true,
+							),
+						)
+					)
+				);
 			},
 			$args['section'],
 			$args['section']
@@ -232,11 +272,11 @@ class UserWall_WP_Settings {
 	 */
 	private function init_general_secondary_settings() {
 		add_settings_section(
-			'wp_custom_general_secondary',
+			'userwall_wp_general_secondary',
 			__( 'Secondary Settings', 'userwall-wp' ),
 			function () {
 				echo '<p>Secondary settings section description.</p>'; },
-			'wp_custom_general_secondary'
+			'userwall_wp_general_secondary'
 		);
 
 		// Additional fields for the Secondary Subtab can be added here.
@@ -305,7 +345,7 @@ class UserWall_WP_Settings {
 	public function show_forms() {
 		echo '<form method="post" action="options.php">';
 		settings_fields( 'userwall_wp' );
-
+	
 		$current_tab = $this->get_current_tab();
 		switch ( $current_tab ) {
 			case 'general':
@@ -315,7 +355,7 @@ class UserWall_WP_Settings {
 				$this->show_advanced_settings();
 				break;
 		}
-
+	
 		submit_button();
 		echo '</form>';
 	}
@@ -330,7 +370,7 @@ class UserWall_WP_Settings {
 				do_settings_sections( 'userwall_settings_general' );
 				break;
 			case 'secondary':
-				do_settings_sections( 'wp_custom_general_secondary' );
+				do_settings_sections( 'userwall_wp_general_secondary' );
 				break;
 		}
 	}
