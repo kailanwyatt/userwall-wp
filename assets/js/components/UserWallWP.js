@@ -1,7 +1,5 @@
 // Import Quill
 import Quill from 'quill';
-import ToolbarEmoji from 'quill-emoji';
-//import InfiniteScroll from './modules/infiniteScroll';
 
 var editor_theme = 'snow';
 var editorModules = {

@@ -1,1 +1,1 @@
-/*! For license information please see userwall-wp.js.LICENSE.txt */
+/*! For license information please see quill.js.LICENSE.txt */

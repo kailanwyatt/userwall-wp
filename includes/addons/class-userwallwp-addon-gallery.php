@@ -325,7 +325,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		global $wpdb;
 		$cache_key = 'userwall_wp_media_' . $post_id;
 		$media     = wp_cache_get( $cache_key );
-
+		error_log( print_r( $media, true ) );
 		if ( false === $media ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$media = $wpdb->get_results(
@@ -410,8 +410,6 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 	 */
 	public function add_js() {
 		?>
-		<div id="imageModal"></div>
-		<script>
 			jQuery(document).ready(function($) {
 				wp.hooks.addFilter('userwall_wp_content_filter', 'custom_userwall_wp_filter', function(post) {
 					// Modify the content here using your custom logic.                    
@@ -482,7 +480,6 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 					}
 				});
 			});
-		</script>
 		<?php
 	}
 

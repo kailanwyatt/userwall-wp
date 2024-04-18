@@ -84,7 +84,7 @@ class UserWall_WP_Post_Manager {
 			$author_name = $user->display_name;
 
 			// Get the author URL.
-			$author_url = user_wall_get_user_profile_url( $user->user_login );
+			$author_url = userwall_wp_get_user_profile_url( $user->user_login );
 
 			// Get the avatar URL.
 			$author_avatar_url = get_avatar_url( $user_id, apply_filters( 'userwall_wp_avatar_size', array( 'size' => 50 ), $user_id ) );
@@ -359,7 +359,7 @@ class UserWall_WP_Post_Manager {
 		}
 
 		if ( $is_post ) {
-			$modified_post->permalink = user_wall_get_permalink( $post->post_id );
+			$modified_post->permalink = userwall_wp_get_permalink( $post->post_id );
 		} else {
 			$modified_post->permalink = '';
 		}

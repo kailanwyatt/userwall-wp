@@ -81,11 +81,7 @@ class UserWallWP_Addon_Groups_Core {
 
 			// Check if the form is submitted.
 			if ( isset( $_POST['userwall_group_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['userwall_group_nonce'] ) ), 'userwall_create_group' ) ) {
-				// Process form data here
-				// Use your logic to create a group, e.g., inserting data into the database
-				// ...
-
-				echo '<div class="updated"><p>Group created successfully.</p></div>';
+				echo '<div class="updated"><p>' . esc_html__( 'Group created successfully.', 'userwall-wp' ) . '</p></div>';
 			}
 			include USERWALL_WP_PLUGIN_DIR . 'includes/admin/templates/add-group.php';
 		}

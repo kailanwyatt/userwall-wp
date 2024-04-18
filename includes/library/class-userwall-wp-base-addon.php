@@ -67,8 +67,7 @@ class UserWall_WP_Base_Addon {
 		$this->addon_id          = $this->get_id();
 		$this->file              = $this->get_file_path();
 		$this->hooks();
-		add_action( 'wp_footer', array( $this, 'add_js' ) );
-		add_action( 'admin_footer', array( $this, 'add_admin_footer_js' ) );
+		add_filter( 'userwall_wp_inline_js', array( $this, 'add_inline_js' ) );
 	}
 
 	/**
@@ -167,5 +166,18 @@ class UserWall_WP_Base_Addon {
 	 */
 	public function is_ready() {
 		return true;
+	}
+
+	/**
+	 * Add inline JS for the addon.
+	 *
+	 * @param string $inline_js The inline JS.
+	 * @return string The modified inline JS.
+	 */
+	public function add_inline_js( $inline_js ) {
+		ob_start();
+		$this->add_js();
+		$inline_js .= ob_get_clean();
+		return $inline_js;
 	}
 }

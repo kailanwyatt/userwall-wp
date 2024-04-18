@@ -111,6 +111,7 @@ class UserWall_WP_FileManager {
 		$upload_overrides = array( 'test_form' => false );
 		add_filter( 'upload_dir', array( $this, 'set_custom_upload_directory' ) );
 		$uploaded_file = wp_handle_upload( $file, $upload_overrides );
+		return $file_path;
 	}
 
 	/**

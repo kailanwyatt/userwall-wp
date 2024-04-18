@@ -20,7 +20,7 @@ class UserWall_WP_Blocks {
 		// Register Gutenberg block.
 		add_action( 'init', array( $this, 'register_gutenberg_block' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'wp_userwall_enqueue_block_editor_assets' ) );
-		add_filter( 'block_categories', array( $this, 'register_user_wall_category' ), 10, 2 );
+		add_filter( 'block_categories', array( $this, 'register_userwall_wp_category' ), 10, 2 );
 	}
 
 	/**
@@ -29,7 +29,7 @@ class UserWall_WP_Blocks {
 	 * @param array $categories The existing block categories.
 	 * @return array The modified block categories.
 	 */
-	public function register_user_wall_category( $categories ) {
+	public function register_userwall_wp_category( $categories ) {
 		return array_merge(
 			$categories,
 			array(
@@ -50,7 +50,7 @@ class UserWall_WP_Blocks {
 			'userwall-wp/page-render',
 			array(
 				'editor_script'   => 'wp-userwall-block-script',
-				'render_callback' => array( $this, 'render_user_wall_block' ),
+				'render_callback' => array( $this, 'render_userwall_wp_block' ),
 				'category'        => 'user-wall',
 			)
 		);
@@ -62,7 +62,7 @@ class UserWall_WP_Blocks {
 	 * @param array $attributes The block attributes.
 	 * @return string The rendered block content.
 	 */
-	public function render_user_wall_block( $attributes ) {
+	public function render_userwall_wp_block( $attributes ) {
 		$type = 'wall-posts';
 		// Server-side rendering of the block.
 		if ( ! empty( $attributes['displayType'] ) ) {

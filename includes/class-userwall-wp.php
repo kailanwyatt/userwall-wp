@@ -27,7 +27,8 @@ class UserWall_WP {
 		// Enqueue assets on the front end.
 		$template = new UserWall_Template();
 		add_action( 'wp_enqueue_scripts', array( $template, 'enqueue_assets' ) );
-
+		add_filter( 'wp_inline_script_attributes', array( $template, 'add_script_attrs_to_wall_tmpl' ), 10, 1 );
+		add_filter( 'script_loader_tag', array( $template, 'add_module_attribute' ), 10, 2 );
 		// Define the path to the addons folder.
 		$addons_folder = trailingslashit( USERWALL_WP_PLUGIN_DIR ) . 'addons';
 

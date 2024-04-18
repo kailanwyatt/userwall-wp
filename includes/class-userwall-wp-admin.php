@@ -173,7 +173,6 @@ class UserWall_WP_Admin {
 	 */
 	private function add_post_template() {
 		include USERWALL_WP_PLUGIN_DIR . '/includes/admin/templates/add-post.php';
-		include USERWALL_WP_PLUGIN_DIR . '/templates/tmpls.php';
 	}
 
 	/**

@@ -65,7 +65,87 @@ class UserWall_Template {
 		// Localize the script with the data.
 		wp_localize_script( 'userwall-wp-js', 'userwallWPObject', apply_filters( 'userwall_wp_localize_script', $userwall_wp_data ) );
 
+		wp_register_script( 'userwall-wall-tmpl', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
+		wp_enqueue_script( 'userwall-wall-tmpl' );
+		wp_add_inline_script( 'userwall-wall-tmpl', $this->get_wall_template() );
+
+		// Add the comments template.
+		wp_register_script( 'userwall-wp-comments', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
+		wp_enqueue_script( 'userwall-wp-comments' );
+		wp_add_inline_script( 'userwall-wp-comments', $this->get_wall_comments_template() );
+
+		wp_register_script( 'userwall-wp-inline', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
+		wp_enqueue_script( 'userwall-wp-inline' );
+		wp_add_inline_script( 'userwall-wp-inline', apply_filters( 'userwall_wp_inline_js', '' ) );
 		// Enqueue CSS.
 		wp_enqueue_style( 'userwall-wp-css', USERWALL_WP_PLUGIN_URL . '/assets/css/userwall-wp.css', array(), USERWALL_WP_VERSION, 'all' );
+	}
+
+	/**
+	 * Add defer attribute to the script tag
+	 *
+	 * @param array $attributes The script tag attributes.
+	 *
+	 * @return array
+	 */
+	public function add_script_attrs_to_wall_tmpl( $attributes = array() ) {
+
+		if ( empty( $attributes['id'] ) ) {
+			return $attributes;
+		}
+
+		if ( strpos( $attributes['id'], 'userwall-wp-comments' ) !== false ) {
+			$attributes['type'] = 'text/html';
+			$attributes['id']   = 'tmpl-userwall-wp-thread-comment-template';
+		}
+
+		if ( strpos( $attributes['id'], 'userwall-wall-tmpl' ) !== false ) {
+			$attributes['type'] = 'text/html';
+			$attributes['id']   = 'tmpl-userwall-wp-feed-template';
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Get the wall template
+	 *
+	 * @return string
+	 */
+	private function get_wall_template() {
+		ob_start();
+		include USERWALL_WP_PLUGIN_DIR . 'templates/wall.php';
+		$output_string = ob_get_contents();
+		ob_end_clean();
+		return $output_string;
+	}
+
+	/**
+	 * Get the wall comments template
+	 *
+	 * @return string
+	 */
+	private function get_wall_comments_template() {
+		ob_start();
+		include USERWALL_WP_PLUGIN_DIR . 'templates/wall-comments.php';
+		$output_string = ob_get_contents();
+		ob_end_clean();
+		return $output_string;
+	}
+
+	/**
+	 * Add module attribute to the script tag
+	 *
+	 * @param array  $html The script tag html.
+	 * @param string $handle     The script handle.
+	 *
+	 * @return array
+	 */
+	public function add_module_attribute( $html = '', $handle = '' ) {
+		if ( 'userwall-wp-js' === $handle ) {
+			$html = str_replace( '></script>', ' type="module"></script>', $html );
+		}
+
+		return $html;
 	}
 }

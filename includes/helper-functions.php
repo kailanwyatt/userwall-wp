@@ -65,12 +65,12 @@ function userwall_wp_get_userwall_wp_profile_data( $profile_key = '', $user_id =
  * @param string|null $profile_tab Optional profile tab.
  * @return string The user profile URL.
  */
-function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
+function userwall_wp_get_user_profile_url( $username, $profile_tab = null ) {
 	// Check if permalinks are enabled ('plain' indicates they are not).
 	if ( '' === get_option( 'permalink_structure' ) ) {
 		// Build a plain URL.
 		$url     = home_url();
-		$options = user_wall_get_options();
+		$options = userwall_wp_get_options();
 		if ( ! empty( $options['user_page'] ) ) {
 			$url = get_permalink( $options['user_page'] );
 		}
@@ -87,7 +87,7 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
 		}
 	} else {
 		// Build a pretty URL.
-		$options = user_wall_get_options();
+		$options = userwall_wp_get_options();
 		if ( ! empty( $options['user_page'] ) ) {
 			$url = get_permalink( $options['user_page'] );
 		}
@@ -106,12 +106,13 @@ function user_wall_get_user_profile_url( $username, $profile_tab = null ) {
  * @param int $post_id The ID of the post.
  * @return string The permalink for the post.
  */
-function user_wall_get_permalink( $post_id = 0 ) {
+function userwall_wp_get_permalink( $post_id = 0 ) {
+	$url = '';
 	// Check if permalinks are enabled ('plain' indicates they are not).
 	if ( '' === get_option( 'permalink_structure' ) ) {
 		// Build a plain URL.
 		$url     = home_url();
-		$options = user_wall_get_options();
+		$options = userwall_wp_get_options();
 		if ( ! empty( $options['single_post_page'] ) ) {
 			$url = get_permalink( $options['single_post_page'] );
 		}
@@ -123,7 +124,7 @@ function user_wall_get_permalink( $post_id = 0 ) {
 		);
 	} else {
 		// Build a pretty URL.
-		$options = user_wall_get_options();
+		$options = userwall_wp_get_options();
 		if ( ! empty( $options['single_post_page'] ) ) {
 			$url = get_permalink( $options['single_post_page'] );
 		}
@@ -138,9 +139,9 @@ function user_wall_get_permalink( $post_id = 0 ) {
  *
  * @return array The content types used by User Wall.
  */
-function user_wall_get_content_types() {
-	$user_wall_core = new UserWall_WP_Post_Core();
-	return $user_wall_core->get_post_content_types();
+function userwall_wp_get_content_types() {
+	$userwall_wp_core = new UserWall_WP_Post_Core();
+	return $userwall_wp_core->get_post_content_types();
 }
 
 /**
@@ -148,9 +149,9 @@ function user_wall_get_content_types() {
  *
  * @return array The post types used by User Wall.
  */
-function user_wall_get_post_types() {
-	$user_wall_core = new UserWall_WP_Post_Core();
-	return $user_wall_core->get_post_types();
+function userwall_wp_get_post_types() {
+	$userwall_wp_core = new UserWall_WP_Post_Core();
+	return $userwall_wp_core->get_post_types();
 }
 
 /**
@@ -160,37 +161,36 @@ function user_wall_get_post_types() {
  * @param mixed  $default_var The default value if the option is not found.
  * @return mixed The option value.
  */
-function user_wall_get_options( $key = '', $default_var = '' ) {
+function userwall_wp_get_options( $key = '', $default_var = '' ) {
 	$options = get_option( 'userwall_wp' );
 	if ( empty( $options ) ) {
 		$defaults = array();
-		$options  = apply_filters( 'user_wall_get_options_defaults', $defaults );
+		$options  = apply_filters( 'userwall_wp_get_options_defaults', $defaults );
 	}
 
 	$defaults = array();
 
 	$options = wp_parse_args( $options, $defaults );
 
-	$options = apply_filters( 'user_wall_get_options', $options );
+	$options = apply_filters( 'userwall_wp_get_options', $options );
 
 	if ( $key && empty( $options[ $key ] ) ) {
 		return $default_var;
 	}
 
 	if ( $key && ! empty( $options[ $key ] ) ) {
-		return apply_filters( 'user_wall_get_options_' . $key, $options[ $key ] );
+		return apply_filters( 'userwall_wp_get_options_' . $key, $options[ $key ] );
 	}
 	return $options;
 }
 
-if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
-	/**
-	 * Get the interaction template based on the type.
-	 *
-	 * @param string $type The type of interaction.
-	 */
-	function userwall_wp_get_interaction_tmpl( $type = '' ) {
-		?>
+/**
+ * Get the interaction template based on the type.
+ *
+ * @param string $type The type of interaction.
+ */
+function userwall_wp_get_interaction_tmpl( $type = '' ) {
+	?>
 	<div class="userwall-wp-activity-section">
 		<div class="userwall-wp-reaction-count userwall-wp-activity-block" aria-label="<?php esc_html_e( 'Reactions count', 'userwall-wp' ); ?>">
 			<span class="userwall-wp-comment-img">
@@ -220,8 +220,7 @@ if ( ! function_exists( 'userwall_wp_get_interaction_tmpl' ) ) :
 		</div>
 	</div>
 		<?php
-	}
-endif;
+}
 
 /**
  * Get the group meta.

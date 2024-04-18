@@ -5,10 +5,6 @@
  * @package UserWall_WP
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
 /**
  * If this file is called directly, abort.
  */

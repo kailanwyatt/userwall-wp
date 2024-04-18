@@ -20,16 +20,6 @@ class UserWall_WP_Shortcode {
 		add_shortcode( 'userwall_wp_post_form', array( $this, 'userwall_wp_post_form_shortcode' ), 10, 1 );
 		add_shortcode( 'userwall_wp_post_single', array( $this, 'userwall_wp_post_single_shortcode' ), 10, 1 );
 		add_shortcode( 'userwall_wp_profile', array( $this, 'userwall_wp_profile_shortcode' ), 10, 1 );
-		add_action( 'wp_footer', array( $this, 'add_tmpls' ) );
-	}
-
-	/**
-	 * Renders the JS template files.
-	 *
-	 * @return void
-	 */
-	public function add_tmpls() {
-		include_once USERWALL_WP_PLUGIN_DIR . 'templates/tmpls.php';
 	}
 
 	/**
@@ -57,7 +47,7 @@ class UserWall_WP_Shortcode {
 		$object_id     = absint( $atts['object_id'] );
 		$show_userwall = wp_validate_boolean( $atts['show_userwall'] );
 		$show_form     = wp_validate_boolean( $atts['show_form'] );
-		$options       = user_wall_get_options();
+		$options       = userwall_wp_get_options();
 		$use_editor    = ! empty( $options['enable_rich_editor'] ) ? true : false;
 		// Output the post form.
 		ob_start();
@@ -66,12 +56,11 @@ class UserWall_WP_Shortcode {
 		);
 
 		$post_tabs      = apply_filters( 'userwall_wp_post_tabs', $post_tabs );
-		$post_types     = user_wall_get_post_types();
-		$content_types  = user_wall_get_content_types();
+		$post_types     = userwall_wp_get_post_types();
+		$content_types  = userwall_wp_get_content_types();
 		$max_characters = ! empty( $options['character_limit'] ) ? absint( $options['character_limit'] ) : 0;
 		$allow_tiltes   = ! empty( $options['allow_tiltes'] ) ? absint( $options['allow_tiltes'] ) : 0;
 		include USERWALL_WP_PLUGIN_DIR . 'templates/post-form.php'; // Create a post form template.
-		$this->add_tmpls();
 		return ob_get_clean();
 	}
 
@@ -102,7 +91,6 @@ class UserWall_WP_Shortcode {
 
 		ob_start();
 		userwall_wp_get_template( 'profile.php', $args );
-		$this->add_tmpls();
 		return ob_get_clean();
 	}
 
@@ -115,7 +103,6 @@ class UserWall_WP_Shortcode {
 			'post_id' => get_query_var( 'thread_id' ),
 		);
 		userwall_wp_get_template( 'post-single.php', $args );
-		$this->add_tmpls();
 		return ob_get_clean();
 	}
 }

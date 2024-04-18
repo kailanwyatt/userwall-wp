@@ -32,6 +32,7 @@ class UserWall_WP_Post_Core {
 	 * @return array
 	 */
 	public function userwall_wp_profile_tabs( $tabs = array() ) {
+		return $tabs;
 	}
 
 	/**
@@ -40,7 +41,7 @@ class UserWall_WP_Post_Core {
 	 * @return array
 	 */
 	public function get_post_types() {
-		$post_types         = apply_filters( 'user_wall_post_types', array() );
+		$post_types         = apply_filters( 'userwall_wp_post_types', array() );
 		$default_post_types = array(
 			'user' => array(
 				'title' => __( 'User', 'userwall-wp' ),
@@ -72,7 +73,7 @@ class UserWall_WP_Post_Core {
 	 * Add rewrite rules
 	 */
 	public function add_rewrite_rules() {
-		$options = user_wall_get_options();
+		$options = userwall_wp_get_options();
 		if ( ! empty( $options['user_page'] ) ) {
 			$user_page_slug = get_post_field( 'post_name', $options['user_page'] );
 			if ( $user_page_slug ) {
