@@ -115,15 +115,15 @@ class UserWallWP_Addon_Bookmarks extends UserWall_WP_Base_Addon {
 
 			// SQL queries to drop the tables.
 			$sql_queries = array(
-				"DROP TABLE IF EXISTS $table_media",
+				$table_media,
 			);
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 			// Delete the tables.
-			foreach ( $sql_queries as $sql_query ) {
+			foreach ( $sql_queries as $table ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->query( $sql_query );
+				$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) );
 			}
 		}
 	}

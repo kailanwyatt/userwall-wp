@@ -145,18 +145,18 @@ class UserWallWP_Addon_Polls extends UserWall_WP_Base_Addon {
 
 		// SQL queries to drop the tables.
 		$sql_queries = array(
-			"DROP TABLE IF EXISTS $table_poll_votes",
-			"DROP TABLE IF EXISTS $table_poll_options",
-			"DROP TABLE IF EXISTS $table_polls",
+			$table_poll_votes,
+			$table_poll_options,
+			$table_polls,
 		);
 
 		// Include the WordPress database upgrade file.
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Delete the tables.
-		foreach ( $sql_queries as $sql_query ) {
+		foreach ( $sql_queries as $table ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->query( $sql_query );
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) );
 		}
 	}
 
