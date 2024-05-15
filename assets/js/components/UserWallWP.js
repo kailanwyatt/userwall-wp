@@ -1,12 +1,195 @@
 // Import Quill
 import Quill from 'quill';
-import ToolbarEmoji from 'quill-emoji';
+
+var editor_theme = 'snow';
+var editorModules = {
+    toolbar: [userwallWPObject.toolbar]
+};
+const userLoggedIn = (parseInt( userwallWPObject.user_id ) > 0);
+const postOpenType = userwallWPObject.settings.open_posts;
+const isSinglePost = userwallWPObject.isSinglePost;
+
+function InfiniteScroll(contentId) {
+    let page = 1;
+    const content = document.querySelector(contentId);
+    const loadingIndicator = document.getElementById('loading');
+    const itemsPerPage = 10;
+    const threadWrapper = document.querySelector(contentId).closest('[data-thread]');
+    let isLoading = false;
+    let sentinel; // Sentinel element to detect scroll to the bottom
+    let hasMoreResults = true; // Track if more results are available
+
+    function createSentinel() {
+        sentinel = document.createElement('div');
+        sentinel.classList.add('sentinel');
+        content.appendChild(sentinel);
+    }
+
+    createSentinel(); // Initialize the sentinel element
+
+    function loadMoreItems() {
+        if (isLoading || !hasMoreResults) {
+            return;
+        }
+        isLoading = true;
+        loadingIndicator.style.display = 'block';
+
+        // Check if the sentinel element is in the viewport
+        const sentinelRect = sentinel.getBoundingClientRect();
+        if (sentinelRect.top <= window.innerHeight) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', userwallWPObject.ajax_url);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        if (response.data.posts.length > 0) {
+                            renderPosts(response.data.posts, 'bottom');
+                            if ( isSinglePost ) {
+                                loadComments(isSinglePost, jQuery(contentId).closest('[data-thread]') )
+                                hasMoreResults = false;
+                            }
+                            page++;
+                        } else {
+                            // No more posts to load
+                            hasMoreResults = false; // Disable further loading
+                        }
+                    } else {
+                        // Handle AJAX error
+                        console.error('Error loading more posts:', response.data.message);
+                        hasMoreResults = false;
+                    }
+                } else {
+                    // Handle AJAX error
+                    console.error('Error loading more posts:', xhr.statusText);
+                    hasMoreResults = false;
+                }
+
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+            };
+
+            xhr.onerror = function () {
+                // Handle AJAX error
+                console.error('Error loading more posts:', xhr.statusText);
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+                hasMoreResults = false;
+            };
+
+            const data = new URLSearchParams();
+            data.append('action', 'userwall_wp_load_more_posts');
+            data.append('per_page', itemsPerPage);
+            data.append('nonce', userwallWPObject.nonce);
+            if ( threadWrapper.dataset.post_id && !isNaN(threadWrapper.dataset.post_id) ) {
+                data.append( 'post_id', threadWrapper.dataset.post_id );
+            }
+            
+            if ( userwallWPObject.user_wall ) {
+                data.append('user_wall', userwallWPObject.user_wall );
+            }
+            // Get all elements with the data-postid attribute
+            const postIdElements = content.querySelectorAll('[data-postid]');
+            
+            // Initialize a variable to store the lowest postid
+            let lowestPostId = 0;
+
+            // Loop through all elements with data-postid attribute
+            postIdElements.forEach(function (element) {
+                const postid = parseInt(element.getAttribute('data-postid'));
+                if (!isNaN(postid) ) {
+                    if ( ! lowestPostId ) {
+                        lowestPostId = postid;
+                    } else if ( postid < lowestPostId ) {
+                        lowestPostId = postid;
+                    }
+                }
+            });
+
+            data.append('last_post', lowestPostId);
+
+            xhr.send(data);
+        }
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!isLoading) {
+            const contentRect = content.getBoundingClientRect();
+            if (contentRect.bottom <= window.innerHeight) {
+                loadMoreItems();
+            }
+        }
+    });
+
+    loadMoreItems();
+}
+
+document.querySelectorAll('[data-thread]').forEach(function(element) {
+    const loadingElement = element.querySelector('#loading');
+    
+    if (loadingElement) {
+        InfiniteScroll('.userwall-wp-inner-thread');
+    }
+});
+
+
+function loadComments( postID, thread ) {
+    // Perform AJAX request to load comments userwall
+    jQuery.ajax({
+        url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
+        type: 'GET',
+        data: {
+            action: 'userwall_wp_load_comments', // Create this AJAX action in your PHP code
+            post_id: postID, // Send the post ID to the server
+            nonce: userwallWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
+        },
+        success: function(response) {
+            if ( response.data.comments.length && response.data.comments.length > 0 ) {
+                var template = wp.template('userwall-wp-thread-comment-template');
+                var newPosts = transformComments( response.data.comments );
+                jQuery.each( newPosts, function( index, comment ) {
+                    var template = wp.template('userwall-wp-thread-comment-template');
+
+                    var commentData = comment;
+
+                    // Render the template with the data
+                    var renderedHtml = template(commentData);
+                    
+                    // Convert the HTML string to a jQuery object
+                    var commentHtml = jQuery('<div class="tempWrapper">' + renderedHtml + '</div>' );
+                    
+                    jQuery.each( comment, function( index, reply ) {
+                        if ( reply.child_comments.length > 0 ) {
+                            template = wp.template('userwall-wp-thread-comment-template');
+                            var innerComments = transformComments(reply.child_comments);
+
+                            jQuery.each( innerComments, function( index2, inner_comment ) {
+                                var ReplyTemplate = wp.template('userwall-wp-thread-comment-template');
+                                var child_html = ReplyTemplate({inner_comment});
+                                commentHtml.find('[data-commentid="' + inner_comment.parent_id + '"] > .userwall-wp-comment-reply-section').append(child_html);
+                            });
+                        }
+                    });
+
+                    thread.find('.userwall-wp-comment-section').prepend(commentHtml.html());
+                    wp.hooks.doAction('userwall_wp_comment_rendered', comment);
+                });
+                wp.hooks.doAction('userwall_wp_comment_all_rendered', response.data.comments );
+            }
+        },
+        error: function(error) {
+            // Handle errors here (e.g., display an error message)
+            console.error('Error loading comments userwall:', error);
+        },
+    });
+}
 //import Masonry from 'masonry-layout';
 
-//window.threadsWP.Masonry = Masonry;
-var editor_theme = 'snow';
-var editor_config = [];
-class ThreadWPHelper {
+//window.userwallWP.Masonry = Masonry;
+
+class UserWallWPHelper {
     constructor() {
       
     }
@@ -39,7 +222,7 @@ class ThreadWPHelper {
             return '';
         }
     
-        const userUrl = "https://example.com/u/";
+        const userUrl = "";
     
         const urlRegex = /https?:\/\/[^\s<>]+/g;
         const hashtagRegex = /#(\w+)/g;
@@ -124,7 +307,7 @@ class ThreadWPHelper {
                 break;
             case 'embed':
                 // Example: Embed an iframe for other sources
-                richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
+                //richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
                 break;
             case 'youtube':
                 // Extract the YouTube video ID from the URL
@@ -153,7 +336,9 @@ class ThreadWPHelper {
                 richPreviewHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                 break;
         }
-    
+        if ( ! richPreviewHTML ) {
+            return '';
+        }
         return '<div class="userwall-wp-embed">' + richPreviewHTML + '</div>';
     }
 
@@ -181,59 +366,145 @@ class ThreadWPHelper {
   }
   
 // Create an instance of the class
-window.ThreadWPHelper = new ThreadWPHelper();
+window.UserWallWPHelper = new UserWallWPHelper();
 
-function transformThreads( threads ) {
-    return threads
+function transformPosts( userwall ) {
+    return userwall
     .filter(function (thread) {
-      return thread.post_id !== ''; // Only keep threads with non-empty post_id
+      return thread.post_id !== ''; // Only keep userwall with non-empty post_id
     })
     .map(function (thread) {
         // Apply the doEmbed method to the post_content
-        thread.post_content = window.ThreadWPHelper.doEmbed(thread.post_content);
-        return wp.hooks.applyFilters('thread_wp_content_filter', thread);
+        thread.post_content = window.UserWallWPHelper.doEmbed(thread.post_content);
+        return wp.hooks.applyFilters('userwall_wp_content_filter', thread);
     });
 }
 
 function transformComments( comments ) {
     return comments.map(function (comment) {
         // Apply the doEmbed method to the comment_content
-        comment.comment_content = window.ThreadWPHelper.doEmbed(comment.comment_content);
-        return wp.hooks.applyFilters('thread_wp_content_comment_filter', comment );
+        comment.comment_content = window.UserWallWPHelper.doEmbed(comment.comment_content);
+        comment.comment_content = comment.comment_content.replace(/^<p>\s*<\/p>/, '');
+        return wp.hooks.applyFilters('userwall_wp_content_comment_filter', comment );
     });
 }
-function renderThreads(threads, position = 'top' ) {
+function renderPosts(posts, position = 'top' ) {
     var template_id = 'userwall-wp-feed-template';
     var template = wp.template(template_id);
-    var newThreads = transformThreads( threads );
+    var newPosts = transformPosts( posts );
 
     var html, renderedHtml;
-    jQuery.each(newThreads, function (i, thread) {
+    jQuery.each(newPosts, function (i, thread) {
         html = template({ thread });
         renderedHtml = jQuery('<div class="tempWrap">' + html + '</div>');
         const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
         const quillContainer = renderedHtml.find('#' + quillContainerId)[0];
-
-        // Check if the container exists (only if the thread is loaded via Ajax)
-        if (quillContainer) {
-            // Initialize Quill editor
-            const quill = new Quill(quillContainer, {
-                theme: editor_theme, // You can use a different theme if needed
-                placeholder: threadsWPObject.reply_placeholder,
-            });
-        }
+        let quill;
+       
         if ( ! jQuery('.userwall-wp-thread[data-postid="' + thread.post_id +'"]').length ) {
             if ( position == 'top' ) {
-                jQuery('.userwall-wp-reddit-thread').prepend(renderedHtml.html());
+                jQuery('.userwall-wp-inner-thread').prepend(renderedHtml.html());
             } else {
-                jQuery('.userwall-wp-reddit-thread').append(renderedHtml.html());
+                jQuery('.userwall-wp-inner-thread').append(renderedHtml.html());
             }
-            wp.hooks.doAction('threads_wp_post_rendered', thread);
+            if ( userLoggedIn ) {
+                const quillContainerId = `quill-comment-editor-edit-${thread.post_id}`;
+                const quillContainer = jQuery('.userwall-wp-inner-thread').find('#' + quillContainerId)[0];
+                // Initialize Quill editor
+                quill = new Quill(quillContainer, {
+                    theme: editor_theme,
+                    placeholder: userwallWPObject.reply_placeholder,
+                    modules: editorModules,
+                });
+            }
+            wp.hooks.doAction('userwall_wp_post_rendered', thread);
         }
     });
 }
 
+function truncateHtml(html, maxLength) {
+    var charCount = 0;
+    var output = '';
+    var isTruncating = false;
+    
+    // Convert HTML string to jQuery objects and iterate
+    jQuery(html).each(function() {
+        var textContent = jQuery(this).text();
+        
+        if (charCount + textContent.length > maxLength && !isTruncating) {
+            // Calculate the number of characters to take from the current element
+            var remainingChars = maxLength - charCount;
+            var truncatedText = textContent.substr(0, remainingChars);
+            
+            // Create a clone of the current element and set its text content to the truncated text
+            var clonedElement = jQuery(this).clone();
+            clonedElement.text(truncatedText);
+            output += jQuery('<div>').append(clonedElement).html();
+            
+            isTruncating = true;
+        } else if (!isTruncating) {
+            // Add the whole element if we are not yet truncating
+            output += jQuery('<div>').append(jQuery(this).clone()).html();
+        }
+        
+        charCount += textContent.length;
+        
+        // If we started truncating, no need to process further elements
+        if (isTruncating) {
+            return false; // Stop adding more elements to the output
+        }
+    });
+    
+    // If the total character count is less than the maxLength, return false
+    if (charCount <= maxLength) {
+        return false;
+    }
+    
+    return output;
+}
+
+
 function setReadMore() {
+    var maxLength = 100; // Maximum number of characters to display before truncating
+    return;
+    jQuery('.userwall-wp-thread').each(function() {
+        var container = jQuery(this);
+        var fullHtml = container.find('.userwall-wp-thread-content').html();
+        var truncatedHtml = truncateHtml(fullHtml, maxLength);
+        
+       
+        
+        if (truncatedHtml && fullHtml != '<p><br></p>' ) {
+            if ( fullHtml.trim() !== truncatedHtml ) {
+                console.log( fullHtml.trim() );
+                console.log( truncatedHtml );
+                console.log( fullHtml.trim() !== truncatedHtml );
+                container.find('.userwall-wp-thread-content').data('full-html', fullHtml).html(truncatedHtml);
+                container.find('.userwall-wp-thread-content').after('<button class="read-more-btn">Read More</button>'); // Add the Read More button
+                container.find('.read-more-btn').show();
+            }
+        }
+    });
+    
+    jQuery('.userwall-wp-thread').on('click', '.read-more-btn', function() {
+        var container = jQuery(this).closest('.userwall-wp-thread');
+        var textContent = container.find('.userwall-wp-thread-content');
+        var isFullHtmlVisible = textContent.data('is-full-html-visible');
+        
+        if (isFullHtmlVisible) {
+            var fullHtml = textContent.data('full-html');
+            var truncatedHtml = truncateHtml(fullHtml, maxLength);
+            textContent.html(truncatedHtml);
+            jQuery(this).text('Read More');
+            textContent.data('is-full-html-visible', false);
+        } else {
+            var fullHtml = textContent.data('full-html');
+            textContent.html(fullHtml);
+            jQuery(this).text('Read Less');
+            textContent.data('is-full-html-visible', true);
+        }
+    });
+
     return;
     // Maximum number of characters to show initially
     var maxLength = 300;
@@ -314,11 +585,11 @@ function updateTime() {
 }
 
 jQuery(document).ready(function($) {
-    wp.hooks.addAction('threads_wp_post_rendered', 'renderEditor', function(thread) {
+    wp.hooks.addAction('userwall_wp_post_rendered', 'renderEditor', function(thread) {
         updateTime();
         setReadMore();
     });
-    wp.hooks.addAction('threads_wp_comment_rendered', 'renderEditor', function(thread) {
+    wp.hooks.addAction('userwall_wp_comment_rendered', 'renderEditor', function(thread) {
         updateTime();
     });
     
@@ -348,7 +619,46 @@ jQuery(document).ready(function($) {
     
             // Attach click event to the ellipsis icon
             jQuery(document).on('click', '.userwall-wp-ellipsis', this.handleEllipsisClick );
-    
+            
+            jQuery(document).on('click', '.userwall-wp-reaction-count', function() {
+                if ( ! userLoggedIn ) {
+                    return;
+                }
+                var button = jQuery(this);
+                var countSpan = button.find('.span-count');
+                var like_reaction = button.data('like-reaction');
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $threadDiv = jQuery(this).closest('.userwall-wp-thread');
+                var postID = $threadDiv.data('postid');
+                var commentID = isComment ? $commentDiv.data('commentid') : 0;
+
+                $.ajax({
+                    url: userwallWPObject.ajax_url,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'userwall_wp_post_like', // Create this AJAX action in your main plugin file
+                        post_id: postID,
+                        comment_id: commentID,
+                        like_reaction: like_reaction,
+                        nonce: userwallWPObject.nonce
+                    },
+                    success: function(response) {
+                        countSpan.text( parseInt( response.data.total) );
+                
+                        // Animate the button on click
+                        if ( like_reaction == 'like' ) {
+                            button.addClass('userwall-wp-liked');
+                            button.data('like-reaction', 'like' );
+                        } else {
+                            button.removeClass('userwall-wp-liked');
+                            button.data('like-reaction', 'remove' );
+                        }
+                    }
+                });
+            });
+
             // Add a click event to the document body to close actions when clicking outside
             jQuery('body').click(this.closeActions);
     
@@ -367,6 +677,17 @@ jQuery(document).ready(function($) {
                         break;
                 }
             });
+
+            jQuery(document).on("click", ".userwall-wp-post-body", function(event) {
+                var $thread = jQuery(this).closest('.userwall-wp-thread');
+                var link    = $thread.data('permalink');
+                // Check if goToPage is true and the clicked element is not a link
+                if (!isSinglePost && link && postOpenType && !$(event.target).is("a")) {
+
+                  window.location.href = link;
+                }
+            });
+
             // Attach click events to actions
             jQuery(document).on( 'click', '.userwall-wp-action', this.handleActionClick.bind(this));
 
@@ -374,7 +695,7 @@ jQuery(document).ready(function($) {
                 const $div = jQuery(this);
 
                 // Fetch and render posts
-                classObj.fetchAndRenderPosts($div);
+                //classObj.fetchAndRenderPosts($div);
             });
 
             jQuery(document).on('click', '.comment-submit-button', function() {
@@ -384,20 +705,22 @@ jQuery(document).ready(function($) {
                 const content = quill.root.innerHTML; // Get Quill editor content
                 // Perform an AJAX request to save the changes
                 $.ajax({
-                    url: threadsWPObject.ajax_url,
+                    url: userwallWPObject.ajax_url,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        action: 'threads_wp_post_comment', // Create this AJAX action in your main plugin file
+                        action: 'userwall_wp_post_comment', // Create this AJAX action in your main plugin file
                         post_id: postID,
                         content: content,
-                        nonce: threadsWPObject.nonce
+                        nonce: userwallWPObject.nonce
                     },
                     success: function(response) {
-                        var template = wp.template('reddit-style-thread-comment-template');
-                        var newThreads = transformComments(response.data.comments);
-                        var html = template(newThreads);;
+                        var template = wp.template('userwall-wp-thread-comment-template');
+                        var newPosts = transformComments(response.data.comments);
+                        var html = template(newPosts);;
                         $thread.find('.userwall-wp-comment-section').prepend(html);
+
+                        $thread.find('.userwall-wp-comment-count .span-count').text( parseInt( response.data.total ) );
                         // Clear the comment input field
                         quill.root.innerHTML = '';
                     },
@@ -409,64 +732,24 @@ jQuery(document).ready(function($) {
             });
 
             jQuery(document).on('click', '.userwall-wp-comment-count', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
                 const thread = jQuery(this).closest('.userwall-wp-thread');
                 // Get the current post ID from data attribute
                 const postID = parseInt( thread.data('postid') );
-                
-                if ( thread.find('.userwall-wp-comment-section').is(':empty')) {
-                   // Perform AJAX request to load comments threads
-                    $.ajax({
-                        url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                        type: 'GET',
-                        data: {
-                            action: 'threads_wp_load_comments', // Create this AJAX action in your PHP code
-                            post_id: postID, // Send the post ID to the server
-                            nonce: threadsWPObject.nonce, // Add nonce for security (make sure to localize this in your main PHP file)
-                        },
-                        success: function(response) {
-                            if ( response.data.comments.length && response.data.comments.length > 0 ) {
-                                var template = wp.template('reddit-style-thread-comment-template');
-                                var newThreads = transformComments( response.data.comments );
-                                jQuery.each( newThreads, function( index, comment ) {
-                                    var template = wp.template('reddit-style-thread-comment-template');
-
-                                    var commentData = comment;
-
-                                    // Render the template with the data
-                                    var renderedHtml = template(commentData);
-                                    
-                                    // Convert the HTML string to a jQuery object
-                                    var commentHtml = jQuery('<div class="tempWrapper">' + renderedHtml + '</div>' );
-
-                                    var childComments = commentData[0].child_comments;
-                                    if ( childComments.length > 0 ) {
-                                        template = wp.template('reddit-style-thread-comment-template');
-                                        var innerComments = transformComments(childComments);
-     
-                                        jQuery.each( innerComments, function( index2, inner_comment ) {
-                                            var ReplyTemplate = wp.template('reddit-style-thread-comment-template');
-                                            var child_html = ReplyTemplate({inner_comment});
-                                            commentHtml.find('.userwall-wp-comment-reply-section').append(child_html);
-                                        });
-                                    }
-
-                                    thread.find('.userwall-wp-comment-section').prepend(commentHtml.html());
-                                    wp.hooks.doAction('threads_wp_comment_rendered', comment);
-                                });
-                                wp.hooks.doAction('threads_wp_comment_all_rendered', response.data.comments );
-                            }
-                        },
-                        error: function(error) {
-                            // Handle errors here (e.g., display an error message)
-                            console.error('Error loading comments threads:', error);
-                        },
-                    });
+                if ( isComment ) {
+                    $commentDiv.find('.userwall-wp-reply-button').trigger('click');
                 } else {
-                    thread.find('.userwall-wp-comment-section').toggle();
+                    if ( thread.find('.userwall-wp-comment-section').is(':empty')) {
+                        loadComments( postID, thread )
+                     } else {
+                         thread.find('.userwall-wp-comment-section').toggle();
+                     }
                 }
+                
             });
 
-            jQuery( document ).on('click', '.userwall-wp-new-threads', function( e ) {
+            jQuery( document ).on('click', '.userwall-wp-new-userwall', function( e ) {
                 e.preventDefault();
                 var $div = jQuery(this).closest('[data-thread]');
                 const postType = $div.data('post_type');
@@ -475,9 +758,9 @@ jQuery(document).ready(function($) {
                 // Initialize variables to keep track of the highest post ID and the corresponding element
                 var highestPostId = -1;
                 var $elementWithHighestId = null;
-                var $threads = $div.find('.userwall-wp-thread'); 
+                var $userwall = $div.find('.userwall-wp-thread'); 
                 // Iterate through each element to find the highest post ID
-                $threads.each(function() {
+                $userwall.each(function() {
                     var postId = parseInt(jQuery(this).data('postid'));
                     
                     // Check if the current post ID is higher than the highest found so far
@@ -488,19 +771,19 @@ jQuery(document).ready(function($) {
                 });
 
                 jQuery.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                     type: 'POST',
                     dataType: 'json', // Adjust the data type based on your server response
                     data: {
                         action: 'fetch_latest_thread', // Create this AJAX action in your main plugin file
                         post_type: postType,
                         per_page: perPage,
-                        nonce: threadsWPObject.nonce,
+                        nonce: userwallWPObject.nonce,
                         post_id: highestPostId,
                     },
                     success: function (response) {
-                        jQuery('.userwall-wp-new-threads').remove();
-                        renderThreads( response.data.threads );
+                        jQuery('.userwall-wp-new-userwall').remove();
+                        renderPosts( response.data.posts );
                     },
                     error: function (error) {
                         console.error('Error fetching data:', error);
@@ -543,90 +826,72 @@ jQuery(document).ready(function($) {
                 jQuery('#image-upload').val('');
             });
         
-            // Handle form submission with AJAX
-            jQuery('#userwall-wp-post-form2').submit(function(event) {
-                event.preventDefault();
-        
-                // Get form data including images
-                const formData = new FormData(this);
-                formData.append('action', sessionID);
-
-                // Perform AJAX request for form submission
-                $.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        // Handle the AJAX response here
-                        console.log('Form submitted successfully');
-                    },
-                    error: function(error) {
-                        // Handle AJAX error here
-                        console.error('Error submitting form:', error);
-                    }
-                });
-            });
             var that = this;
-            jQuery('[data-thread]').each(function () {
-                var $threadContainer = jQuery(this);
-                jQuery(window).scroll(function() {
-                    if (jQuery(window).scrollTop() + jQuery(window).height() >= $threadContainer.height() - 100) {
-                        //that.loadMorePosts( $threadContainer );
-                    }
-                });
-            });
 
-            $(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
+                const $title = ! isComment ? $postDiv.find('.userwall-wp-thread-title-wrapper') : '';
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
         
                 $content.hide();
+                $title.hide();
                 $editForm.show();
                 
                 if ( isComment ) {
-                     // Initialize Quill editor for editing
-                    let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`, {
-                        theme: editor_theme
-                    });
-                    // Populate Quill editor with existing content
-                    const existingContent = $content.html();
-                    quillEditor.root.innerHTML = existingContent;
+                    let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}-${$commentDiv.data('commentid')}`;
+                    if ( ! jQuery( editorContainer ).find('.ql-editor').length ) {
+                        // Initialize Quill editor for editing
+                        let quillEditor = new Quill(editorContainer, {
+                            theme: editor_theme,
+                            modules: editorModules,
+                        });
+
+                        // Populate Quill editor with existing content
+                        const existingContent = $content.html();
+                        quillEditor.root.innerHTML = existingContent.replace(/^<p>\s*<\/p>/, '');
+                    }
                 } else {
-                     // Initialize Quill editor for editing
-                    let quillEditor = new Quill(`#quill-editor-edit-${$postDiv.data('postid')}`, {
-                        theme: editor_theme
-                        // ... (Quill editor configurations)
-                    });
-                    // Populate Quill editor with existing content
-                    const existingContent = $content.html();
-                    quillEditor.root.innerHTML = existingContent;
+                    let editorContainer = `#quill-editor-edit-${$postDiv.data('postid')}`;
+                    if ( ! jQuery( editorContainer ).find('.ql-editor').length ) {
+                        // Initialize Quill editor for editing
+                        let quillEditor = new Quill(editorContainer, {
+                            theme: editor_theme,
+                            modules: editorModules,
+                        });
+
+                        // Populate Quill editor with existing content
+                        const existingContent = $content.html();
+                        quillEditor.root.innerHTML = existingContent.replace(/^<p>\s*<\/p>/, '');
+                    }
+                    
                 }
             });
         
             // Function to cancel editing
-            $(document).on('click', '.cancel-button', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click', '.cancel-button', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
+                const $title = ! isComment ? $postDiv.find('.userwall-wp-thread-title-wrapper') : '';
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
         
                 $editForm.hide();
                 $content.show();
+                $title.show();
             });
             
             // Function to save changes via AJAX
-            $(document).on('click','.save-button', function() {
-                const isComment = $(this).closest('.userwall-wp-comment').length ? true : false;
-                const $commentDiv = isComment ? $(this).closest('.userwall-wp-comment') : '';
-                const $postDiv = $(this).closest('.userwall-wp-thread');
+            jQuery(document).on('click','.save-button', function() {
+                const isComment = jQuery(this).closest('.userwall-wp-comment').length ? true : false;
+                const $commentDiv = isComment ? jQuery(this).closest('.userwall-wp-comment') : '';
+                const $postDiv = jQuery(this).closest('.userwall-wp-thread');
                 var content = '';
                 const $content = isComment ? $commentDiv.find('.userwall-wp-comment-content') : $postDiv.find('.userwall-wp-thread-content');
+                const $title = ! isComment ? $postDiv.find('.userwall-wp-thread-title-wrapper') : '';
                 const $editForm = isComment ? $commentDiv.find('.comment-thread-edit-form') : $postDiv.find('.edit-form');
                 var commentID = isComment ? $commentDiv.data('commentid') : 0;
                 var postID = $postDiv.data('postid');
@@ -637,36 +902,37 @@ jQuery(document).ready(function($) {
                 } else {
                     const quill = new Quill(`#quill-editor-edit-${postID}`);
                     content = quill.root.innerHTML; // Get Quill editor content
+                    $title.val( $postDiv.find( '.userwall-wp-thread-title' ).text() );
                 }
 
                 // Perform an AJAX request to save the changes
                 $.ajax({
-                    url: threadsWPObject.ajax_url,
+                    url: userwallWPObject.ajax_url,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        action: isComment ? 'threads_wp_update_comment' : 'threads_wp_update_post', // Create this AJAX action in your main plugin file
+                        action: isComment ? 'userwall_wp_update_comment' : 'userwall_wp_update_post', // Create this AJAX action in your main plugin file
                         post_id: postID,
                         comment_id: commentID,
                         content: content,
-                        nonce: threadsWPObject.nonce
+                        nonce: userwallWPObject.nonce
                     },
                     success: function(response) {
                         if ( isComment ) {
                             // Handle success, e.g., update the post content display
                             const $content = $commentDiv.find('.userwall-wp-comment-content');
-                            var template = wp.template('reddit-style-thread-comment-template');
-                            var newThreads = transformComments(response.data.comments);
+                            var template = wp.template('userwall-wp-thread-comment-template');
+                            var newPosts = transformComments(response.data.comments);
 
-                            var html = template(newThreads);
+                            var html = template(newPosts);
                             $commentDiv.replaceWith(html);
                         } else {
                             // Handle success, e.g., update the post content display
                             const $content = $postDiv;
                             var template = wp.template('userwall-wp-feed-template');
-                            var newThreads = transformThreads(response.data.threads);
+                            var newPosts = transformPosts(response.data.posts);
 
-                            var html = template(newThreads);
+                            var html = template(newPosts);
                             $content.replaceWith(html);
                             // Hide the edit form
                             $editForm.hide();
@@ -682,6 +948,20 @@ jQuery(document).ready(function($) {
                                 const quill = new Quill(quillContainer, {
                                     theme: editor_theme, // You can use a different theme if needed
                                     placeholder: 'Edit your thread here...',
+                                    modules: editorModules,
+                                });
+
+                                quill.on('text-change', function() {
+                                    var editorContent = quill.getText();
+                            
+                                    // If there is text in the editor (not just whitespace)
+                                    if (editorContent.trim().length > 0) {
+                                        // Remove 'ql-blank' class
+                                        jQuery('#' . quillContainerId).removeClass('ql-blank');
+                                    } else {
+                                        // Add 'ql-blank' class if the editor is empty
+                                        jQuery('#' . quillContainerId).addClass('ql-blank');
+                                    }
                                 });
                             }
                             
@@ -693,13 +973,13 @@ jQuery(document).ready(function($) {
                 });
             });
 
-            $(document).on('click', '.userwall-wp-reply-button', function () {
+            jQuery(document).on('click', '.userwall-wp-reply-button', function () {
                 // Find the closest comment container
-                var commentContainer = $(this).closest('.userwall-wp-comment');
+                var commentContainer = jQuery(this).closest('.userwall-wp-comment');
                 
                 var commentId = commentContainer.data('commentid');
 
-                var postContainer = $(this).closest('.userwall-wp-thread');
+                var postContainer = jQuery(this).closest('.userwall-wp-thread');
                 var postId =  postContainer.data('postid');
 
                 // Get the dynamic ID for the Quill editor
@@ -708,10 +988,27 @@ jQuery(document).ready(function($) {
                 // Toggle the reply form visibility
                 commentContainer.find('.userwall-wp-reply-form').toggle();
                 
-                // Initialize Quill editor inside the reply form using the dynamic ID
-                var quill = new Quill('#' + quillEditorId, {
-                    theme: editor_theme, // You can customize the Quill editor's theme
-                });
+                let quillContainer = '#' + quillEditorId;
+                if ( jQuery( quillContainer).html() == '' ) {
+                    // Initialize Quill editor inside the reply form using the dynamic ID
+                    var quill = new Quill( quillContainer, {
+                        theme: editor_theme, // You can customize the Quill editor's theme
+                        modules: editorModules,
+                    });
+
+                    quill.on('text-change', function() {
+                        var editorContent = quill.getText();
+                
+                        // If there is text in the editor (not just whitespace)
+                        if (editorContent.trim().length > 0) {
+                            // Remove 'ql-blank' class
+                            jQuery(quillContainer).removeClass('ql-blank');
+                        } else {
+                            // Add 'ql-blank' class if the editor is empty
+                            jQuery(quillContainer).addClass('ql-blank');
+                        }
+                    });
+                }
                 
                 // Handle submit button click
                 commentContainer.find('.userwall-wp-reply-submit').on('click', function () {
@@ -720,28 +1017,29 @@ jQuery(document).ready(function($) {
                     // Perform an AJAX request to submit the comment
                     $.ajax({
                         type: 'POST',
-                        url: threadsWPObject.ajax_url,
+                        url: userwallWPObject.ajax_url,
                         data: {
-                            action: 'thread_wp_comment_reply', // AJAX action hook
+                            action: 'userwall_wp_comment_reply', // AJAX action hook
                             post_id: postId,
                             commentId: commentId,
                             commentContent: replyContent,
-                            nonce: threadsWPObject.nonce, // Nonce value (localized in your template)
+                            nonce: userwallWPObject.nonce, // Nonce value (localized in your template)
                         },
                         success: function (response) {
                             // Handle the AJAX response here (update the comment section, etc.)
                             if (response.success) {
                                 // Update your comment section with response.data
-                                var template = wp.template('reddit-style-thread-comment-template');
+                                var template = wp.template('userwall-wp-thread-comment-template');
                                 var newComments = transformComments(response.data.comments);
                                 var html = template(newComments);
                                 var commentHtml = jQuery( '<div class="tempWrap">' + html + '</div>' );
                                 commentHtml.find('.userwall-wp-reply').remove();
                                 commentHtml.find('.userwall-wp-comment-reply-section').remove();
                                 commentContainer.find('.userwall-wp-comment-reply-section').prepend(commentHtml.html());
+                                commentContainer.find('.userwall-wp-reply-form').toggle();
                                 // Clear the comment input field
                                 quill.root.innerHTML = '';
-                                wp.hooks.doAction('threads_wp_comment_rendered', newComments );
+                                wp.hooks.doAction('userwall_wp_comment_rendered', newComments );
                             } else {
                                 console.error('Error:', response.data);
                             }
@@ -753,112 +1051,28 @@ jQuery(document).ready(function($) {
                 });
             });
         }
-
-        fetchAndRenderPosts($div) {
-            const postType = $div.data('post_type');
-            const perPage = $div.data('per_page');
-            const page = $div.data('page');
-            const objectId = $div.data('object_id');
-            // Perform an AJAX request to fetch data based on the attributes
-            jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                type: 'GET',
-                dataType: 'json', // Adjust the data type based on your server response
-                data: {
-                    action: 'fetch_data_by_thread', // Create this AJAX action in your main plugin file
-                    post_type: postType,
-                    per_page: perPage,
-                    page: page,
-                    object_id: objectId,
-                    nonce: threadsWPObject.nonce,
-                },
-                success: function (response) {
-                    // Handle the response here (e.g., render the fetched data)
-                    renderThreads( response.threads, 'bottom' );
-                },
-                error: function (error) {
-                    console.error('Error fetching data:', error);
-                },
-            });
-        }
-
-        loadMorePosts( $container ) {
-            if (this.loading) {
-                return;
-            }
-            this.loading = true;
-            var $loader = $container.find('.loading-indicator');
-            $loader.show();
-            
-            const postType = $container.data('post_type');
-            const perPage = $container.data('per_page');
-
-            $.ajax({
-                url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                type: 'POST',
-                data: {
-                    action: 'threads_wp_load_more_posts', // Create this AJAX action in your main plugin file
-                    per_page: perPage,
-                },
-                success: function(response) {
-                    if (response.success) {
-                        if (response.data.posts.length > 0) {
-                            var template = wp.template( 'userwall-wp-feed-template' );
-                            var newThreads = response.data.threads( response.data.threads );
-                            
-                            var html = template( newThreads );
-                            jQuery('.userwall-wp-new-threads').remove();
-                            $container.find('.userwall-wp-reddit-thread').append( html );
-                            page++;
-                        } else {
-                            // No more posts to load
-                            $loader.text('No more posts to load').show();
-                        }
-                    } else {
-                        // Handle AJAX error
-                        console.error('Error loading more posts:', response.data.message);
-                    }
-    
-                    this.loading = false;
-                    $loader.hide();
-                },
-                error: function(error) {
-                    // Handle AJAX error
-                    console.error('Error loading more posts:', error);
-                    loading = false;
-                    $loader.hide();
-                },
-            });
-
-            
-        }
         
         initializeTabs() {
             // Initialize the first tab as active
-            jQuery('.threads-tab:first-child').addClass('active');
-            jQuery('.threads-tab-content:first-child').addClass('active');
+            jQuery('.userwall-tab:first-child').addClass('active');
+            jQuery('.userwall-tab-content:first-child').addClass('active');
     
             // Switch tabs when clicked
-            jQuery('.threads-tab').click(function() {
-                jQuery('.threads-tab').removeClass('active');
-                jQuery('.threads-tab-content').removeClass('active');
+            jQuery('.userwall-tab').click(function() {
+                jQuery('.userwall-tab').removeClass('active');
+                jQuery('.userwall-tab-content').removeClass('active');
                 var tab = jQuery(this).data('tab');
                 jQuery(this).addClass('active');
-                jQuery('.threads-tab-content[data-tab="' + tab + '"]').addClass('active');
+                jQuery('.userwall-tab-content[data-tab="' + tab + '"]').addClass('active');
             });
         }
     
         submitForm(event) {
             event.preventDefault();
-    
-            // Get form data
-            //const formData = jQuery('#userwall-wp-post-form').serialize();
-            
-            // Get the HTML content from the Quill editor
-            const quill = new Quill('.post-quill-editor'); // Initialize Quill (if not already done)
-            const content = quill.root.innerHTML;
 
-            var tab = jQuery('.threads-tab.active').data('tab');
+            const content = jQuery( '.post-quill-editor').find('.ql-editor').html();
+
+            var tab = jQuery('.userwall-tab.active').data('tab');
             var form = jQuery('#userwall-wp-post-form')[0];
 
             const formData = new FormData(form);
@@ -868,13 +1082,19 @@ jQuery(document).ready(function($) {
                 formData.append('content', content );
             }
 
-            formData.append( 'action', 'threads_wp_save_post' );
-            formData.append( 'nonce', threadsWPObject.nonce );
+            var title = jQuery('.userwall-wp-post-title-input');
+            if ( title.length && title.val() ) {
+                formData.append('post_title', title.val() );
+            }
+
+            formData.append( 'action', 'userwall_wp_save_post' );
+            formData.append( 'nonce', userwallWPObject.nonce );
             formData.append( 'post_tab', tab );
+            formData.append( 'nonce', userwallWPObject.nonce);
             
             // Perform AJAX request to save the post
             jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
+                url: userwallWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
                 type: 'POST',
                 enctype: 'multipart/form-data',
                 processData: false,  // Important!
@@ -882,11 +1102,13 @@ jQuery(document).ready(function($) {
                 cache: false,
                 data: formData,
                 success: function(response) {
-                    renderThreads( response.data.threads );
+                    renderPosts( response.data.posts );
                     // Reset post form.
-                    quill.root.innerHTML = '';
-
-                    wp.hooks.doAction('threads_wp_after_post_submitted', response, formData );
+                    jQuery( '.post-quill-editor').find('.ql-editor').html('');
+                    if ( title.length && title.val() ) {
+                        title.val('');
+                    }
+                    wp.hooks.doAction('userwall_wp_after_post_submitted', response, formData );
                 },
                 error: function(error) {
                     // Handle errors here (e.g., display an error message)
@@ -895,20 +1117,13 @@ jQuery(document).ready(function($) {
         }
     
         handleEllipsisClick() {
-            // Find the parent .userwall-wp-thread
-            
-            var thread = jQuery(this).closest('.userwall-wp-comment');
-            if ( thread.length == 0 ) {
-                thread = jQuery(this).closest('.userwall-wp-thread');
-            }
+            var obj = jQuery( this );
+
             // Find .userwall-wp-thread-actions within the thread
-            const actionsArea = thread.find('.userwall-wp-thread-actions');
+            const actionsArea = obj.siblings('.userwall-wp-thread-actions');
 
             // Toggle the visibility of the actions area
             actionsArea.toggle();
-    
-            // Prevent the click event from propagating to the document body
-            event.stopPropagation();
         }
     
         closeActions() {
@@ -918,21 +1133,23 @@ jQuery(document).ready(function($) {
 
         handleActionClick(event) {
             var $thread = jQuery(event.target).closest('.userwall-wp-thread');
+            var $commentDiv = jQuery( event.target ).closest( '.userwall-wp-comment' );
             const actionType = jQuery(event.target).data('action');
             if ( actionType == 'Edit' ) {
                 return;
             }
             var data = {
-                action: 'threads_wp_posts_action',
+                action: 'userwall_wp_posts_action',
                 action_type: actionType, // The action type you want to perform
                 post_id: $thread.data('postid'), // The post ID associated with the action
-                nonce: threadsWPObject.nonce 
+                comment_id: $commentDiv.data('commentid'), // The comment ID associated with the action
+                nonce: userwallWPObject.nonce 
             };
     
             // Perform the AJAX request
             jQuery.ajax({
                 type: 'POST',
-                url: threadsWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
+                url: userwallWPObject.ajax_url, // Define the AJAX URL (Make sure to localize this in your main plugin file)
                 data: data,
                 success: function(response) {
                     // Handle the AJAX response here based on the actionType
@@ -967,12 +1184,20 @@ jQuery(document).ready(function($) {
             // Initialize Quill rich text editor
             const quill = new Quill('[data-comment-reply]', {
               theme: editor_theme,
-              modules: {
-                toolbar: [
-                  ['bold', 'italic', 'strike'], // Text formatting options
-                  ['image', 'code-block', 'blockquote'], // Add photos, code block, and quote
-                ],
-              },
+              modules: editorModules,
+            });
+
+            quill.on('text-change', function() {
+                var editorContent = quill.getText();
+        
+                // If there is text in the editor (not just whitespace)
+                if (editorContent.trim().length > 0) {
+                    // Remove 'ql-blank' class
+                    jQuery('[data-comment-reply]').removeClass('ql-blank');
+                } else {
+                    // Add 'ql-blank' class if the editor is empty
+                    jQuery('[data-comment-reply]').addClass('ql-blank');
+                }
             });
       
             // Show/hide reply form when clicking the Reply button
@@ -988,12 +1213,12 @@ jQuery(document).ready(function($) {
       
               // Perform AJAX request to save the reply
               jQuery.ajax({
-                url: threadsWPObject.ajax_url, // Define the AJAX URL
+                url: userwallWPObject.ajax_url, // Define the AJAX URL
                 type: 'POST',
                 data: {
-                  action: 'threads_wp_save_reply', // Create this AJAX action in your main plugin file
+                  action: 'userwall_wp_save_reply', // Create this AJAX action in your main plugin file
                   reply_content: replyContent,
-                  nonce: threadsWPObject.nonce,
+                  nonce: userwallWPObject.nonce,
                 },
                 success: function(response) {
                   // Handle the response here (e.g., display a success message)
@@ -1016,11 +1241,47 @@ jQuery(document).ready(function($) {
             if ( ! jQuery('.post-quill-editor' ).length ) {
                 return;
             }
-            const quillPostEditor = new Quill('.post-quill-editor', {
-              theme: editor_theme,
-              modules: {
-                toolbar: '#userwall-wp-post-toolbar'
-              }
+    
+            var quill_config = {
+                theme: editor_theme,
+                modules: editorModules
+            }
+            const quillPostEditor = new Quill('.post-quill-editor', quill_config);
+
+            var maxChars = parseInt( userwallWPObject.char_limit ); // Maximum characters allowed
+
+            quillPostEditor.on('text-change', function(delta, oldDelta, source) {
+                if ( maxChars !== 0 ) {
+                    var text = quillPostEditor.getText().trim(); // Get text content of editor
+                    var charCount = text.length; // Get the length of text
+
+                    // Update character count
+                    var charCountDiv = jQuery('#userwall-wp-charcount');
+                    charCountDiv.text( charCount + '/' + maxChars);
+
+                    // Add 'max-reached' class to character count if limit is reached
+                    if (charCount > maxChars) {
+                        charCountDiv.html( charCount + '/' + maxChars + ' <span class="max-reached">(Max limit reached)</span>');
+                        
+                        // Optional: Prevent further typing
+                        quillPostEditor.deleteText(maxChars, charCount - maxChars);
+                    } else {
+                        charCountDiv.removeClass('max-reached');
+                    }
+                }
+            });
+
+            quillPostEditor.on('text-change', function() {
+                var editorContent = quillPostEditor.getText();
+        
+                // If there is text in the editor (not just whitespace)
+                if (editorContent.trim().length > 0) {
+                    // Remove 'ql-blank' class
+                    jQuery('.post-quill-editor').removeClass('ql-blank');
+                } else {
+                    // Add 'ql-blank' class if the editor is empty
+                    jQuery('.post-quill-editor').addClass('ql-blank');
+                }
             });
 
             quillPostEditor.on('text-change', function(delta, oldDelta, source) {
@@ -1088,6 +1349,9 @@ jQuery(document).ready(function($) {
         }        
     
         fetchAndUpdateData() {
+            if ( isSinglePost ) {
+                return;
+            }
             jQuery('[data-thread]').each(function () {
                 // Get the data attributes from the current div element
                 const $div = jQuery(this);
@@ -1097,9 +1361,9 @@ jQuery(document).ready(function($) {
                 // Initialize variables to keep track of the highest post ID and the corresponding element
                 var highestPostId = -1;
                 var $elementWithHighestId = null;
-                var $threads = $div.find('.userwall-wp-thread'); 
+                var $userwall = $div.find('.userwall-wp-thread'); 
                 // Iterate through each element to find the highest post ID
-                $threads.each(function() {
+                $userwall.each(function() {
                     var postId = parseInt(jQuery(this).data('postid'));
                     
                     // Check if the current post ID is higher than the highest found so far
@@ -1108,29 +1372,31 @@ jQuery(document).ready(function($) {
                         $elementWithHighestId = jQuery(this);
                     }
                 });
+
                 // Use jQuery's AJAX method to make a GET request to your server
                 jQuery.ajax({
-                    url: threadsWPObject.ajax_url, // Replace with your AJAX endpoint URL
+                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
                     type: 'GET',
                     dataType: 'json', // Adjust the data type based on your server response
                     data: {
                         action: 'fetch_latest_thread_notice', // Create this AJAX action in your main plugin file
                         post_type: postType,
                         per_page: perPage,
-                        nonce: threadsWPObject.nonce,
+                        nonce: userwallWPObject.nonce,
                         post_id: highestPostId,
+                        user_wall: userwallWPObject.user_wall
                     },
                     success: (response) => {
                         var message = response.data.message;
                         
                         if ( response.data.message > 0 ) {
                             // Update your template with the new data
-                            if ( ! $div.find('.userwall-wp-new-threads').length ) {
-                                $div.prepend('<div class="userwall-wp-new-threads">New ' + message + ' posts</div>');
+                            if ( ! $div.find('.userwall-wp-new-userwall').length ) {
+                                $div.prepend('<div class="userwall-wp-new-userwall"><span class="userwall-wp-new-userwall-content">New ' + message + ' posts</span></div>');
                             } else {
-                                $div.find('.userwall-wp-new-threads').html('New ' + message+ ' posts' );
+                                $div.find('.userwall-wp-new-userwall').html( '<span class="userwall-wp-new-userwall-content">New ' + message + ' posts</span>' );
                             }
-                            wp.hooks.doAction('threads_wp_new_posts_available', response );
+                            wp.hooks.doAction('userwall_wp_new_posts_available', response );
                         }
                     },
                     error: (error) => {
@@ -1190,7 +1456,7 @@ jQuery(document).ready(function($) {
                     break;
                 case 'embed':
                     // Example: Embed an iframe for other sources
-                    richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
+                    //richPreviewHTML = '<iframe src="' + url + '" frameborder="0" allowfullscreen></iframe>';
                     break;
                 case 'youtube':
                     // Extract the YouTube video ID from the URL
@@ -1219,7 +1485,9 @@ jQuery(document).ready(function($) {
                     richPreviewHTML = '<a href="' + url + '" target="_blank">' + url + '</a>';
                     break;
             }
-        
+            if ( ! richPreviewHTML ) {
+                return '';
+            }
             return richPreviewHTML;
         }
 
@@ -1250,6 +1518,6 @@ jQuery(document).ready(function($) {
     window.UserWallWPPlugin = UserWallWPPlugin;
     
     // Create an instance of the UserWallWPPlugin class
-    const threadsWP = new UserWallWPPlugin();
+    const userwallWP = new UserWallWPPlugin();
     
 });

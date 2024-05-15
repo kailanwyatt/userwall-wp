@@ -6,6 +6,7 @@
     border-radius: 8px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 /* Style the text area for post content */
@@ -43,13 +44,13 @@
     padding: 20px;
 }
 
-.threads-tabs {
+.userwall-tabs {
     list-style: none;
     padding: 0;
     display: flex;
 }
 
-.threads-tab {
+.userwall-tab {
     flex: 1;
     text-align: center;
     padding: 10px;
@@ -57,7 +58,7 @@
     background-color: #eee;
 }
 
-.threads-tab-content {
+.userwall-tab-content {
     display: none;
 }
 
@@ -74,16 +75,16 @@ input[type="text"] {
 */
 
 /* Style the currently active tab */
-.threads-tab.active {
+.userwall-tab.active {
     background-color: #0079d3;
     color: #fff;
 }
 
-.threads-tab-content.active {
+.userwall-tab-content.active {
     display: block;
 }
 
-.userwall-wp-reddit-thread {
+.userwall-wp-inner-thread {
     background-color: #f7f7f7;
 }
 
@@ -140,4 +141,9 @@ input[type="text"] {
 
 .userwall-wp-wall-time {
     cursor: pointer;
+}
+
+.userwall-wp-after-post-section {
+    display: flex;
+    justify-content: space-between;
 }

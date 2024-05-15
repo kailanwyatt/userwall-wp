@@ -1,0 +1,368 @@
+# Copyright (C) 2024 UserWall WP
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: UserWall WP 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/userwall-wp\n"
+"POT-Creation-Date: 2024-05-15 06:02:47+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
+
+#: includes/addons/class-userwallwp-addon-bookmarks.php:41
+msgid "Bookmarks"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-bookmarks.php:50
+msgid "This addon adds ability to save bookmarks from the wall."
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-files.php:38
+msgid "Files"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-files.php:47
+msgid "This addon adds ability to add and download files on the wall."
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-followers.php:39
+msgid "Followers"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-followers.php:48
+msgid "This addon adds ability to have users follow each other."
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-gallery.php:48
+msgid "Gallery"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-gallery.php:57
+msgid "An easy way to add Photo uploads to user wall"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-gallery.php:66
+#: includes/addons/class-userwallwp-addon-groups.php:48
+#: includes/addons/class-userwallwp-addon-polls.php:48
+#: includes/addons/class-userwallwp-addon-reactions.php:48
+msgid "UserWallWP"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-gallery.php:154
+#: includes/addons/class-userwallwp-addon-gallery.php:202
+msgid "Image"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-groups.php:30
+#: includes/addons/class-userwallwp-addon-groups.php:39
+msgid "Groups"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-polls.php:30
+msgid "Polls"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-polls.php:39
+msgid "A way to add Polls to posts with expiration"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-polls.php:177
+msgid "Poll"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-reactions.php:30
+msgid "Reactions"
+msgstr ""
+
+#: includes/addons/class-userwallwp-addon-reactions.php:39
+msgid "Adds User Reactions to posts and comments"
+msgstr ""
+
+#: includes/addons/includes/class-userwallwp-addon-groups-core.php:84
+msgid "Group created successfully."
+msgstr ""
+
+#: includes/admin/templates/add-group.php:14
+msgid "Add New Group"
+msgstr ""
+
+#: includes/admin/templates/add-group.php:24
+msgid "Group Name"
+msgstr ""
+
+#: includes/admin/templates/add-group.php:28
+msgid "Group Slug"
+msgstr ""
+
+#: includes/admin/templates/add-group.php:32
+#: includes/admin/templates/addons.php:28
+msgid "Description"
+msgstr ""
+
+#: includes/admin/templates/add-group.php:36
+msgid "Group Avatar URL"
+msgstr ""
+
+#: includes/admin/templates/add-post.php:29
+msgid "Add Post"
+msgstr ""
+
+#: includes/admin/templates/add-post.php:33
+msgid "Add Post Details"
+msgstr ""
+
+#: includes/admin/templates/add-post.php:43
+msgid "Posts"
+msgstr ""
+
+#: includes/admin/templates/addons.php:27
+msgid "Name"
+msgstr ""
+
+#: includes/admin/templates/addons.php:29
+msgid "Version"
+msgstr ""
+
+#: includes/admin/templates/addons.php:30
+msgid "Status"
+msgstr ""
+
+#: includes/admin/templates/addons.php:52
+msgid "Deactivate"
+msgstr ""
+
+#: includes/admin/templates/addons.php:55
+msgid "Activate"
+msgstr ""
+
+#: includes/admin/templates/addons.php:59
+msgid "Coming Soon"
+msgstr ""
+
+#: includes/class-userwall-template.php:53
+msgid "What are you're thoughs?"
+msgstr ""
+
+#: includes/class-userwall-wp-admin.php:221
+#. translators: Placeholder for the addon name.
+msgid "Addon \"%s\" has been deactivated."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:93
+#: includes/class-userwall-wp-ajax-manager.php:156
+#: includes/class-userwall-wp-ajax-manager.php:200
+#: includes/class-userwall-wp-ajax-manager.php:247
+#: includes/class-userwall-wp-ajax-manager.php:301
+#: includes/class-userwall-wp-ajax-manager.php:336
+#: includes/class-userwall-wp-ajax-manager.php:354
+#: includes/class-userwall-wp-ajax-manager.php:372
+#: includes/class-userwall-wp-ajax-manager.php:405
+#: includes/class-userwall-wp-ajax-manager.php:435
+#: includes/class-userwall-wp-ajax-manager.php:483
+#: includes/class-userwall-wp-ajax-manager.php:523
+#: includes/class-userwall-wp-ajax-manager.php:564
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:161
+msgid "You must be logged in to update comment."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:178
+#: includes/class-userwall-wp-ajax-manager.php:225
+#: includes/class-userwall-wp-ajax-manager.php:278
+msgid "Post creation failed. Please try again."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:205
+#: includes/class-userwall-wp-ajax-manager.php:252
+msgid "You must be logged in to create a post."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:440
+msgid "You must be logged in to add a comment."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:460
+#: includes/class-userwall-wp-ajax-manager.php:502
+msgid "Could not add comment. Please try again."
+msgstr ""
+
+#: includes/class-userwall-wp-ajax-manager.php:551
+msgid "No term found"
+msgstr ""
+
+#: includes/class-userwall-wp-blocks.php:38
+msgid "User Wall"
+msgstr ""
+
+#: includes/class-userwall-wp-post-core.php:47
+msgid "User"
+msgstr ""
+
+#: includes/class-userwall-wp-shortcode.php:55
+msgid "Post"
+msgstr ""
+
+#: includes/helper-functions.php:197
+msgid "Reactions count"
+msgstr ""
+
+#: includes/helper-functions.php:207
+msgid "Comment Count"
+msgstr ""
+
+#: includes/helper-functions.php:216
+msgid "Share"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:40
+msgid "General"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:45
+msgid "Main"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:75
+msgid "User Page"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:83
+msgid "Single Post Page"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:92
+msgid "Character Limit"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:100
+msgid "Allow Titles on Posts"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:108
+msgid "Open Posts Page"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:117
+msgid "Editor Options"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:119
+msgid "Bold"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:120
+msgid "Italic"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:121
+msgid "Underline"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:122
+msgid "Strike"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:123
+msgid "List"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:124
+msgid "Headers"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:125
+msgid "Blockquote"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:126
+msgid "Code Block"
+msgstr ""
+
+#: includes/library/class-userwall-wp-settings.php:205
+msgid "-Page-"
+msgstr ""
+
+#: templates/post-form.php:51
+msgid "Submit"
+msgstr ""
+
+#: templates/post-form.php:59 templates/post-single.php:14
+msgid "Loading..."
+msgstr ""
+
+#: templates/profile.php:16
+#. translators: Avatar alt text placeholder.
+msgid "Avatar of %s"
+msgstr ""
+
+#: templates/wall-comments.php:55 templates/wall.php:67
+msgid "Edit"
+msgstr ""
+
+#: templates/wall-comments.php:58
+msgid "Delete Comment"
+msgstr ""
+
+#: templates/wall-comments.php:58 templates/wall.php:70
+msgid "Delete"
+msgstr ""
+
+#: templates/wall-comments.php:61 templates/wall.php:73
+msgid "Block"
+msgstr ""
+
+#: templates/wall-comments.php:64 templates/wall.php:76
+msgid "Report"
+msgstr ""
+
+#: templates/wall-comments.php:67 templates/wall.php:79
+msgid "Embed Post"
+msgstr ""
+
+#: templates/wall-comments.php:70 templates/wall.php:82
+msgid "Save"
+msgstr ""
+
+#: templates/wall-comments.php:73 templates/wall.php:85
+msgid "Follow"
+msgstr ""
+
+#: templates/wall-comments.php:81
+msgid "Reply"
+msgstr ""
+
+#: templates/wall-comments.php:89
+msgid "Submit Reply"
+msgstr ""
+
+#: templates/wall-comments.php:90
+msgid "Cancel Reply"
+msgstr ""
+
+#: templates/wall.php:57
+msgid "Save Changes"
+msgstr ""
+
+#: templates/wall.php:58
+msgid "Cancel Changes"
+msgstr ""
+
+#: templates/wall.php:97
+msgid "Share Comment"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "UserWall WP"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"A versatile plugin that combines microblogging and forum functionality "
+"within WordPress, enhancing user engagement and interaction."
+msgstr ""

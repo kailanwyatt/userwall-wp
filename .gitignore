@@ -1,5 +1,6 @@
 /node_modules/
 /release/
+/vendor/
 
 __MACOSX
 .DS_Store

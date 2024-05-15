@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-    var myModal = $('#myModal').ThreadWPModal({
+    var myModal = $('#myModal').UserWallWPModal({
         content: '<div class="author">New Author</div><div class="caption">New Caption</div>',
         showCloseBtn: true,
         openTransition: 'fade',

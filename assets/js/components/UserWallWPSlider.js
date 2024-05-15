@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.ThreadWPSlider = function(options) {
+    $.fn.UserWallWPSlider = function(options) {
         var settings = $.extend({
             slideClass: 'slide',
             slideWrapperClass: 'slider-wrapper',
@@ -17,7 +17,6 @@
 
         return this.each(function() {
             var $slider = $(this);
-            console.log( $slider );
             var $slides = $slider.find('.' + settings.slideClass);
             var currentIndex = settings.currentIndex;
             var slideWidth = 100;
@@ -40,7 +39,6 @@
                 
                 if (index >= 0 && index < $slides.length) {
                     currentIndex = index;
-                    console.log( currentIndex );
                     $slides.hide();
                     $slides.each( function( index, el ) {
                         if ( currentIndex == parseInt( jQuery(this).attr('data-index') ) ) {
@@ -131,5 +129,5 @@
         });
     };
 
-    window.ThreadWPSlider = $.fn.ThreadWPSlider;
+    window.UserWallWPSlider = $.fn.UserWallWPSlider;
 }(jQuery));

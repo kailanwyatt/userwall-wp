@@ -1,5 +1,5 @@
 (function($) {
-    $.fn.ThreadWPModal = function(options) {
+    $.fn.UserWallWPModal = function(options) {
         var settings = $.extend({
             content: '',
             showCloseBtn: true,

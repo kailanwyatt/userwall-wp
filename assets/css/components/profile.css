@@ -1,0 +1,51 @@
+.userwall-wp-profile-wrapper {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.userwall-wp-profile-header {
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+}
+
+.userwall-wp-profile-avatar {
+    flex-basis: 150px;
+    padding: 10px;
+}
+
+.userwall-wp-profile-avatar img {
+    width: 100%;
+    border-radius: 50%;
+}
+
+.userwall-wp-profile-name {
+    flex-grow: 1;
+    padding-left: 20px;
+}
+
+.userwall-wp-profile-display-name h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.userwall-wp-profile-user-name {
+    color: #777;
+    font-size: 1em;
+}
+
+.userwall-wp-profile-tabs {
+    display: flex;
+    padding: 20px 0;
+}
+
+.userwall-wp-profile-tab-item {
+    margin-right: 20px;
+    font-size: 1em;
+}
+
+.userwall-wp-profile-content {
+    padding: 20px 0;
+}
