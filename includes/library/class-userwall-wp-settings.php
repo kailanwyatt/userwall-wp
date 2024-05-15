@@ -1,9 +1,40 @@
 <?php
+/**
+ * UserWall_WP_Settings class
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * UserWall_WP_Settings class
+ */
 class UserWall_WP_Settings {
-	private $tabs    = array();
+	/**
+	 * Tabs array
+	 *
+	 * @var array
+	 */
+	private $tabs = array();
+	/**
+	 * Subtabs array
+	 *
+	 * @var array
+	 */
 	private $subtabs = array();
+	/**
+	 * Options array
+	 *
+	 * @var array
+	 */
 	private $options = array();
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		$this->tabs = array(
 			'general' => __( 'General', 'userwall-wp' ),
@@ -18,13 +49,17 @@ class UserWall_WP_Settings {
 		$this->options = get_option( 'userwall_wp' );
 	}
 
+	/**
+	 * Initialize the settings
+	 */
 	public function admin_init() {
 		register_setting( 'userwall_wp', 'userwall_wp' );
 		$this->init_general_main_settings();
-		$this->init_general_secondary_settings();
-		$this->init_advanced_settings();
 	}
 
+	/**
+	 * Initialize the general main settings
+	 */
 	private function init_general_main_settings() {
 		add_settings_section(
 			'userwall_settings_general',
@@ -37,7 +72,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'pages_dropdown',
 				'name'  => 'user_page',
-				'label' => __( 'User Page', 'userwall_wp' ),
+				'label' => __( 'User Page', 'userwall-wp' ),
 			)
 		);
 
@@ -45,16 +80,16 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'pages_dropdown',
 				'name'  => 'single_post_page',
-				'label' => __( 'Single Post Page', 'userwall_wp' ),
+				'label' => __( 'Single Post Page', 'userwall-wp' ),
 			)
 		);
 
-		// Character Limit Field
+		// Character Limit Field.
 		$this->get_field(
 			array(
 				'type'  => 'text',
 				'name'  => 'character_limit',
-				'label' => __( 'Character Limit', 'userwall_wp' ),
+				'label' => __( 'Character Limit', 'userwall-wp' ),
 			)
 		);
 
@@ -62,7 +97,7 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'checkbox',
 				'name'  => 'allow_titles',
-				'label' => __( 'Allow Titles on Posts', 'userwall_wp' ),
+				'label' => __( 'Allow Titles on Posts', 'userwall-wp' ),
 			)
 		);
 
@@ -70,16 +105,16 @@ class UserWall_WP_Settings {
 			array(
 				'type'  => 'checkbox',
 				'name'  => 'open_posts',
-				'label' => __( 'Open Posts Page', 'userwall_wp' ),
+				'label' => __( 'Open Posts Page', 'userwall-wp' ),
 			)
 		);
 
-		// Editor Settings Fields
+		// Editor Settings Fields.
 		$this->get_field(
 			array(
 				'type'    => 'checkbox',
 				'name'    => 'editor_options',
-				'label'   => __( 'Editor Options', 'userwall_wp' ),
+				'label'   => __( 'Editor Options', 'userwall-wp' ),
 				'options' => array(
 					'bold'       => __( 'Bold', 'userwall-wp' ),
 					'italic'     => __( 'Italic', 'userwall-wp' ),
@@ -134,7 +169,7 @@ class UserWall_WP_Settings {
 				$input = '<select name="userwall_wp[' . esc_attr( $args['name'] ) . ']">';
 				foreach ( $args['options'] as $option_value => $option_label ) {
 					$selected = selected( $args['value'], $option_value, false );
-					$input   .= '<option value="' . esc_attr( $option_value ) . '" ' . $selected . '>' . esc_html( $option_label ) . '</option>';
+					$input   .= '<option value="' . esc_attr( $option_value ) . '" ' . esc_html( $selected ) . '>' . esc_html( $option_label ) . '</option>';
 				}
 				$input .= '</select>';
 				break;
@@ -143,35 +178,35 @@ class UserWall_WP_Settings {
 					$checked = '';
 					foreach ( $args['options'] as $option_key => $option ) {
 						if ( ! empty( $args['value'] ) && is_array( $args['value'] ) ) {
-							$checked = checked( in_array( $option_key, array_keys( $args['value'] ) ), true, false );
+							$checked = checked( in_array( $option_key, array_keys( $args['value'] ), true ), true, false );
 						}
 						$input .= '<div><label>';
-						$input .= '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . '][' . $option_key . ']" ' . $checked . '/>';
+						$input .= '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . '][' . esc_attr( $option_key ) . ']" ' . esc_html( $checked ) . '/>';
 						$input .= esc_html( $option ) . '</label></div>';
 					}
 				} else {
 					$checked = checked( $args['value'], 'on', false );
-					$input   = '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" ' . $checked . '/>';
+					$input   = '<input type="checkbox" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" ' . esc_html( $checked ) . '/>';
 				}
 				break;
 			case 'radio':
 				$input = '';
 				foreach ( $args['options'] as $option_value => $option_label ) {
 					$checked = checked( $args['value'], $option_value, false );
-					$input  .= '<input type="radio" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" value="' . esc_attr( $option_value ) . '" ' . $checked . '/> ' . esc_html( $option_label ) . '<br>';
+					$input  .= '<input type="radio" name="userwall_wp[' . esc_attr( $args['name'] ) . ']" value="' . esc_attr( $option_value ) . '" ' . esc_html( $checked ) . '/> ' . esc_html( $option_label ) . '<br>';
 				}
 				break;
 			case 'pages_dropdown':
 				$input = '<select name="userwall_wp[' . esc_attr( $args['name'] ) . ']">';
 
-				// Get the list of pages
+				// Get the list of pages.
 				$pages    = get_pages();
 				$selected = selected( $args['value'], '', false );
-				$input   .= '<option value="" ' . $selected . '>' . esc_html__( '-Page-', 'userwall-wp' ) . '</option>';
+				$input   .= '<option value="" ' . esc_html( $selected ) . '>' . esc_html__( '-Page-', 'userwall-wp' ) . '</option>';
 				if ( ! empty( $pages ) ) {
 					foreach ( $pages as $page ) {
 						$selected = selected( $args['value'], $page->ID, false );
-						$input   .= '<option value="' . esc_attr( $page->ID ) . '" ' . $selected . '>' . esc_html( $page->post_title ) . '</option>';
+						$input   .= '<option value="' . esc_attr( $page->ID ) . '" ' . esc_html( $selected ) . '>' . esc_html( $page->post_title ) . '</option>';
 					}
 				}
 				$input .= '</select>';
@@ -182,42 +217,79 @@ class UserWall_WP_Settings {
 			$args['name'],
 			$args['label'],
 			function () use ( $input ) {
-				echo $input;
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wp_kses(
+					$input,
+					apply_filters(
+						'userwall_wp_allowed_tags',
+						array(
+							'div'      => array(
+								'class'  => true,
+								'id'     => true,
+								'style'  => true,
+								'title'  => true,
+								'role'   => true,
+								'aria-*' => true,
+								'data-*' => true,
+								'align'  => true,
+							),
+							'label'    => array(
+								'for'    => true,
+								'class'  => true,
+								'id'     => true,
+								'style'  => true,
+								'title'  => true,
+								'role'   => true,
+								'aria-*' => true,
+								'data-*' => true,
+								'align'  => true,
+							),
+							'input'    => array(
+								'type'    => true,
+								'name'    => true,
+								'value'   => true,
+								'checked' => true,
+							),
+							'textarea' => array(
+								'name' => true,
+								'rows' => true,
+								'cols' => true,
+							),
+							'select'   => array(
+								'name'     => true,
+								'size'     => true,
+								'multiple' => true,
+								'disabled' => true,
+								'class'    => true,
+								'id'       => true,
+								'style'    => true,
+								'title'    => true,
+								'role'     => true,
+								'aria-*'   => true,
+								'data-*'   => true,
+								'align'    => true,
+							),
+							'option'   => array(
+								'value'    => true,
+								'selected' => true,
+							),
+						)
+					)
+				);
 			},
 			$args['section'],
 			$args['section']
 		);
 	}
 
-	private function init_general_secondary_settings() {
-		add_settings_section(
-			'wp_custom_general_secondary',
-			__( 'Secondary Settings', 'userwall-wp' ),
-			function () {
-				echo '<p>Secondary settings section description.</p>'; },
-			'wp_custom_general_secondary'
-		);
-
-		// Additional fields for the Secondary Subtab can be added here.
-	}
-
-	private function init_advanced_settings() {
-		add_settings_section(
-			'wp_custom_advanced',
-			__( 'Advanced Settings', 'wp_custom_admin_settings_panel' ),
-			function () {
-				echo '<p>Advanced settings section description.</p>'; },
-			'wp_custom_advanced'
-		);
-
-		// Additional fields for the Advanced Tab can be added here.
-	}
-
+	/**
+	 * Add the settings page
+	 */
 	public function show_navigation() {
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $tab => $name ) {
 			$class = ( $tab === $this->get_current_tab() ) ? ' nav-tab-active' : '';
-			echo "<a class='nav-tab$class' href='?page=userwall-wp-settings&tab=$tab'>$name</a>";
+			echo '<a class="nav-tab' . esc_attr( $class ) . ' href="' . esc_url( admin_url( 'admin.php?page=userwall-wp-settings&tab=' . esc_attr( $tab ) ) ) . '">' . esc_attr( $name ) . '</a>';
 		}
 		echo '</h2>';
 
@@ -225,20 +297,36 @@ class UserWall_WP_Settings {
 			echo '<ul class="subsubsub">';
 			foreach ( $this->subtabs[ $this->get_current_tab() ] as $subtab => $name ) {
 				$class = ( $subtab === $this->get_current_subtab() ) ? ' current' : '';
-				echo "<li><a class='$class' href='?page=userwall-wp-settings&tab={$this->get_current_tab()}&subtab=$subtab'>$name</a> | </li>";
+				echo '<li><a class="' . esc_attr( $class ) . ' href="' . esc_url( admin_url( 'admin.php?page=userwall-wp-settings&tab=' . $this->get_current_tab() . '&subtab=' . esc_attr( $subtab ) ) ) . '">' . esc_attr( $name ) . '</a> | </li>';
 			}
 			echo '</ul>';
 		}
 	}
 
+	/**
+	 * Get the current tab
+	 *
+	 * @return string
+	 */
 	private function get_current_tab() {
-		return isset( $_GET['tab'] ) ? $_GET['tab'] : 'general';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+		return $tab;
 	}
 
+	/**
+	 * Get the current subtab
+	 *
+	 * @return string
+	 */
 	private function get_current_subtab() {
-		return isset( $_GET['subtab'] ) ? $_GET['subtab'] : 'main';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_GET['subtab'] ) ? sanitize_text_field( wp_unslash( $_GET['subtab'] ) ) : 'main';
 	}
 
+	/**
+	 * Show the settings forms
+	 */
 	public function show_forms() {
 		echo '<form method="post" action="options.php">';
 		settings_fields( 'userwall_wp' );
@@ -248,15 +336,15 @@ class UserWall_WP_Settings {
 			case 'general':
 				$this->show_general_settings();
 				break;
-			case 'advanced':
-				$this->show_advanced_settings();
-				break;
 		}
 
 		submit_button();
 		echo '</form>';
 	}
 
+	/**
+	 * Show the general settings
+	 */
 	private function show_general_settings() {
 		$current_subtab = $this->get_current_subtab();
 		switch ( $current_subtab ) {
@@ -264,12 +352,8 @@ class UserWall_WP_Settings {
 				do_settings_sections( 'userwall_settings_general' );
 				break;
 			case 'secondary':
-				do_settings_sections( 'wp_custom_general_secondary' );
+				do_settings_sections( 'userwall_wp_general_secondary' );
 				break;
 		}
-	}
-
-	private function show_advanced_settings() {
-		do_settings_sections( 'wp_custom_advanced' );
 	}
 }

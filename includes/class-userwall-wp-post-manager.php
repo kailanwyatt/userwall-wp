@@ -2,25 +2,35 @@
 /**
  * Class for Managing Posts and Comments.
  *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class for Managing Posts and Comments.
+ *
  * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
  */
 class UserWall_WP_Post_Manager {
 	/**
-	 * table_posts variable
+	 * The table_posts variable.
 	 *
 	 * @var array
 	 */
 	private $table_posts;
 
 	/**
-	 * wpdb
+	 * The wpdb.
 	 *
 	 * @var object
 	 */
 	private $wpdb;
 
 	/**
-	 * authors
+	 * The authors array.
 	 *
 	 * @var array
 	 */
@@ -39,12 +49,12 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Get author information for post.
 	 *
-	 * @param integer $user_id
+	 * @param integer $user_id User ID.
 	 *
 	 * @return array
 	 */
 	private function get_author_info( $user_id = 0 ) {
-		// Ensure the user ID is an integer
+		// Ensure the user ID is an integer.
 		$user_id = intval( $user_id );
 
 		if ( ! $user_id ) {
@@ -57,10 +67,10 @@ class UserWall_WP_Post_Manager {
 
 		// If the author is not in the array. Add it now to reduce DB calls.
 		if ( empty( $this->authors[ $user_id ] ) ) {
-			// Get the user by user ID
+			// Get the user by user ID.
 			$user = get_userdata( $user_id );
 
-			// Check if user exists
+			// Check if user exists.
 			if ( false === $user ) {
 				// Return empty array.
 				return array(
@@ -70,13 +80,13 @@ class UserWall_WP_Post_Manager {
 				);
 			}
 
-			// Get the author's display name
+			// Get the author's display name.
 			$author_name = $user->display_name;
 
-			// Get the author URL
-			$author_url = user_wall_get_user_profile_url( $user->user_login );
+			// Get the author URL.
+			$author_url = userwall_wp_get_user_profile_url( $user->user_login );
 
-			// Get the avatar URL
+			// Get the avatar URL.
 			$author_avatar_url = get_avatar_url( $user_id, apply_filters( 'userwall_wp_avatar_size', array( 'size' => 50 ), $user_id ) );
 
 			$this->authors[ $user_id ] = array(
@@ -106,9 +116,9 @@ class UserWall_WP_Post_Manager {
 
 		$data = wp_parse_args( $data, $defaults );
 
-		// Sanitize and validate data as needed
+		// Sanitize and validate data as needed.
 
-		// Insert data into the posts table
+		// Insert data into the posts table.
 		$insert_data = array(
 			'post_title'    => $data['title'],
 			'post_content'  => $this->trim_p_tags( $data['content'] ),
@@ -131,7 +141,7 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Update an existing post.
 	 *
-	 * @param int $post_id The ID of the post to update.
+	 * @param int   $post_id The ID of the post to update.
 	 * @param array $data Post data to update.
 	 * @return bool Whether the update was successful or not.
 	 */
@@ -145,7 +155,7 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$data = wp_parse_args( $data, $defaults );
-		// Sanitize and validate data as needed
+		// Sanitize and validate data as needed.
 
 		$update_data = array(
 			'post_content' => $this->trim_p_tags( $data['content'] ),
@@ -159,8 +169,8 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Moderate post function.
 	 *
-	 * @param integer $post_id
-	 * @param integer $current_user_id
+	 * @param integer $post_id Post ID.
+	 * @param integer $current_user_id User ID.
 	 * @return boolean
 	 */
 	public function can_moderate( $post_id = 0, $current_user_id = 0 ) {
@@ -169,11 +179,12 @@ class UserWall_WP_Post_Manager {
 			return true;
 		}
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		$query  = $this->wpdb->prepare(
-			"SELECT p.user_id
-            FROM {$this->table_posts} p
-            WHERE p.post_id = %d",
-			$post_id
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
+		$query = $this->wpdb->prepare(
+			'SELECT p.user_id
+            FROM %i p
+            WHERE p.post_id = %d',
+			array( $this->table_posts, $post_id )
 		);
 
 		$user_id = $this->wpdb->get_var( $query );
@@ -195,7 +206,7 @@ class UserWall_WP_Post_Manager {
 		do_action( 'userwall_wp_before_delete_post', $post_id );
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 
-		// Delete comments
+		// Delete comments.
 		$result = $this->wpdb->delete( $tables['comments'], array( 'post_id' => $post_id ) );
 
 		$result = $this->wpdb->delete( $tables['posts'], array( 'post_id' => $post_id ) );
@@ -212,15 +223,20 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function get_post_by_id( $post_id ) {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
 		$post = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT p.*, 
-                (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
-                (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-                FROM {$this->table_posts} p
-                WHERE p.post_id = %d",
-				$post_id
+				'SELECT p.*, 
+                (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
+                (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+                FROM %i p
+                WHERE p.post_id = %d',
+				array(
+					$tables['comments'],
+					$tables['likes'],
+					$this->table_posts,
+					$post_id,
+				)
 			)
 		);
 		$post = $this->transform_post( $post );
@@ -238,9 +254,12 @@ class UserWall_WP_Post_Manager {
 	public function get_posts_by_user_id( $user_id, $limit = -1 ) {
 		$posts = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT * FROM {$this->table_posts} WHERE user_id = %d ORDER BY ID DESC LIMIT %d",
-				$user_id,
-				$limit
+				'SELECT * FROM %i WHERE user_id = %d ORDER BY ID DESC LIMIT %d',
+				array(
+					$this->table_posts,
+					$user_id,
+					$limit,
+				)
 			)
 		);
 		if ( ! empty( $posts ) ) {
@@ -259,7 +278,7 @@ class UserWall_WP_Post_Manager {
 	 * @return array List of post objects by the group.
 	 */
 	public function get_posts_by_group( $group_id, $limit = -1 ) {
-		// Implement the query to fetch posts by group ID here
+		// Implement the query to fetch posts by group ID here.
 		$posts = array();
 		if ( ! empty( $posts ) ) {
 			foreach ( $posts as $index => $post ) {
@@ -277,18 +296,23 @@ class UserWall_WP_Post_Manager {
 	 * @return array List of post objects.
 	 */
 	public function get_posts_latest( $last_post_id = 0, $limit = 30 ) {
-		// Implement the query to fetch the latest posts since $last_post_id here
+		// Implement the query to fetch the latest posts since $last_post_id here.
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 		$query  = $this->wpdb->prepare(
-			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
-            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-            FROM {$this->table_posts} p
+			'SELECT p.*, 
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0) AS comments_count,
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+            FROM %i p
             WHERE p.post_id > %d
             ORDER BY p.post_id DESC
-            LIMIT %d",
-			$last_post_id,
-			$limit
+            LIMIT %d',
+			array(
+				$tables['comments'],
+				$tables['likes'],
+				$this->table_posts,
+				$last_post_id,
+				$limit,
+			)
 		);
 
 		$posts = $this->wpdb->get_results( $query );
@@ -301,20 +325,9 @@ class UserWall_WP_Post_Manager {
 	}
 
 	/**
-	 * Get Permalink function. Use helper function
-	 *
-	 * @param array $post
-	 * @return void
-	 */
-	private function get_permalink( $post = array() ) {
-		$permalink = '';
-		return $permalink;
-	}
-
-	/**
 	 * Tranforms the post for usable keys in frontend.
 	 *
-	 * @param object $post
+	 * @param object $post Post Array.
 	 *
 	 * @return array
 	 */
@@ -332,7 +345,7 @@ class UserWall_WP_Post_Manager {
 			$modified_post->post_timestamp = strtotime( $post->creation_date );
 		}
 
-		// Get timestamp for comment
+		// Get timestamp for comment.
 		if ( isset( $modified_post->comment_date ) ) {
 			$modified_post->comment_timestamp = strtotime( $post->comment_date );
 		}
@@ -346,7 +359,7 @@ class UserWall_WP_Post_Manager {
 		}
 
 		if ( $is_post ) {
-			$modified_post->permalink = user_wall_get_permalink( $post->post_id );
+			$modified_post->permalink = userwall_wp_get_permalink( $post->post_id );
 		} else {
 			$modified_post->permalink = '';
 		}
@@ -362,16 +375,20 @@ class UserWall_WP_Post_Manager {
 	 * @return array List of post objects.
 	 */
 	public function get_posts_latest_count( $last_post_id = 0, $limit = 30 ) {
-		// Implement the query to fetch the latest posts since $last_post_id here
+		// Implement the query to fetch the latest posts since $last_post_id here.
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		$query  = $this->wpdb->prepare(
-			"SELECT COUNT(p.post_id)
-            FROM {$this->table_posts} p
+
+		$query = $this->wpdb->prepare(
+			'SELECT COUNT(p.post_id)
+            FROM %i p
             WHERE p.post_id > %d
             ORDER BY p.post_id ASC
-            LIMIT %d",
-			$last_post_id,
-			$limit
+            LIMIT %d',
+			array(
+				$this->table_posts,
+				$last_post_id,
+				$limit,
+			)
 		);
 
 		$posts = $this->wpdb->get_var( $query );
@@ -382,7 +399,7 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Get posts.
 	 *
-	 * @param array $args
+	 * @param array $args Post Args.
 	 * @return array
 	 */
 	public function get_posts( $args = array() ) {
@@ -399,31 +416,31 @@ class UserWall_WP_Post_Manager {
 		);
 
 		$args     = wp_parse_args( $args, $defaults );
-		$page     = intval( $args['page'] ); // Sanitize the page value
-		$per_page = intval( $args['per_page'] ); // Sanitize the per_page value
+		$page     = intval( $args['page'] ); // Sanitize the page value.
+		$per_page = intval( $args['per_page'] ); // Sanitize the per_page value.
 		$offset   = ( $page - 1 ) * $per_page;
 
-		// Create a WHERE clause based on the conditions in $args
-		$where_clause = '1 = %d'; // Default condition
-		$where_values = array( 1 ); // Default value for the default condition
+		// Create a WHERE clause based on the conditions in $args.
+		$where_clause = '1 = %d'; // Default condition.
+		$where_values = array( 1 ); // Default value for the default condition.
 
-		// Implement the query to fetch the latest posts since $last_post_id here
+		// Implement the query to fetch the latest posts since $last_post_id here.
 		$tables = UserWall_WP_Table_Manager::get_table_names();
 
-		// Create a WHERE clause based on the conditions in $args
-		$where_clause = '1 = 1'; // Default condition
+		// Create a WHERE clause based on the conditions in $args.
+		$where_clause = '1 = 1'; // Default condition.
 
 		if ( 'posts' === $args['type'] ) {
-			// Add a condition based on the type
-			//$where_clause = "post_type = %s";
-			$post_type = sanitize_text_field( $args['type'] ); // Sanitize the post_type
-			//$where_values[] = $post_type;
+			// Add a condition based on the type.
+			// $where_clause = "post_type = %s"; // Default condition.
+			$post_type = sanitize_text_field( $args['type'] ); // Sanitize the post_type.
+			// $where_values[] = $post_type; // Add the post_type to the array of values.
 		}
 
 		if ( 0 !== $args['object_id'] && 'user-posts' === $args['type'] ) {
-			// Add a condition based on the object_id
+			// Add a condition based on the object_id.
 			$where_clause  .= ' AND user_id = %d';
-			$object_id      = intval( $args['object_id'] ); // Sanitize the object_id
+			$object_id      = intval( $args['object_id'] ); // Sanitize the object_id.
 			$where_values[] = $object_id;
 		}
 
@@ -431,31 +448,43 @@ class UserWall_WP_Post_Manager {
 		if ( current_user_can( 'manage_options' ) ) {
 
 			// Searching content by query.
-			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase, WordPress.Security.NonceVerification.Missing
 			if ( isset( $_REQUESTS['sq'] ) ) {
-				$search_query     = sanitize_text_field( $_REQUEST['sq'] ); // The wildcard character
-				$escaped_wildcard = $this->wpdb->esc_like( $search_query ); // Escaping the wildcard
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				if ( isset( $_REQUEST['sq'] ) ) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$search_query = sanitize_text_field( wp_unslash( $_REQUEST['sq'] ) ); // The wildcard character.
+				} else {
+					$search_query = ''; // Set a default value if the index is undefined.
+				}
+				$escaped_wildcard = $this->wpdb->esc_like( $search_query ); // Escaping the wildcard.
 				$where_clause    .= $this->wpdb->prepare( ' AND post_content LIKE %s', $escaped_wildcard );
 			}
-			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
+			// phpcs:ignore: WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase, WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUESTS['user_id'] ) ) {
-				$user_id       = absint( $_REQUEST['user_id'] );
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				if ( isset( $_REQUEST['user_id'] ) ) {
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$user_id = absint( wp_unslash( $_REQUEST['user_id'] ) );
+				} else {
+					$user_id = 0; // Set a default value if the index is undefined.
+				}
 				$where_clause .= $this->wpdb->prepare( ' AND user_id = %d', $user_id );
 			}
 
 			// Filter for date range.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['date_from'] ) && '' !== $_REQUEST['date_from'] ) {
-				$date_from     = sanitize_text_field( $_REQUEST['date_from'] );
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$date_from     = sanitize_text_field( wp_unslash( $_REQUEST['date_from'] ) );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date >= %s', $date_from );
 			}
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['date_end'] ) && '' !== $_REQUEST['date_end'] ) {
-				$date_end      = sanitize_text_field( $_REQUEST['date_end'] );
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$date_end      = sanitize_text_field( wp_unslash( $_REQUEST['date_end'] ) );
 				$where_clause .= $this->wpdb->prepare( ' AND creation_date <= %s', $date_end );
-			} else {
-				// If date_end is empty, set it to today
-				//$today = date('Y-m-d');
-				//$where_clause .= $this->wpdb->prepare(" AND creation_date <= %s", $today);
 			}
 		}
 
@@ -474,7 +503,7 @@ class UserWall_WP_Post_Manager {
 			} else {
 				$integers = explode( ',', str_replace( ' ', '', $args['object_id'] ) );
 
-				// Convert each element to an integer
+				// Convert each element to an integer.
 				$object_ids = array_map( 'intval', $integers );
 			}
 
@@ -496,7 +525,7 @@ class UserWall_WP_Post_Manager {
 			} else {
 				$integers = explode( ',', str_replace( ' ', '', $args['post_id'] ) );
 
-				// Convert each element to an integer
+				// Convert each element to an integer.
 				$post_ids = array_map( 'intval', $integers );
 			}
 
@@ -509,24 +538,29 @@ class UserWall_WP_Post_Manager {
 			}
 		}
 
-		// Add additional conditions based on other $args as needed
+		// Add additional conditions based on other $args as needed.
 		$where_clause = apply_filters( 'userwall_wp_get_posts_where_clause', $where_clause, $args );
 
-		//$where_values = apply_filters( 'userwall_wp_get_posts_where_values', $where_values, $args );
+		// $where_values = apply_filters( 'userwall_wp_get_posts_where_values', $where_values, $args );
 		// Build the SQL query
-		$limit     = intval( $per_page ); // Sanitize the limit
+		$limit = intval( $per_page ); // Sanitize the limit.
+
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$sql_query = $this->wpdb->prepare(
 			"SELECT p.*, 
-            (SELECT COUNT(*) FROM {$tables['comments']} WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,
-            (SELECT COUNT(*) FROM {$tables['likes']} WHERE post_id = p.post_id) AS reactions_count
-            FROM {$this->table_posts} p
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id AND parent_id = 0 ) AS comments_count,
+            (SELECT COUNT(*) FROM %i WHERE post_id = p.post_id) AS reactions_count
+            FROM %i p
             WHERE {$where_clause}
             ORDER BY {$args['order_by']} {$args['order']}
             LIMIT %d
-            OFFSET %d", // Add the LIMIT and OFFSET clauses
-			$limit, // Pass the limit value
-			$offset, // Pass the offset value
-			...$where_values // Pass the array of values
+            OFFSET %d", // Add the LIMIT and OFFSET clauses.
+			$tables['comments'],
+			$tables['likes'],
+			$this->table_posts,
+			$limit, // Pass the limit value.
+			$offset, // Pass the offset value.
+			...$where_values // Pass the array of values.
 		);
 
 		$posts = $this->wpdb->get_results( $sql_query );
@@ -543,8 +577,8 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Report a post.
 	 *
-	 * @param int $post_id The ID of the post to report.
-	 * @param int $reporter_user_id The ID of the user reporting the post.
+	 * @param int    $post_id The ID of the post to report.
+	 * @param int    $reporter_user_id The ID of the user reporting the post.
 	 * @param string $report_reason The reason for reporting the post.
 	 * @return bool Whether the report was successful or not.
 	 */
@@ -575,8 +609,8 @@ class UserWall_WP_Post_Manager {
 	 * @return bool Whether the user was successfully blocked for the post or not.
 	 */
 	public function block_user_for_post( $user_id, $blocked_user_id, $post_id ) {
-		// Implement the logic to add a record in your database table
-		// to indicate that $user_id has blocked $blocked_user_id for $post_id
+		// Implement the logic to add a record in your database table.
+		// to indicate that $user_id has blocked $blocked_user_id for $post_id.
 
 		$table_blocklist = $this->wpdb->prefix . 'userwall_blocklist';
 
@@ -606,8 +640,8 @@ class UserWall_WP_Post_Manager {
 	 * @return bool Whether the user successfully followed the author or not.
 	 */
 	public function follow_author_of_post( $user_id, $author_id, $post_id ) {
-		// Implement the logic to add a record in your database table
-		// to indicate that $user_id is following $author_id for $post_id
+		// Implement the logic to add a record in your database table.
+		// to indicate that $user_id is following $author_id for $post_id.
 
 		$table_followers = $this->wpdb->prefix . 'userwall_user_followers';
 
@@ -653,13 +687,13 @@ class UserWall_WP_Post_Manager {
 		return false !== $result;
 	}
 
-
 	/**
 	 * Add a comment to a post.
 	 *
-	 * @param int $user_id The ID of the user adding the comment.
-	 * @param int $post_id The ID of the post to which the comment is added.
+	 * @param int    $user_id The ID of the user adding the comment.
+	 * @param int    $post_id The ID of the post to which the comment is added.
 	 * @param string $comment_content The content of the comment.
+	 * @param int    $parent_comment The ID of the parent comment (optional).
 	 * @return int|false The new comment ID on success, false on failure.
 	 */
 	public function add_comment( $user_id, $post_id, $comment_content, $parent_comment = 0 ) {
@@ -688,8 +722,9 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Add a like or reaction to a post.
 	 *
-	 * @param int $user_id The ID of the user adding the like/reaction.
-	 * @param int $post_id The ID of the post to which the like/reaction is added.
+	 * @param int    $user_id The ID of the user adding the like/reaction.
+	 * @param int    $post_id The ID of the post to which the like/reaction is added.
+	 * @param int    $comment_id The ID of the comment to which the like/reaction is added (optional).
 	 * @param string $reaction_type The type of reaction (e.g., 'like', 'love', 'haha').
 	 * @return bool Whether the like/reaction was successfully added or not.
 	 */
@@ -734,10 +769,13 @@ class UserWall_WP_Post_Manager {
 	 */
 	public function get_user_id_by_post_id( $post_id ) {
 		$query = $this->wpdb->prepare(
-			"SELECT user_id
-            FROM {$this->table_posts}
-            WHERE post_id = %d",
-			$post_id
+			'SELECT user_id
+            FROM %i
+            WHERE post_id = %d',
+			array(
+				$this->table_posts,
+				$post_id,
+			)
 		);
 
 		$user_id = $this->wpdb->get_var( $query );
@@ -759,10 +797,13 @@ class UserWall_WP_Post_Manager {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$comment = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT c.*
-                FROM {$tables['comments']} c
-                WHERE c.comment_id = %d",
-				$comment_id
+				'SELECT c.*
+                FROM %i c
+                WHERE c.comment_id = %d',
+				array(
+					$tables['comments'],
+					$comment_id,
+				)
 			)
 		);
 		$comment = $this->transform_post( $comment );
@@ -780,10 +821,13 @@ class UserWall_WP_Post_Manager {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$comment = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT c.*
-                FROM {$tables['comments']} c
-                WHERE c.comment_id = %d",
-				$comment_id
+				'SELECT c.*
+                FROM %i c
+                WHERE c.comment_id = %d',
+				array(
+					$tables['comments'],
+					$comment_id,
+				)
 			)
 		);
 
@@ -806,23 +850,28 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Get comments and child comments.
 	 *
-	 * @param integer $post_id
-	 * @param integer $parent_id
-	 * @param integer $limit
+	 * @param integer $post_id Post ID.
+	 * @param integer $parent_id Parent ID.
+	 * @param integer $limit Limit.
 	 * @return array
 	 */
 	private function get_comments_recursive( $post_id = 0, $parent_id = 0, $limit = 0 ) {
 		$tables  = UserWall_WP_Table_Manager::get_table_names();
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				'SELECT 
 					c.*,
-					(SELECT COUNT(comment_id) FROM {$tables['comments']} WHERE parent_id = c.comment_id) AS replies_count,
-            		(SELECT COUNT(like_id) FROM {$tables['likes']} WHERE comment_id = c.comment_id) AS reactions_count 
-					FROM {$tables['comments']} AS c WHERE c.post_id = %d AND c.parent_id = %d ORDER BY c.comment_date DESC LIMIT %d",
-				$post_id,
-				$parent_id,
-				$limit
+					(SELECT COUNT(comment_id) FROM %i WHERE parent_id = c.comment_id) AS replies_count,
+            		(SELECT COUNT(like_id) FROM %i WHERE comment_id = c.comment_id) AS reactions_count 
+					FROM %i AS c WHERE c.post_id = %d AND c.parent_id = %d ORDER BY c.comment_date DESC LIMIT %d',
+				array(
+					$tables['comments'],
+					$tables['likes'],
+					$tables['comments'],
+					$post_id,
+					$parent_id,
+					$limit,
+				)
 			)
 		);
 
@@ -843,13 +892,13 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Update an existing comment.
 	 *
-	 * @param int $comment_id The ID of the comment to update.
+	 * @param int    $comment_id The ID of the comment to update.
 	 * @param string $new_content The updated comment content.
 	 * @return bool Whether the update was successful or not.
 	 */
 	public function update_comment( $comment_id, $new_content ) {
 		$tables = UserWall_WP_Table_Manager::get_table_names();
-		// Sanitize and validate data as needed
+		// Sanitize and validate data as needed (e.g., check if the comment ID exists).
 
 		$update_data = array(
 			'comment_content' => $new_content,
@@ -864,7 +913,7 @@ class UserWall_WP_Post_Manager {
 	/**
 	 * Get total comments by post ID.
 	 *
-	 * @param integer $post_id
+	 * @param integer $post_id Post ID.
 	 *
 	 * @return integer
 	 */
@@ -876,10 +925,13 @@ class UserWall_WP_Post_Manager {
 		$tables   = UserWall_WP_Table_Manager::get_table_names();
 		$comments = $this->wpdb->get_var(
 			$this->wpdb->prepare(
-				"SELECT COUNT(c.comment_id)
-                FROM {$tables['comments']} c
-                WHERE c.post_id = %d",
-				absint( $post_id )
+				'SELECT COUNT(c.comment_id)
+                FROM %i c
+                WHERE c.post_id = %d',
+				array(
+					$tables['comments'],
+					absint( $post_id ),
+				)
 			)
 		);
 
@@ -887,16 +939,16 @@ class UserWall_WP_Post_Manager {
 	}
 
 	/**
-	 * Trim P tags from editor
+	 * Trim P tags from editor.
 	 *
-	 * @param string $html_content
+	 * @param string $html_content HTML Content to trimmed.
 	 * @return string
 	 */
 	private function trim_p_tags( $html_content = '' ) {
-		// Remove empty paragraphs
+		// Remove empty paragraphs.
 		$cleaned_content = preg_replace( '/<p><br><\/p>/', '', $html_content );
 
-		// You might want to remove paragraphs that contain only whitespace as well
+		// You might want to remove paragraphs that contain only whitespace as well.
 		$cleaned_content = preg_replace( '/<p>\s*<\/p>/', '', $cleaned_content );
 
 		return $cleaned_content;

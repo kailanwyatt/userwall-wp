@@ -49,4 +49,4 @@ UserWall WP is distributed under the [GPLv2 or later](https://www.gnu.org/licens
 
 ---
 
-**UserWall WP** is proudly developed by [Your Company Name](https://yourcompanywebsite.com).
+**UserWall WP** is proudly developed by [Karizmatic LLC](https://kailanwyatt.com).

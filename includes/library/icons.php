@@ -1,5 +1,31 @@
 <?php
-function userwall_get_icon( $icon_name = '' ) {
+/**
+ * UserWall_WP_Post_Core class
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Display the icon.
+ *
+ * @param string $icon_name Icon name.
+ */
+function userwall_wp_display_icon( $icon_name = '' ) {
+	echo wp_kses( userwall_wp_get_icon( $icon_name ), userwall_wp_kses_extended_ruleset() );
+}
+
+/**
+ * Get Userwall get icon
+ *
+ * @param string $icon_name  Icon name.
+ *
+ * @return string
+ */
+function userwall_wp_get_icon( $icon_name = '' ) {
 	if ( ! $icon_name ) {
 		return;
 	}

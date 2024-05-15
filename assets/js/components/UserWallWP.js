@@ -1,7 +1,5 @@
 // Import Quill
 import Quill from 'quill';
-import ToolbarEmoji from 'quill-emoji';
-//import InfiniteScroll from './modules/infiniteScroll';
 
 var editor_theme = 'snow';
 var editorModules = {
@@ -84,6 +82,7 @@ function InfiniteScroll(contentId) {
             const data = new URLSearchParams();
             data.append('action', 'userwall_wp_load_more_posts');
             data.append('per_page', itemsPerPage);
+            data.append('nonce', userwallWPObject.nonce);
             if ( threadWrapper.dataset.post_id && !isNaN(threadWrapper.dataset.post_id) ) {
                 data.append( 'post_id', threadWrapper.dataset.post_id );
             }
@@ -683,7 +682,7 @@ jQuery(document).ready(function($) {
                 var $thread = jQuery(this).closest('.userwall-wp-thread');
                 var link    = $thread.data('permalink');
                 // Check if goToPage is true and the clicked element is not a link
-                if (link && postOpenType && !$(event.target).is("a")) {
+                if (!isSinglePost && link && postOpenType && !$(event.target).is("a")) {
 
                   window.location.href = link;
                 }
@@ -827,31 +826,6 @@ jQuery(document).ready(function($) {
                 jQuery('#image-upload').val('');
             });
         
-            // Handle form submission with AJAX
-            jQuery('#userwall-wp-post-form2').submit(function(event) {
-                event.preventDefault();
-        
-                // Get form data including images
-                const formData = new FormData(this);
-                formData.append('action', sessionID);
-
-                // Perform AJAX request for form submission
-                $.ajax({
-                    url: userwallWPObject.ajax_url, // Replace with your AJAX endpoint URL
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        // Handle the AJAX response here
-                        console.log('Form submitted successfully');
-                    },
-                    error: function(error) {
-                        // Handle AJAX error here
-                        console.error('Error submitting form:', error);
-                    }
-                });
-            });
             var that = this;
 
             jQuery(document).on('click', '.userwall-wp-action[data-action="Edit"]', function() {
@@ -1116,6 +1090,7 @@ jQuery(document).ready(function($) {
             formData.append( 'action', 'userwall_wp_save_post' );
             formData.append( 'nonce', userwallWPObject.nonce );
             formData.append( 'post_tab', tab );
+            formData.append( 'nonce', userwallWPObject.nonce);
             
             // Perform AJAX request to save the post
             jQuery.ajax({
@@ -1273,7 +1248,7 @@ jQuery(document).ready(function($) {
             }
             const quillPostEditor = new Quill('.post-quill-editor', quill_config);
 
-            var maxChars = userwallWPObject.char_limit; // Maximum characters allowed
+            var maxChars = parseInt( userwallWPObject.char_limit ); // Maximum characters allowed
 
             quillPostEditor.on('text-change', function(delta, oldDelta, source) {
                 if ( maxChars !== 0 ) {

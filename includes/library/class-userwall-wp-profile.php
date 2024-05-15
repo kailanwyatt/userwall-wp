@@ -1,4 +1,14 @@
 <?php
+/**
+ * Class UserWall_WP_Profile
+ * Class for managing a WordPress user profile.
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Class UserWall_WP_Profile

@@ -1,14 +1,28 @@
 <?php
+/**
+ * Deactivation functions for the User Wall plugin.
+ *
+ * @file  deactivation.php
+ *
+ * @package UserWall_WP
+ */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Deactivate the User Wall plugin.
+ */
 function userwall_wp_deactivate() {
-	// Check if the option for deletion is set to true
+	// Check if the option for deletion is set to true.
 	$delete_on_deactivation = get_option( 'userwall_wp_delete_deactivation', false );
 	$delete_on_deactivation = 1;
-	// If the option is set to true, delete the tables
+	// If the option is set to true, delete the tables.
 	if ( $delete_on_deactivation ) {
 		global $wpdb;
 
-		// Define the table names with the "userwall_" prefix
+		// Define the table names with the "userwall_" prefix.
 		$table_posts              = $wpdb->prefix . 'userwall_posts';
 		$table_comments           = $wpdb->prefix . 'userwall_comments';
 		$table_likes              = $wpdb->prefix . 'userwall_likes';
@@ -29,34 +43,40 @@ function userwall_wp_deactivate() {
 		$table_poll_options       = $wpdb->prefix . 'userwall_poll_options';
 		$table_blocklist          = $wpdb->prefix . 'userwall_blocklist';
 
-		// SQL queries to drop the tables
+		// SQL queries to drop the tables.
 		$sql_queries = array(
-			"DROP TABLE IF EXISTS $table_comments",
-			"DROP TABLE IF EXISTS $table_likes",
-			"DROP TABLE IF EXISTS $table_bookmarks",
-			"DROP TABLE IF EXISTS $table_polls",
-			"DROP TABLE IF EXISTS $table_poll_votes",
-			"DROP TABLE IF EXISTS $table_reports",
-			"DROP TABLE IF EXISTS $table_user_reputation",
-			"DROP TABLE IF EXISTS $table_badges",
-			"DROP TABLE IF EXISTS $table_hashtags",
-			"DROP TABLE IF EXISTS $table_user_settings",
-			"DROP TABLE IF EXISTS $table_notifications",
-			"DROP TABLE IF EXISTS $table_search_history",
-			"DROP TABLE IF EXISTS $table_user_followers",
-			"DROP TABLE IF EXISTS $table_user_following",
-			"DROP TABLE IF EXISTS $table_reports",
-			"DROP TABLE IF EXISTS $table_user_notifications",
-			"DROP TABLE IF EXISTS $table_poll_options",
-			"DROP TABLE IF EXISTS $table_blocklist",
-			"DROP TABLE IF EXISTS $table_posts",
-
+			$table_comments,
+			$table_likes,
+			$table_bookmarks,
+			$table_polls,
+			$table_poll_votes,
+			$table_reports,
+			$table_user_reputation,
+			$table_badges,
+			$table_hashtags,
+			$table_user_settings,
+			$table_notifications,
+			$table_search_history,
+			$table_user_followers,
+			$table_user_following,
+			$table_reports,
+			$table_user_notifications,
+			$table_poll_options,
+			$table_blocklist,
 		);
 
-		// Delete the tables
-		foreach ( $sql_queries as $sql_query ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$wpdb->query( $sql_query );
+		$drop_tables = apply_filters( 'userwall_wp_drop_tables', $sql_queries );
+
+		// Add the posts table to the list of tables to drop.
+		$drop_tables[] = $table_posts;
+
+		// Include the WordPress database upgrade file.
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		// Execute the SQL queries to create the tables.
+		foreach ( $drop_tables as $table ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) );
 		}
 	}
 }

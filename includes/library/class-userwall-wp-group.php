@@ -2,6 +2,17 @@
 /**
  * Class UserWall_WP_Group
  * Class for managing a WordPress group.
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class UserWall_WP_Group
+ * Class for managing a WordPress group.
  */
 class UserWall_WP_Group {
 
@@ -27,7 +38,7 @@ class UserWall_WP_Group {
 	 * @return string The group name.
 	 */
 	public function get_group_name() {
-		return get_group_meta( $this->group_id, 'name', true );
+		return userwall_wp_get_group_meta( $this->group_id, 'name', true );
 	}
 
 	/**
@@ -36,7 +47,7 @@ class UserWall_WP_Group {
 	 * @return string The group slug.
 	 */
 	public function get_group_slug() {
-		return get_group_meta( $this->group_id, 'slug', true );
+		return userwall_wp_get_group_meta( $this->group_id, 'slug', true );
 	}
 
 	/**
@@ -45,7 +56,7 @@ class UserWall_WP_Group {
 	 * @return string The group description.
 	 */
 	public function get_group_description() {
-		return get_group_meta( $this->group_id, 'description', true );
+		return userwall_wp_get_group_meta( $this->group_id, 'description', true );
 	}
 
 	/**
@@ -54,7 +65,7 @@ class UserWall_WP_Group {
 	 * @return string The group avatar URL or path.
 	 */
 	public function get_group_avatar() {
-		return get_group_meta( $this->group_id, 'avatar', true );
+		return userwall_wp_get_group_meta( $this->group_id, 'avatar', true );
 	}
 
 	/**

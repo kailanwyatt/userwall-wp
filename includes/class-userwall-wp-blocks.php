@@ -1,40 +1,68 @@
 <?php
 /**
  * UserWall_WP_Blocks class
+ *
+ * @package UserWall_WP
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * UserWall_WP_Blocks class
  */
 class UserWall_WP_Blocks {
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
-		// Register Gutenberg block
+		// Register Gutenberg block.
 		add_action( 'init', array( $this, 'register_gutenberg_block' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'wp_userwall_enqueue_block_editor_assets' ) );
-		add_filter( 'block_categories', array( $this, 'register_user_wall_category' ), 10, 2 );
+		add_filter( 'block_categories', array( $this, 'register_userwall_wp_category' ), 10, 2 );
 	}
 
-	public function register_user_wall_category( $categories, $post ) {
+	/**
+	 * Register the User Wall category.
+	 *
+	 * @param array $categories The existing block categories.
+	 * @return array The modified block categories.
+	 */
+	public function register_userwall_wp_category( $categories ) {
 		return array_merge(
 			$categories,
 			array(
 				array(
 					'slug'  => 'user-wall',
-					'title' => __( 'User Wall', 'user-wall' ),
+					'title' => __( 'User Wall', 'userwall-wp' ),
 					'icon'  => 'smiley',
 				),
 			)
 		);
 	}
 
+	/**
+	 * Register the User Wall block.
+	 */
 	public function register_gutenberg_block() {
 		register_block_type(
 			'userwall-wp/page-render',
 			array(
 				'editor_script'   => 'wp-userwall-block-script',
-				'render_callback' => array( $this, 'render_user_wall_block' ),
+				'render_callback' => array( $this, 'render_userwall_wp_block' ),
 				'category'        => 'user-wall',
 			)
 		);
 	}
 
-	public function render_user_wall_block( $attributes ) {
+	/**
+	 * Render the User Wall block.
+	 *
+	 * @param array $attributes The block attributes.
+	 * @return string The rendered block content.
+	 */
+	public function render_userwall_wp_block( $attributes ) {
 		$type = 'wall-posts';
 		// Server-side rendering of the block.
 		if ( ! empty( $attributes['displayType'] ) ) {
@@ -54,11 +82,16 @@ class UserWall_WP_Blocks {
 		}
 	}
 
+	/**
+	 * Enqueue block editor assets
+	 */
 	public function wp_userwall_enqueue_block_editor_assets() {
 		wp_enqueue_script(
 			'wp-userwall-block-script',
 			USERWALL_WP_PLUGIN_URL . '/assets/js/wp-userwall-block.js',
-			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' )
+			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+			filemtime( USERWALL_WP_PLUGIN_DIR . '/assets/js/wp-userwall-block.js' ),
+			array( 'in_footer' => true )
 		);
 	}
 }
