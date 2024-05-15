@@ -66,6 +66,8 @@ function userwall_wp_get_userwall_wp_profile_data( $profile_key = '', $user_id =
  * @return string The user profile URL.
  */
 function userwall_wp_get_user_profile_url( $username, $profile_tab = null ) {
+	// Initialize the URL.
+	$url = home_url();
 	// Check if permalinks are enabled ('plain' indicates they are not).
 	if ( '' === get_option( 'permalink_structure' ) ) {
 		// Build a plain URL.
@@ -90,10 +92,10 @@ function userwall_wp_get_user_profile_url( $username, $profile_tab = null ) {
 		$options = userwall_wp_get_options();
 		if ( ! empty( $options['user_page'] ) ) {
 			$url = get_permalink( $options['user_page'] );
-		}
-		$url = rtrim( $url, '/' ) . '/' . $username . '/';
-		if ( $profile_tab ) {
-			$url = rtrim( $url, '/' ) . '/' . $profile_tab . '/';
+			$url = rtrim( $url, '/' ) . '/' . $username . '/';
+			if ( $profile_tab ) {
+				$url = rtrim( $url, '/' ) . '/' . $profile_tab . '/';
+			}
 		}
 	}
 

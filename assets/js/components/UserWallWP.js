@@ -1248,7 +1248,7 @@ jQuery(document).ready(function($) {
             }
             const quillPostEditor = new Quill('.post-quill-editor', quill_config);
 
-            var maxChars = userwallWPObject.char_limit; // Maximum characters allowed
+            var maxChars = parseInt( userwallWPObject.char_limit ); // Maximum characters allowed
 
             quillPostEditor.on('text-change', function(delta, oldDelta, source) {
                 if ( maxChars !== 0 ) {
