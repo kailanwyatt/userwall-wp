@@ -65,15 +65,18 @@ class UserWall_Template {
 		// Localize the script with the data.
 		wp_localize_script( 'userwall-wp-js', 'userwallWPObject', apply_filters( 'userwall_wp_localize_script', $userwall_wp_data ) );
 
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 		wp_register_script( 'userwall-wall-tmpl', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
 		wp_enqueue_script( 'userwall-wall-tmpl' );
 		wp_add_inline_script( 'userwall-wall-tmpl', $this->get_wall_template() );
 
 		// Add the comments template.
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 		wp_register_script( 'userwall-wp-comments', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
 		wp_enqueue_script( 'userwall-wp-comments' );
 		wp_add_inline_script( 'userwall-wp-comments', $this->get_wall_comments_template() );
 
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 		wp_register_script( 'userwall-wp-inline', '', array(), '', USERWALL_WP_VERSION, array( 'in_footer' => true ) );
 		wp_enqueue_script( 'userwall-wp-inline' );
 		wp_add_inline_script( 'userwall-wp-inline', apply_filters( 'userwall_wp_inline_js', '' ) );
