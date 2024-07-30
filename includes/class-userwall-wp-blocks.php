@@ -30,7 +30,7 @@ class UserWall_WP_Blocks {
 	 * @return array The modified block categories.
 	 */
 	public function register_userwall_wp_category( $categories ) {
-		return array_merge(
+		$data = array_merge(
 			$categories,
 			array(
 				array(
@@ -40,6 +40,7 @@ class UserWall_WP_Blocks {
 				),
 			)
 		);
+		return $data;
 	}
 
 	/**
@@ -69,17 +70,20 @@ class UserWall_WP_Blocks {
 			$type = $attributes['displayType'];
 		}
 
+		$result = '';
 		switch ( $type ) {
 			case 'wall-posts':
-				return do_shortcode( '[userwall_wp_post_form]' );
+				$result = do_shortcode( '[userwall_wp_post_form]' );
 				break;
 			case 'profile':
-				return do_shortcode( '[userwall_wp_profile]' );
+				$result = do_shortcode( '[userwall_wp_profile]' );
 				break;
 			case 'single-post':
-				return do_shortcode( '[userwall_wp_post_single]' );
+				$result = do_shortcode( '[userwall_wp_post_single]' );
 				break;
 		}
+
+		return $result;
 	}
 
 	/**

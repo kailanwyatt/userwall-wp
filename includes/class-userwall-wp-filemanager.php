@@ -87,7 +87,7 @@ class UserWall_WP_FileManager {
 	 * Upload file method.
 	 *
 	 * @param array $file The file to be uploaded.
-	 * @return void
+	 * @return sting The path of the uploaded file.
 	 */
 	public function upload_file( $file = array() ) {
 		// Ensure the upload directory exists.

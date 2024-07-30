@@ -9,22 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
-<style>
-	.userwall-wp-admin-posts-wrapper {
-		max-width: 600px
-	}
-	.comment-edit-form,
-	.userwall-wp-activity-section {
-		display: none;
-	}
-	.filter-container {
-		display: flex;
-		align-items: center;
-	}
-	.filter-label {
-		margin-right: 10px;
-	}
-</style>
 <div class="wrap">
 	<h2><?php esc_html_e( 'Add Post', 'userwall-wp' ); ?></h2>
 	<table class="form-table">

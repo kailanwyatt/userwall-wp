@@ -28,25 +28,46 @@ Turn your WordPress site into a social hub with UserWall WP. Let users connect, 
 
 UserWall WP Pro provides unmatched flexibility and scalability to take your community to the next level!
 
-## Third-Party Services
+## External Services Used
 
-Our plugin, **UserWall WP**, integrates with the following third-party services:
+This plugin relies on third-party services to embed videos and images. Specifically, it uses YouTube and Vimeo for video embedding.
 
-### YouTube
-- **Service Description**: YouTube is a video-sharing platform that allows users to upload, view, and share videos.
-- **Usage in Plugin**: We use YouTube to embed videos within the plugin interface.
-- **Service Link**: [YouTube](https://www.youtube.com)
-- **Terms of Service**: [YouTube Terms of Service](https://www.youtube.com/static?template=terms)
-- **Privacy Policy**: [YouTube Privacy Policy](https://policies.google.com/privacy)
+### YouTube Integration
+Our plugin allows users to embed YouTube videos by providing a YouTube URL. When a YouTube URL is provided, an iframe is created to embed the video on the page. This means that the video content is hosted by YouTube and not on your own server, which helps in saving bandwidth and storage space. 
 
-### Vimeo
-- **Service Description**: Vimeo is a video hosting, sharing, and services platform focused on high-quality video content.
-- **Usage in Plugin**: We use Vimeo to embed videos within the plugin interface.
-- **Service Link**: [Vimeo](https://vimeo.com)
-- **Terms of Service**: [Vimeo Terms of Service](https://vimeo.com/terms)
-- **Privacy Policy**: [Vimeo Privacy Policy](https://vimeo.com/privacy)
+**Service Link:** [YouTube](https://www.youtube.com)
 
-Please be aware that by using our plugin, you agree to the terms of service and privacy policies of these third-party services. We recommend reviewing these documents to ensure compliance with any legal requirements related to data transmission and privacy.
+**Terms of Use:** [YouTube Terms of Service](https://www.youtube.com/static?template=terms)
+
+**Privacy Policy:** [YouTube Privacy Policy](https://policies.google.com/privacy)
+
+### Vimeo Integration
+Similarly, our plugin allows users to embed Vimeo videos by providing a Vimeo URL. When a Vimeo URL is provided, an iframe is created to embed the video on the page. Vimeo hosts the video content, ensuring that your website's bandwidth and storage are not impacted.
+
+**Service Link:** [Vimeo](https://www.vimeo.com)
+
+**Terms of Use:** [Vimeo Terms of Service](https://vimeo.com/terms)
+
+**Privacy Policy:** [Vimeo Privacy Policy](https://vimeo.com/privacy)
+
+### Image Uploads
+Users can upload images directly to the plugin, which are then previewed within the plugin interface. The images are stored on your server and are not transmitted to any third-party service.
+
+### How the Plugin Interacts with External Services
+
+1. **Embedding YouTube Videos:**
+   - Users provide a YouTube URL.
+   - The plugin extracts the video ID from the URL.
+   - An iframe is generated using this ID to embed the video on the website.
+
+2. **Embedding Vimeo Videos:**
+   - Users provide a Vimeo URL.
+   - The plugin extracts the video ID from the URL.
+   - An iframe is generated using this ID to embed the video on the website.
+
+By embedding videos using iframes from YouTube and Vimeo, the plugin allows you to easily display multimedia content without hosting the files yourself. This leverages the robust infrastructure of these video platforms, ensuring reliable video playback and reduced load on your web server.
+
+By using this plugin, you agree to the terms and privacy policies of these third-party services. This ensures that you are aware of where your data is being sent and the terms under which it is handled.
 
 
 == Installation ==

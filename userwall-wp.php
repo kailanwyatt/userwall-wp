@@ -60,5 +60,5 @@ require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp-table-manager.
 require_once USERWALL_WP_PLUGIN_DIR . 'includes/class-userwall-wp.php';
 
 // Create an instance of the UserWall_WP_Addons class.
-$addons_manager = new UserWall_WP_Addons();
-$addons_manager->load_addons();
+$userwall_wp_addons_manager = new UserWall_WP_Addons();
+$userwall_wp_addons_manager->load_addons();

@@ -90,8 +90,8 @@ class UserWall_WP_Admin {
 	 */
 	public function add_menu() {
 		add_menu_page(
-			'User WallP',
-			'User Wall',
+			__( 'User Wall', 'userwall-wp' ),
+			__( 'User Wall', 'userwall-wp' ),
 			'manage_options',
 			$this->dashboard_page_key,
 			array( $this, 'posts_page' ),

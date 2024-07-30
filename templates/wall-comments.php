@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// Userwall WP Wall Comments Template
+// Userwall WP Wall Comments Template.
 ?>
 <!-- Comment Section -->
 <# _.each(data, function(comment) { #>

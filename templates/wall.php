@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// Userwall WP Wall Template
+// Userwall WP Wall Template.
 ?>
-<?php do_action( 'wp_userwall_header' ); ?>
+<?php do_action( 'userwall_wp_header' ); ?>
 <!-- Loop through userwall -->
 <# _.each(data, function(thread) { #>
 	<div class="userwall-wp-thread" data-postid="{{ thread.post_id }}" data-user_id="{{ thread.user_id }}" data-permalink="{{ thread.permalink }}">

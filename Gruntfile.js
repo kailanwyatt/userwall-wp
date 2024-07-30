@@ -129,6 +129,7 @@ module.exports = function(grunt) {
           '!webpack.config.js',
           '!composer.lock',
 					'!phpunit.xml',
+          '!.phpcs.xml.dist',
 				],
 				dest: 'release/' + pkg.version + '/'
 			},

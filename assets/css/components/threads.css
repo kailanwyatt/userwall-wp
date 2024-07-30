@@ -254,3 +254,17 @@
     width: 100%;
 }
   
+#wpwrap .userwall-wp-admin-posts-wrapper {
+	max-width: 600px
+}
+#wpwrap .comment-edit-form,
+#wpwrap .userwall-wp-activity-section {
+	display: none;
+}
+#wpwrap .filter-container {
+	display: flex;
+	align-items: center;
+}
+#wpwrap .filter-label {
+	margin-right: 10px;
+}

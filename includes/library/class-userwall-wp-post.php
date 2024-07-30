@@ -81,7 +81,7 @@ class UserWall_WP_Post {
 	/**
 	 * WordPress_Post constructor.
 	 *
-	 * @param stdClass $object The post object.
+	 * @param stdClass $post The post object.
 	 */
 	public function __construct( $post ) {
 		$this->post_id         = $post->post_id;

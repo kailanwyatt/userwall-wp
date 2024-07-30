@@ -296,7 +296,6 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		$file_manager = new UserWall_WP_FileManager( $post->user_id );
 		if ( ! empty( $media ) ) {
 			foreach ( $media as $media_item ) {
-
 				$file_path = $media_item->file_path;
 				if ( ! file_exists( $file_path ) ) {
 					continue;
@@ -325,7 +324,7 @@ class UserWallWP_Addon_Gallery extends UserWall_WP_Base_Addon {
 		global $wpdb;
 		$cache_key = 'userwall_wp_media_' . $post_id;
 		$media     = wp_cache_get( $cache_key );
-		error_log( print_r( $media, true ) );
+
 		if ( false === $media ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$media = $wpdb->get_results(
